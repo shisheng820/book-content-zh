@@ -1,0 +1,75 @@
+.site-nav {
+  $this: &;
+
+  position: fixed;
+  z-index: 4;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100vw;
+  padding: 1.25rem;
+  transition: background-color 0.2s $easing--ease-out-editorial;
+
+  @include screen(sm) {
+    grid-template-areas: "brand crumbs theme-toggle";
+    grid-template-columns: auto auto 1fr;
+    justify-content: start;
+  }
+  &__brand {
+    font-size: 1.125rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    margin-right: 1rem;
+    text-decoration: none;
+    color: inherit;
+
+    @include screen(sm) {
+      grid-area: brand;
+      width: $sizing--chapter-nav__width;
+      margin-right: 3rem;
+    }
+    > svg {
+      width: 1.625rem;
+      margin-right: 0.5ch;
+
+      filter: grayscale(1);
+    }
+    > span {
+      font-weight: bold;
+    }
+  }
+  &__jump {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    justify-self: end;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 4px;
+    background: none;
+    color: $color--mono-55;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.15s ease-in-out;
+
+    @include screen(sm) {
+      grid-area: theme-toggle;
+    }
+    @include screen(sm) {
+      position: static;
+      top: unset;
+      right: unset;
+    }
+    &:hover {
+      background: white;
+      border-color: #4c8eff;
+      color: #3663ea;
+    }
+  }
+}

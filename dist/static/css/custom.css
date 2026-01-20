@@ -1,0 +1,58 @@
+.site-nav__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+    /* 确保在桌面端靠右对齐 */
+    justify-self: end;
+    grid-area: theme-toggle;
+}
+
+.site-nav__jump {
+    /* 移除所有内联样式带来的影响 */
+    margin: 0 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px; /* 默认最大宽度 */
+}
+
+/* 桌面端调整 */
+@media screen and (min-width: 52.625rem) {
+    .site-nav__jump--primary {
+        font-weight: bold;
+    }
+}
+
+/* 移动端调整 */
+@media screen and (max-width: 52.625rem) {
+    /* 修复 width: 100vw 导致的布局挤压问题 */
+    .site-nav {
+        width: 100% !important; /* 强制覆盖 100vw */
+        box-sizing: border-box; /* 确保 padding 包含在宽度内 */
+        display: flex !important; /* 强制使用 Flex 布局 */
+        justify-content: space-between; /* 左右两端对齐 */
+    }
+
+    .site-nav__actions {
+        /* 取消绝对定位，使用 Flexbox 自然排列 */
+        position: static; 
+        margin-left: auto; /* 推到右边 */
+        flex-direction: row; /* 保持横向排列 */
+        align-items: center;
+        gap: 6px;
+    }
+
+    .site-nav__jump {
+        position: static !important;
+        top: unset !important;
+        right: unset !important;
+        
+        /* 缩小尺寸以适应移动端 */
+        padding: 0.6rem 0.8rem !important;
+        font-size: 0.8rem !important;
+        
+        /* 限制宽度触发省略号 */
+        max-width: 100px; 
+    }
+}
