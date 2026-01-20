@@ -1,53 +1,29 @@
 
-# Per-User Keys
+# 每用户密钥 (Per-User Keys)
 
-Users on Keybase have one or more [*device keys*](https://keybase.io/blog/keybase-new-key-model), whose public halves are advertised in the user's
-signature chain, and whose private halves stay local to the device that
-generated them. Users can also have *paper keys*, which act as device
-keys for the purposes of recovery from lost devices.
+Keybase 上的用户拥有一个或多个[*设备密钥*](https://keybase.io/blog/keybase-new-key-model)，其公钥部分在用户的签名链中公布，而私钥部分则保留在生成它们的设备本地。用户还可以拥有*纸质密钥*，在从丢失设备中恢复时，它们充当设备密钥。
 
-With the rollout of teams, we introduce a new type of key: the Per-User Key or PUK.
-Conceptually, the secret half of the per-user key is encrypted for all of a user's
-active device and paper keys. The public half is advertised in the user's signature
-chain. When a user adds a new device, the secret-half of the PUK is simply encrypted
-for the new device. When the user revokes a device, a new PUK is generated, and all
-remaining devices get the new secret half.
+随着团队的推出，我们引入了一种新型密钥：每用户密钥或 PUK。
+从概念上讲，每用户密钥的秘密部分是为用户的所有活动设备和纸质密钥加密的。公钥部分在用户的签名链中公布。当用户添加新设备时，PUK 的秘密部分仅为新设备加密。当用户撤销设备时，会生成新的 PUK，并且所有剩余设备都会获得新的秘密部分。
 
-## Cryptographic Specifics
+## 密码学细节
 
-Users start at PUK generation 1. Every time they revoke a device, they increment their version
-number and roll their PUK. At generation *i*:
+用户从 PUK 第 1 代开始。每次撤销设备时，他们都会增加版本号并轮换 PUK。在第 *i* 代：
 
-* A user generates a 32-byte random seed *s*.
-* Computes *e* = HMAC-SHA256(*s*, `"Derived-User-NaCl-EdDSA-1"`) and uses this value as the secret key for an EdDSA signing key. Then computes the public half, yielding keypair *(E,e)*
-* Computes *d* = HMAC-SHA256(*s*, `"Derived-User-NaCl-DH-1"`) and uses this value as a secret key for a Curve25519 DH encryption key. Then computes the public half, yielding keypair *(D,d)*
-* Computes *c* = HMAC-SHA256(*s*, `"Derived-User-NaCl-SecretBox-1"`) and uses this value as symmetric secret key.
+*   用户生成一个 32 字节的随机种子 *s*。
+*   计算 *e* = HMAC-SHA256(*s*, `"Derived-User-NaCl-EdDSA-1"`) 并将此值用作 EdDSA 签名密钥的密钥。然后计算公钥部分，产生密钥对 *(E,e)*
+*   计算 *d* = HMAC-SHA256(*s*, `"Derived-User-NaCl-DH-1"`) 并将此值用作 Curve25519 DH 加密密钥的密钥。然后计算公钥部分，产生密钥对 *(D,d)*
+*   计算 *c* = HMAC-SHA256(*s*, `"Derived-User-NaCl-SecretBox-1"`) 并将此值用作对称密钥。
 
+这个过程在每一代 *i* 重复。在任何给定的一代中，公钥 *E* 和 *D* 都被签署到用户的公共签名链中。每当添加新设备时，*s* 都会为新设备的设备密钥加密。这是一个瞬时操作，并且显着提高了我们之前考虑和实施的设计的密钥性能。这些 NaCl 盒子被写入服务器并存储在主数据库中。当前的 *s* 应该为每个活动设备都有一个盒子。
 
-This process is repeated at every generation *i*. At any given generation, the
-public keys *E* and *D* are signed into the user's public sigchain. Whenever a
-new device is added, *s* is encrypted for the new device's device key. This is
-an instantaneous operation and significantly improves keying performance over
-previous designs we've considered and implemented. These NaCl boxes are
-written to the server and stored in the main DB. The current *s* should have a
-box for every active device.
+在设备撤销时，撤销设备会生成一个新的 PUK，为所有剩余设备的私钥加密，并将新的 PUK 与撤销旧设备的声明一起写入签名链。此外，每当密钥轮换时，前一个种子 *s*<sub>i</sub> 都会通过 NaCl 的 [SecretBox](https://nacl.cr.yp.to/secretbox.html) 对称加密使用 *c*<sub>*i*+1</sub> 进行加密，带有一个随机的 24 字节随机数。参见 [newPerUserKeyPrev](https://github.com/keybase/client/blob/527fae6d5389e2899c41c5bdcb5b7097e4e5eb50/go/libkb/per_user_key.go#L79-L111) 和 [openPerUsrKeyPrev](https://github.com/keybase/client/blob/527fae6d5389e2899c41c5bdcb5b7097e4e5eb50/go/libkb/per_user_key.go#L113-L163) 分别了解加密和解密的实现。
 
-On device revoke, the revoking device makes a new PUK, encrypts for the
-private key for all remaining devices, and writes the new PUK to the
-sigchain along with the statement revoking the old device. Also, whenever the
-key rolls over, the previous seed *s*<sub>i</sub> is encrypted with
-*c*<sub>*i*+1</sub> via NaCl's [SecretBox](https://nacl.cr.yp.to/secretbox.html) symmetric encryption,
-with a random 24-byte nonce. See [newPerUserKeyPrev](https://github.com/keybase/client/blob/527fae6d5389e2899c41c5bdcb5b7097e4e5eb50/go/libkb/per_user_key.go#L79-L111)
-and [openPerUsrKeyPrev](https://github.com/keybase/client/blob/527fae6d5389e2899c41c5bdcb5b7097e4e5eb50/go/libkb/per_user_key.go#L113-L163)
-for an implementation of encryption and decryption, respectively.
+## 签名链表示
 
-## Sigchain Representation
+PUK 的公开部分写入用户的公共签名链。为了通过示例演示这一点，[这里](https://keybase.io/max/sigchain#24a4189169cf5cec3b1788353c4cd801a7ed0543bd7269aef7999bec25c022b70f)是 [max](https://keybase.io/max) 的签名链中的链接，他的客户端为他添加了一个 PUK。
 
-The public side of PUKs are written to a user's public sigchain. To demonstrate this
-by example, [here](https://keybase.io/max/sigchain#24a4189169cf5cec3b1788353c4cd801a7ed0543bd7269aef7999bec25c022b70f)
-is the link in [max](https://keybase.io/max)'s sigchain where his client added a PUK for him.
-
-The relevant sections are:
+相关部分是：
 
 ```javascript
 {
@@ -63,25 +39,17 @@ The relevant sections are:
 }
 ```
 
-As with any signing key, a *reverse signature* is computed with the new signing key over the entire JSON body, but with the
-reverse signature set to empty. This proves that the user knows the private key corresponding to the advertised `signing_kid`.
+与任何签名密钥一样，*反向签名*是用新的签名密钥对整个 JSON 主体进行计算的，但反向签名设置为空。这证明用户知道对应于公布的 `signing_kid` 的私钥。
 
-One of these links appears every PUK generation, or roughly, whenever a user *revokes* a device.
+这些链接中的一个出现在每个 PUK 世代，或者大致上，每当用户*撤销*设备时。
 
-## Teams
+## 团队
 
-Teams the user is a member of will need to rotate their shared symmetric keys,
-but this can happen lazily (before the next write) and off the critical path
-(see [CLKR](clkr)).
+用户所在的团队将需要轮换其共享的对称密钥，但这可以懒惰地发生（在下一次写入之前）并且不在关键路径上（参见 [级联惰性密钥轮换 (CLKR)](/docs/teams/clkr)）。
 
-## Rollout
+## 推出
 
-Users just joining Keybase get a PUK when then provision their first device.
-Some users were active before PUKs were rolled out, and their clients
-opportunistically upgrade to include a PUK upon software upgrade.
+刚刚加入 Keybase 的用户在配置他们的第一台设备时会获得一个 PUK。
+一些用户在 PUK 推出之前就很活跃，他们的客户端在软件升级时会机会主义地升级以包含 PUK。
 
-Note, this change introduces a new state a user can be in: they are signed up
-for keybase, they have device keys, but they don't have a PUK as
-described above. New CLI users won't get here, but legacy users and new Web
-users will. This makes some flows (like inviting users into teams) more
-complicated.
+注意，此更改引入了用户可能处于的新状态：他们已注册 keybase，拥有设备密钥，但没有上述的 PUK。新的 CLI 用户不会到达这里，但旧用户和新的 Web 用户会。这使得某些流程（如邀请用户加入团队）更加复杂。

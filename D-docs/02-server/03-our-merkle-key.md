@@ -1,13 +1,13 @@
-<h2>Our Merkle root signing key</h2>
+<h2>我们的 Merkle 根签名密钥</h2>
 
 
-<h3>Expect signatures by</h3>
+<h3>期望签名者</h3>
 <ul>
   <li><a href="https://keybase.io/max">keybase.io/max</a></li>
   <li><a href="https://keybase.io/chris">keybase.io/chris</a></li>
 </ul>
 
-<h3>Fingerprint</h3>
+<h3>指纹</h3>
 
 <p>
   <code>03E1 46CD AF81 3668  0AD5 6691 2A32 340C EC8C 9492</code>
@@ -19,7 +19,7 @@
   Keybase <a href="https://keybase.io/docs/api/1.0/kid">KID</a>: <code>010159baae6c7d43c66adf8fb7bb2b8b4cbe408c062cfc369e693ccb18f85631dbcd0a</code>
 </p>
 
-<h3>Contents</h3>
+<h3>内容</h3>
 
 ```
 -----BEGIN PGP PUBLIC KEY BLOCK-----

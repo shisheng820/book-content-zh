@@ -1,100 +1,99 @@
-{% set section_title = "Command Line" %}
+{% set section_title = "命令行" %}
 
-# Command Line
+# 命令行
 
-This page is just a sampler. [Download](https://keybase.io/download) the Keybase app and use the built-in help:
-
-```bash
-keybase help        # general
-keybase help follow # help following people
-keybase help pgp    # help using PGP keys in Keybase
-keybase help prove  # help with proofs
-                    # etc.
-```
-
-### Common commands
+本页面仅作为示例。[下载](https://keybase.io/download) Keybase 应用并使用内置帮助：
 
 ```bash
-keybase version              # print the version number
-keybase help                 # get help
-keybase signup               # if you've never used Keybase
-keybase login                # or...if you already have an account
-keybase prove twitter        # prove you own a twitter account
-keybase prove github         # prove a github account
-keybase prove reddit         # prove a reddit account
-keybase prove facebook       # prove a facebook
-keybase prove hackernews     # prove an HN account
-keybase prove https you.com  # prove a website
-keybase prove http you.com   # if you don't have a legit cert
-keybase prove dns you.com    # prove via a DNS entry
-                             # ...more proof types soon...
+keybase help        # 常规帮助
+keybase help follow # 关注他人的帮助
+keybase help pgp    # 在 Keybase 中使用 PGP 密钥的帮助
+keybase help prove  # 证明的帮助
+                    # 等等
 ```
 
-
-### Looking up other people & following
+### 常用命令
 
 ```bash
-keybase search max                 # find users like "max"
-keybase id max                     # look "max" up, verify identity
-keybase id maxtaco@twitter         # look twitter maxtaco up
-keybase follow max                 # track max's identity publicly
-keybase follow maxtaco@reddit      # follow a reddit user
+keybase version              # 打印版本号
+keybase help                 # 获取帮助
+keybase signup               # 如果你从未使用过 Keybase
+keybase login                # 或者...如果你已有账户
+keybase prove twitter        # 证明你拥有一个 twitter 账户
+keybase prove github         # 证明一个 github 账户
+keybase prove reddit         # 证明一个 reddit 账户
+keybase prove facebook       # 证明一个 facebook 账户
+keybase prove hackernews     # 证明一个 HN 账户
+keybase prove https you.com  # 证明一个网站
+keybase prove http you.com   # 如果你没有合法的证书
+keybase prove dns you.com    # 通过 DNS 条目证明
+                             # ...更多证明类型即将推出...
 ```
 
-### Why follow? (previously called "tracking")
 
-If you follow someone, subsequent commands will work without requiring more input from you:
+### 查找他人及关注
+
+```bash
+keybase search max                 # 查找像 "max" 这样的用户
+keybase id max                     # 查找 "max"，验证身份
+keybase id maxtaco@twitter         # 查找 twitter 上的 maxtaco
+keybase follow max                 # 公开追踪 max 的身份
+keybase follow maxtaco@reddit      # 关注一个 reddit 用户
+```
+
+### 为什么要关注？（以前称为“追踪”）
+
+如果你关注了某人，后续命令将无需你提供更多输入即可工作：
 
 ```bash
 keybase encrypt maria -m "this is a secret"
-# Success! No questions asked
+# 成功！不再询问问题
 ```
 
-And if anything about your target has changed since you last followed them, you'll get a meaningful error.
+而且，如果你上次关注他们之后，目标的任何信息发生了变化，你会收到一个有意义的错误提示。
 
 
-### Device adding + removing
+### 添加及移除设备
 
-Every computer you install Keybase on gets a device-specific key. This is a very big improvement over the old PGP model, where you had to move a private key around.
+你在每台计算机上安装 Keybase 时，都会获得一个设备专用的密钥。这是对旧 PGP 模型的一个巨大改进，旧模型中你必须到处移动私钥。
 
 ```bash
-keybase device list        # list all your device + paper keys
-keybase device remove [ID] # revoke device ID (found in device list)
-keybase device add         # provision a new device
+keybase device list        # 列出你所有的设备 + 纸质密钥
+keybase device remove [ID] # 撤销设备 ID（在设备列表中找到）
+keybase device add         # 配置新设备
 ```
 
-### Paper keys
+### 纸质密钥
 
-When you install Keybase for the first time, you'll be asked
-to generate a paper key. It's  a full-powered key, just like a device key.
+当你首次安装 Keybase 时，会被要求生成一个纸质密钥。它是一个全功能的密钥，就像设备密钥一样。
 
-You can have as many paper keys as you like. You should have at least 1, until Keybase releases a mobile app.
+你可以拥有任意数量的纸质密钥。在 Keybase 发布移动应用之前，你应该至少保留 1 个。
 
 ```bash
-keybase paperkey    # make a new paper key
-keybase device list # see your paper keys
+keybase paperkey    # 制作一个新的纸质密钥
+keybase device list # 查看你的纸质密钥
 ```
 
-If you lose a paper key, just remove it like any other device.
+如果你丢失了纸质密钥，只需像移除其他设备一样将其移除即可。
 
-### Crypto commands
+### 加密命令
 
-Generally:
+通常：
 
-  - `-m` means a message (as opposed to stdin or an input file)
-  - `-i` means an input file
-  - `-o` means an output file
-  - `-b` means binary output, as opposed to ASCII
+  - `-m` 表示消息（相对于标准输入或输入文件）
+  - `-i` 表示输入文件
+  - `-o` 表示输出文件
+  - `-b` 表示二进制输出，相对于 ASCII
 
 ```
-# given keybase user "max"
+# 给定 keybase 用户 "max"
 keybase encrypt max -m "this is a secret"
 echo "this is a secret" | keybase encrypt max
 keybase encrypt max -i secret.txt
 keybase encrypt max -i secret.mp3 -b -o secret.mp3.encrypted
 ```
 
-### Encrypting for Keybase users
+### 为 Keybase 用户加密
 
 ```bash
 keybase encrypt max -m "this is a secret for max"
@@ -103,7 +102,7 @@ echo "secret" | keybase encrypt maxtaco@twitter
 keybase encrypt max -i ~/movie.avi -o ~/movie.avi.encrypted
 ```
 
-### Decrypting
+### 解密
 
 ```bash
 keybase decrypt -i movie.avi.encrypted -o movie.avi
@@ -111,93 +110,93 @@ keybase decrypt -i some_secret.txt
 cat some_secret.txt.encrypted | keybase decrypt
 ```
 
-### Signing
+### 签名
 
 ```bash
 keybase sign -m "I hereby abdicate the throne"
 keybase sign -i foo.exe -b -o foo.exe.signed
 ```
 
-### Verifying
+### 验证
 
 ```bash
 cat some_signed_statement.txt | keybase verify
 keybase verify -i foo.exe.signed -o foo.exe
 ```
 
-### Encrypting a PGP message
+### 加密 PGP 消息
 
-If a Keybase user only has a PGP key, or you'd rather encrypt for that:
+如果 Keybase 用户只有 PGP 密钥，或者你更愿意为此加密：
 
 ```bash
-keybase pgp encrypt chris -m "secret"            # encrypt
-keybase pgp encrypt maxtaco@twitter -m "secret"  # using a twitter name
-keybase pgp encrypt maxtaco@reddit -m "secret"   # using a Reddit name
-keybase pgp encrypt chris -s -m "secret"         # also sign with -s
+keybase pgp encrypt chris -m "secret"            # 加密
+keybase pgp encrypt maxtaco@twitter -m "secret"  # 使用 twitter 名称
+keybase pgp encrypt maxtaco@reddit -m "secret"   # 使用 Reddit 名称
+keybase pgp encrypt chris -s -m "secret"         # 同时使用 -s 签名
 keybase pgp encrypt chris -i foo.txt             # foo.txt -> foo.txt.asc
 keybase pgp encrypt chris -i foo.txt -o bar.asc  # foo.txt -> bar.asc
-echo 'secret' | keybase pgp encrypt chris        # stream
+echo 'secret' | keybase pgp encrypt chris        # 流
 ```
 
-### Decrypting a PGP message
+### 解密 PGP 消息
 
 ```bash
 keybase pgp decrypt -i foo.txt.asc             # foo.txt.asc -> stdout
 keybase pgp decrypt -i foo.txt.asc -o foo.txt  # foo.txt.asc -> foo.txt
-cat foo.txt.asc | keybase pgp decrypt          # decrypt a stream
+cat foo.txt.asc | keybase pgp decrypt          # 解密流
 ```
 
-### Signing a PGP message
+### 签名 PGP 消息
 
 ```bash
-keybase pgp sign -m "Hello"                # sign a message
-keybase pgp sign --clearsign -m "Hello"    # sign, but don't encode contents
-keybase pgp sign -i foo.txt --detached     # generate foo.txt.asc, just a signature
-keybase pgp sign -i foo.txt                # generate foo.txt.asc, containing signed foo.txt
-echo "I rock." | keybase pgp sign          # stream
+keybase pgp sign -m "Hello"                # 签名消息
+keybase pgp sign --clearsign -m "Hello"    # 签名，但不编码内容
+keybase pgp sign -i foo.txt --detached     # 生成 foo.txt.asc，仅签名
+keybase pgp sign -i foo.txt                # 生成 foo.txt.asc，包含签名的 foo.txt
+echo "I rock." | keybase pgp sign          # 流
 ```
 
-### Verifying a PGP message
+### 验证 PGP 消息
 
 ```bash
-keybase pgp verify -i foo.txt.asc            # verify a self-signed file
-keybase pgp verify -d foo.txt.asc -i foo.txt # verify a file + detached signature
-cat foo.txt.asc | keybase pgp verify         # stream a self-signed file
+keybase pgp verify -i foo.txt.asc            # 验证自签名文件
+keybase pgp verify -d foo.txt.asc -i foo.txt # 验证文件 + 分离的签名
+cat foo.txt.asc | keybase pgp verify         # 流式验证自签名文件
 ```
 
-### Publishing a bitcoin address
+### 发布比特币地址
 
 ```
-keybase btc 1p90X3byTONYhortonETC  # sign and set the bitcoin
-                                   # address on your profile
+keybase btc 1p90X3byTONYhortonETC  # 签名并设置比特币
+                                   # 地址到你的个人资料
 ```
 
 {#
 TODO:
 </md>
-<pre class="code code-highlighted">keybase btc 1p90X3byTONYhortonETC  <span class="hljs-comment"># sign and set the bitcoin</span>
-                                   <span class="hljs-comment"># address on your profile</span>
+<pre class="code code-highlighted">keybase btc 1p90X3byTONYhortonETC  <span class="hljs-comment"># 签名并设置比特币</span>
+                                   <span class="hljs-comment"># 地址到你的个人资料</span>
 </pre>
 <md>
 #}
 
-### Assertions (useful for scripting, cron jobs, etc.)
+### 断言（适用于脚本、cron 任务等）
 
 
 ```
-# Here we encrypt a copy of a backup for
-# maria, asserting that she's proven her key on both
-# twitter and github. Both must pass.
+# 这里我们为 maria 加密一份备份副本，
+# 断言她已经在 twitter 和 github 上证明了她的密钥。
+# 两者都必须通过。
 #
-# This is unnecessary if we've followed maria, as the command
-# will fail if anything about her identity breaks.
+# 如果我们已经关注了 maria，这是不必要的，因为
+# 如果她的身份有任何问题，命令将会失败。
 cat some_backup.sql | keybase pgp encrypt -o enc_backup.asc \
   maria_2354@twitter+maria_booyeah@github+maria@keybase
 ```
 
-### More examples soon
+### 更多示例即将推出
 
-Use `keybase help` to learn what's available.
+使用 `keybase help` 了解可用功能。
 
 {# Teams #}
 
@@ -220,31 +219,31 @@ Use `keybase help` to learn what's available.
       <md>
 #}
 
-## Teams for Keybase
+## Keybase 团队
 
 
-### What is it?
+### 它是什么？
 
-A keybase team is a *named* group of people, with flexible membership. If you work on a project called Acme, you could register the team name `acme` on Keybase. This team name is *universal*; there can be only one Keybase team with a given name.
+Keybase 团队是一组*命名的*人群，具有灵活的成员资格。如果你在一个名为 Acme 的项目上工作，你可以在 Keybase 上注册团队名称 `acme`。这个团队名称是*全局唯一*的；给定名称的 Keybase 团队只能有一个。
 
-A team's encrypted files can be found in `/keybase/team`:
+团队的加密文件可以在 `/keybase/team` 中找到：
 
 ![](https://keybase.io/images/teams/team_kbfs.png)
 
-Teams can have chat channels, kind of like Slack.  But unlike Slack, Keybase chats are end-to-end encrypted, and your team's admins cryptographically control who is on the team.
+团队可以拥有聊天频道，有点像 Slack。但与 Slack 不同的是，Keybase 聊天是端到端加密的，并且你团队的管理员通过加密方式控制谁在团队中。
 
-Each team gets a default `#general` chat channel, but you can make more.
+每个团队都有一个默认的 `#general` 聊天频道，但你可以创建更多。
 
-During this early alpha, team administration is solely done through the command line. If that's ok with you, keep reading.
+在这个早期 alpha 阶段，团队管理完全通过命令行完成。如果你没问题，请继续阅读。
 
-### A command-line TL;DR:
+### 命令行简要说明：
 ```bash
-# make a team
+# 创建团队
 # -----------
 
 > keybase team create dingbatz
 
-# see what teams you're in
+# 查看你所在的团队
 # ------------------------
 
 > keybase team list-memberships
@@ -252,274 +251,273 @@ Team            Role      Username    Full name
 keybase         owner     chris       Chris Coyne
 dingbatz        owner     chris       Chris Coyne
 
-# add some people
+# 添加一些人
 # ---------------------------------------------
 
 > keybase team add-member dingbatz --user max     --role=admin
 > keybase team add-member dingbatz --user crudder --role=writer
 > keybase team list-memberships dingbatz
 
-# end-to-end encrypted KBFS folders
+# 端到端加密的 KBFS 文件夹
 # ---------------------------------
 > mv ~/Dropbox/Manifesto.pdf .
 
-# and chats!
+# 还有聊天！
 # --------------------------------------------
 
 > keybase chat send dingbatz "hello to my pals"
 
 ```
 
-### In the GUI
+### 在图形界面中
 
-I actually ran the above commands, so now I see the "dingbatz #general" chat channel show up in my UI. Max and crudder do, too, since I added them. We can share files in KBFS, and we can chat. If I add someone else to the team, they'll get access to the files and chat histories, too, as we'll rekey for them.
+我实际上运行了上面的命令，所以现在我在我的 UI 中看到了 "dingbatz #general" 聊天频道。Max 和 crudder 也看到了，因为我添加了他们。我们可以在 KBFS 中共享文件，并且我们可以聊天。如果我向团队添加其他人，他们也将获得访问文件和聊天记录的权限，因为我们会为他们重新加密密钥。
 
-In an upcoming release, it will be prettier, but right now team chat looks like a regular chat with no avatar, and prefixed with that ugly `#general`. This is an MVP, so please bear with us.
+在即将发布的版本中，它会更漂亮，但现在团队聊天看起来像一个没有头像的普通聊天，并且前缀是那个丑陋的 `#general`。这是一个 MVP（最小可行产品），所以请多包涵。
 
 ![](https://keybase.io/images/teams/dingbatz.png)
 
-### Casual teams and big orgs
+### 临时团队和大型组织
 
-We want to support both casual discussions (e.g., pokerpals) and large organizations (e.g., nytimes).
+我们要支持临时讨论（例如，pokerpals）和大型组织（例如，nytimes）。
 
-To serve bigger groups:
+为了服务更大的群体：
 
- * there will soon be a teams tab in the app for administering with greater complexity
- * we have baked-in subteam support. For example, `atlassian.usa.marketing` or `nytimes.devops`.
+ * 应用中很快会有一个团队标签页，用于进行更复杂的管理
+ * 我们已经内置了子团队支持。例如，`atlassian.usa.marketing` 或 `nytimes.devops`。
 
-For the next 4-8 weeks, all administration is in the CLI.
+在接下来的 4-8 周内，所有管理都在 CLI 中进行。
 
 
-### The most important command
+### 最重要的命令
 
 ```bash
 keybase team help
 ```
 
-### Making chat channels
+### 创建聊天频道
 
-In the first days of our alpha, creating a chat channel other than `#general` is slightly annoying. You have to kick it off by sending a message from the CLI:
+在我们 alpha 的最初几天，创建除 `#general` 以外的聊天频道有点烦人。你必须通过从 CLI 发送消息来启动它：
 
 ```bash
 keybase chat send --channel '#hr-issues' uber "let's do this"
 ```
 
-After that your team can use it in the GUI - both on the desktop and phone apps. Anyone who wants to join the channel (for now) can do it from the command line.
+之后，你的团队可以在 GUI 中使用它——包括桌面和手机应用。任何想加入频道的人（目前）都可以通过命令行加入。
 
 ```bash
-# join a channel
+# 加入频道
 keybase chat join-channel fyre '#festival2018'
 
-# or list channels
+# 或列出频道
 keybase chat list-channels acme
 ```
 
-Oh, also, at-mentioning a team member will pull them in...so the simplest thing is just to make a channel, join it yourself, and then ping someone on it in the GUI.
+哦，还有，@提及团队成员会将他们拉进来...所以最简单的做法就是创建一个频道，自己加入，然后在 GUI 中 ping 某人。
 
-A chat channel can be joined by anyone on a team. For example, if you have an `acme #design` channel, anyone in `acme` can join and read it.
+任何团队成员都可以加入聊天频道。例如，如果你有一个 `acme #design` 频道，`acme` 中的任何人都可以加入并阅读它。
 
-If you want to segregate chats, cryptographically, this is what subteams will be for. More on that below.
+如果你想在加密层面隔离聊天，这就是子团队的用途。详情见下文。
 
 
-### Subteams
+### 子团队
 
-We have implemented subteams! For example, if you're the owner of `nike`, you could keep the top team pretty empty and divide your company into `nike.usa` and `nike.marketing` and even deeper teams such as `nike.web.engineering.interns2017`. And if you did a partnership with Apple, you could make `nike.apple_partnership` and put some people who work at Apple into that subteam.
+我们已经实现了子团队！例如，如果你是 `nike` 的所有者，你可以让顶层团队保持相当空闲，并将你的公司分为 `nike.usa` 和 `nike.marketing`，甚至更深层的团队，如 `nike.web.engineering.interns2017`。如果你与 Apple 建立了合作伙伴关系，你可以创建 `nike.apple_partnership`，并将一些在 Apple 工作的人放入该子团队。
 
 ```bash
-# assuming you're an admin of nike
+# 假设你是 nike 的管理员
 keybase team create nike.board
 ```
 
-Each subteam in your org has its own chat channels. So to have an encrypted discussion with only your board of directors, you could make the subteam `acme.board`. Inside that team, you could make chat channels for whatever B.O.D.'s talk about, `#plausible-deniability` and `#efficient-breach`.
+你组织中的每个子团队都有自己的聊天频道。因此，要与你的董事会进行加密讨论，你可以创建子团队 `acme.board`。在这个团队中，你可以为董事会讨论的内容创建聊天频道，如 `#plausible-deniability`（推诿责任）和 `#efficient-breach`（有效违约）。
 
-Members of `acme` won't know there's a subteam called `acme.board` unless they're an admin of `acme` or invited into `acme.board`.
+`acme` 的成员不会知道有一个名为 `acme.board` 的子团队，除非他们是 `acme` 的管理员或被邀请加入 `acme.board`。
 
-More details:
+更多细节：
 
-* to create a subteam you must be an admin of its parent
-* parent admins have certain admin controls of a subteam, even if they don't join the team. This prevents lost, orphaned subteams. If you're an admin of `acme` and make `acme.interns` without joining it, you won't see its chat or files; even though you have cryptographic keys to the group, the server will refuse to give you the encrypted data unless you explicitly sign yourself into the team, which lets all its members know.
-* subteam members don't need to be parent team members. So `acme.interns` don't need to be members of `acme`.
-* members of a team cannot tell the name or membership of subteams they're not a part of.
-* members of sibling teams cannot see each other's names or memberships. Lowly `nike.interns` can't see `nike.sweatshop`.
-* members of a subteam *can* tell membership of parent teams.
-* subteams can be renamed, unlike root team names.
+* 要创建子团队，你必须是其父团队的管理员
+* 父团队管理员对子团队拥有某些管理控制权，即使他们不加入该团队。这可以防止丢失、孤立的子团队。如果你是 `acme` 的管理员并创建了 `acme.interns` 但不加入它，你将看不到它的聊天或文件；即使你拥有该组的加密密钥，服务器也会拒绝向你提供加密数据，除非你显式地将自己签入该团队，这会让所有成员都知道。
+* 子团队成员不需要是父团队成员。所以 `acme.interns` 不需要是 `acme` 的成员。
+* 团队成员无法知道他们未加入的子团队的名称或成员资格。低级的 `nike.interns` 无法看到 `nike.sweatshop`。
+* 兄弟团队的成员无法看到彼此的名称或成员资格。
+* 子团队的成员*可以*知道父团队的成员资格。
+* 子团队可以重命名，不像根团队名称。
 
 
 
-### Asking to join a team
+### 申请加入团队
 
-You can request team access:
+你可以申请团队访问权限：
 
 ```bash
 > keybase team request-access acme
 ```
 
-As an outsider, you can't tell who's in a team, so Keybase will reach out to the admins and say you've requested access. They can then add you or ignore the request.
+作为局外人，你无法知道谁在团队中，所以 Keybase 会联系管理员并告知你已申请访问。他们可以添加你或忽略该请求。
 
-### Approving by social media handle
+### 通过社交媒体账号批准
 
-Ultimately admins are signing into a team the username + key chain of a Keybase user. Continued team membership does not require maintaining specific social proofs, so if an admin cares about a social proof they should check it at the time they sign someone in.
+最终，管理员是将 Keybase 用户的用户名 + 密钥链签入团队。持续的团队成员资格不需要维护特定的社交证明，因此如果管理员关心社交证明，他们应该在签入某人时进行检查。
 
-All that said, there's a protocol to approve by other proven identities:
+尽管如此，有一种协议可以通过其他已证明的身份进行批准：
 
 ```bash
 keybase team add-member --role writer --user acmeceo@twitter acme
 ```
 
-1. this signs an admin statement (to yourself and other admins) in the team sig chain, saying, "hey, if @acmeceo on twitter proves their account, sign whoever that user is into our team."
+1. 这在团队签名链中签署了一个管理员声明（对自己和其他管理员），说：“嘿，如果 twitter 上的 @acmeceo 证明了他们的账户，就把那个用户签入我们的团队。”
 
-2. an admin's client will obey the fellow admin's signed link and perform the action.
+2. 管理员的客户端将遵守该管理员签署的链接并执行操作。
 
-To be clear, this user does not need to maintain the twitter account indefinitely; they are not kicked out of the team if Twitter goes down or they abandon the account.
+需要明确的是，该用户不需要无限期地维护 twitter 账户；如果 Twitter 宕机或他们放弃了该账户，他们不会被踢出团队。
 
-### A taste of TOFU: quick team building by email
+### TOFU 体验：通过电子邮件快速建立团队
 
-The following is a common desire, so we've made it work:
+以下是一个常见的愿望，所以我们实现了它：
 
 ```bash
 keybase team add-member --role writer --email wonderwoman@acme.com acme
 ```
 
-Here's what happens when you run this command:
+当你运行此命令时会发生什么：
 
-1. you sign an admin statement, saying you want wonderwoman@acme.com to join the team
-2. **the Keybase servers** get wonderwoman@acme.com to join and establish a username
-3. the next admin online gets pinged to automatically sign her onto the team, trusting Keybase checked the email.
+1. 你签署一份管理员声明，表示你想让 wonderwoman@acme.com 加入团队
+2. **Keybase 服务器** 让 wonderwoman@acme.com 加入并建立用户名
+3. 下一个上线的管理员会收到 ping，自动将她签入团队，信任 Keybase 检查了电子邮件。
 
-This is "Trust on First Use" (TOFU) because you're trusting Keybase isn't lying about the email proof...the same kind of TOFU you see when using Signal or WhatsApp to lookup a key by phone number.
+这是“首次使用信任”（TOFU），因为你信任 Keybase 没有对电子邮件证明撒谎...就像你使用 Signal 或 WhatsApp 通过电话号码查找密钥时看到的 TOFU 一样。
 
-Once wonderwoman is on the team, her identity can't be swapped out. Also, as she adds more devices you won't have to go through TOFU again, unlike when people wipe/install their phones with some chat apps. (That really isn't TOFU, now, is it?)
+一旦 wonderwoman 加入团队，她的身份就无法被替换。此外，随着她添加更多设备，你不必再次经历 TOFU，这不像人们在某些聊天应用中擦除/安装手机时那样。（那真的不是 TOFU，对吧？）
 
-Keybase can't abuse this feature to insert extra people on your team. It only works if you start the process off by posting a signed statement that you want it to work, and the admin(s) on your team verify the signed statement, because that statement is checked in step 3. The invitation can be revoked, cryptographically, if you change your mind.
+Keybase 无法滥用此功能向你的团队插入额外人员。它只有在你通过发布已签名的声明开始该过程，并且你团队的管理员验证已签名的声明时才有效，因为该声明在第 3 步中被检查。如果你改变主意，可以通过加密方式撤销邀请。
 
-Admin privileges cannot be granted with TOFU.
+管理员权限不能通过 TOFU 授予。
 
-### Understanding roles
+### 了解角色
 
-We'll move this to a table soon. Here's a screenshot of a spreadsheet:
+我们将很快把它移到一个表格中。这是一张电子表格的截图：
 
 ![](https://keybase.io/images/teams/roles.png)
 
-In the above, an "implied admin" of a subteam is someone who is an admin of a parent team.
+在上面，子团队的“隐含管理员”是指父团队的管理员。
 
-### Metadata
+### 元数据
 
-Keybase servers do know team memberships: team names, users, and roles. Keybase servers *cannot* read the contents of chats or files or even know the names of chat channels or files, as that is end-to-end encrypted.  **At no point does Keybase have any private keys for any KBFS or chat data.**
+Keybase 服务器确实知道团队成员资格：团队名称、用户和角色。Keybase 服务器*无法*读取聊天或文件的内容，甚至不知道聊天频道或文件的名称，因为那是端到端加密的。**在任何时候，Keybase 都没有任何 KBFS 或聊天数据的私钥。**
 
-### On the immutability of teams' sig chains
+### 关于团队签名链的不可变性
 
-Any change to a team is signed into a chain, referencing the hash of the last change to the team. This chain itself hangs off a Merkle tree, where it can be found, deterministically. If you're a member of `acme` you can traverse the tree to the chain. This means you will see the exact same `acme` chain as any other acme user. [We even write the root of our merkle tree to the bitcoin blockchain](https://keybase.io/docs/server_security/merkle_root_in_bitcoin_blockchain).
+对团队的任何更改都会签名到链中，引用团队上次更改的哈希值。这个链本身挂在一个 Merkle 树上，可以确定性地找到它。如果你是 `acme` 的成员，你可以遍历树找到该链。这意味着你将看到与其他 acme 用户完全相同的 `acme` 链。[我们甚至将 Merkle 树的根写入比特币区块链](https://keybase.io/docs/server_security/merkle_root_in_bitcoin_blockchain)。
 
-This is so you can say or type: "Hey - we're in a team on Keybase called 'lollipops'. Join Keybase and request access." Or "Expect an invitation from the team dunkindonuts...that'll be me." We believe this kind of human discourse without fingerprints or codes is crucial. Just say no to hex strings or 60-digit numbers you're supposed to compare.
+这是为了让你可以说或打字：“嘿 - 我们在 Keybase 上有一个叫 'lollipops' 的团队。加入 Keybase 并申请访问。” 或者 “期待来自团队 dunkindonuts 的邀请...那就是我。” 我们相信这种没有人指纹或代码的人类交流至关重要。拒绝你需要比较的十六进制字符串或 60 位数字。
 
-Teams do not have a concept of being "reset" or recovered. Once a team is created, it can never be stolen by Keybase or given to someone else. Links can only be added to its signature chain by admins, and links can be added but never removed. Only revoked. This prevents the server from lying by omission.
+团队没有“重置”或恢复的概念。一旦创建了团队，它就永远无法被 Keybase 窃取或交给其他人。链接只能由管理员添加到其签名链中，并且链接只能添加而不能删除。只能撤销。这可以防止服务器通过遗漏来撒谎。
 
-If all your admins lose all their keys, you will permanently lose your team! There's nothing Keybase can do to help, because Keybase can't mess with your team.
+如果你所有的管理员都丢失了所有的密钥，你将永久失去你的团队！Keybase 无法提供任何帮助，因为 Keybase 无法干扰你的团队。
 
-### Small odds of team screwup
+### 团队出错的小概率
 
-You're among the first testers of Keybase Teams, so there is a small chance we'll screw something up and you'll need to haul your data out and pick a new team name. We hope this doesn't happen. Call it 1% chance of this for July-Sept 2017.
+你是 Keybase 团队的首批测试者之一，所以有很小的机会我们会搞砸某些事情，你需要把数据取出来并选择一个新的团队名称。我们希望这不会发生。假设在 2017 年 7 月至 9 月期间发生这种情况的概率为 1%。
 
-### Limits
+### 限制
 
-During our testing:
+在我们的测试期间：
 
-- teams are limited to 20 people
-- subteam creation is disabled for a little while
-- you can only make 100 total teams. Don't go squatting names for companies and projects that you know others will want, please.
+- 团队人数限制为 20 人
+- 子团队创建暂时禁用
+- 你总共只能创建 100 个团队。请不要抢注你知道其他人会想要的公司和项目名称。
 
-### Anticipated Questions
+### 常见问题
 
-**Why are team names universal?**
+**为什么团队名称是全局的？**
 
-So people can talk about a team just using its name, without using fingerprints or security codes.
+这样人们就可以只用名字来谈论团队，而不需要使用指纹或安全代码。
 
-**Why can't I rename top-level teams?**
+**为什么我不能重命名顶层团队？**
 
-You can rename subteams, but top-level team renaming is not something we're ready to implement yet. It would require a level of redirection in our Merkle tree and, more important, extensive user experience considerations. So we may never implement it. If you dislike your team name, make a new team and invite everyone.
+你可以重命名子团队，但顶层团队重命名是我们尚未准备好实现的功能。这需要在我们的 Merkle 树中进行重定向，更重要的是，需要广泛的用户体验考虑。所以我们可能永远不会实现它。如果你不喜欢你的团队名称，请创建一个新团队并邀请所有人。
 
-**Can people outside my teams know what teams I'm in?**
+**我的团队之外的人能知道我所在的团队吗？**
 
-No. As mentioned in the metadata section above, the Keybase servers need to know, for a variety of user experience and notification reasons. But team sig chains are not published, unlike user sig chains, which are.
+不能。如上面的元数据部分所述，出于各种用户体验和通知原因，Keybase 服务器需要知道。但团队签名链不像用户签名链那样公开，用户签名链是公开的。
 
-**What happens if I "reset" my account**
+**如果我“重置”我的账户会发生什么**
 
-Account resetting on Keybase is where you throw away all your keys and start over, and redo your identity proofs. **This kicks you off all your teams.** You will need to be added again.
+Keybase 上的账户重置是指你丢弃所有密钥并重新开始，并重做你的身份证明。**这会将你踢出所有团队。** 你需要被重新添加。
 
-It has to be this way, otherwise Keybase could kick you out of a team and put someone else in your place.
+必须这样，否则 Keybase 可能会把你踢出团队并让其他人顶替你的位置。
 
-**How do I test?**
+**我该如何测试？**
 
-Just install Keybase and make a team with the command line.
+只需安装 Keybase 并使用命令行创建一个团队。
 
-**How do I send feedback?**
+**我如何发送反馈？**
 
 ```bash
-# if you have any issues in the desktop client
+# 如果你在桌面客户端遇到任何问题
 > keybase log send
 ```
 
-In the phone app, you can go to **gear icon > feedback**.
+在手机应用中，你可以进入 **齿轮图标 > 反馈**。
 
-For general non-bug feedback, you can create an issue on [https://github.com/keybase/client](https://github.com/keybase/client)
+对于一般的非 bug 反馈，你可以在 [https://github.com/keybase/client](https://github.com/keybase/client) 上创建一个 issue。
 
-**How does this fit into Keybase's business model?**
+**这如何适应 Keybase 的商业模式？**
 
-We think someday if teams take off, we'll charge for larger teams. Nothing we're offering for free now will flip to a pay model, so if you make a 20 person team now and start using it, you won't someday be faced with a credit card screen to get your files or messages.
+我们认为如果团队功能起飞，将来我们会对更大的团队收费。我们要么现在免费提供的任何东西都不会转变为付费模式，所以如果你现在创建一个 20 人的团队并开始使用它，你将来不会面临为了获取文件或消息而必须付费的情况。
 
-**Is this actually open source?**
+**这真的是开源的吗？**
 
-Yes, on all clients.
+是的，所有客户端都是。
 
 [https://github.com/keybase/client](https://github.com/keybase/client)
 
-[Installation instructions here](https://keybase.io/download)
+[安装说明在这里](https://keybase.io/download)
 
 ![](https://keybase.io/images/teams/acme.png)
 
 
-## Tor Support
+## Tor 支持
 
-The Keybase command-line client supports Tor. Of course anonymity is a fraught and subtle property. This document explains how to protect your identity with Tor and other Keybase features.
+Keybase 命令行客户端支持 Tor。当然，匿名是一个充满风险和微妙的属性。本文档解释了如何使用 Tor 和其他 Keybase 功能来保护你的身份。
 
-*Please note that the Keybase GUI does not support Tor mode.* If you would like to tunnel the whole application through Tor, we recommend running it inside of a [Tails VM](https://tails.boum.org). Furthermore our Tor support isn't audited, so it's possible that even in strict mode some identifying information might creep in.
+*请注意，Keybase GUI 不支持 Tor 模式。* 如果你想通过 Tor 隧道传输整个应用程序，我们建议在 [Tails VM](https://tails.boum.org) 中运行它。此外，我们的 Tor 支持未经审计，因此即使在严格模式下，也可能潜入一些识别信息。
 
-### Prerequisites
+### 先决条件
 
-To use the command-line client with Tor, you'll need the Tor SOCKS proxy running locally. See the [Tor project's documentation](https://www.torproject.org/docs/installguide.html.en) for more information on how to set up a local Tor
-proxy.
+要使用带有 Tor 的命令行客户端，你需要在本地运行 Tor SOCKS 代理。有关如何设置本地 Tor 代理的更多信息，请参阅 [Tor 项目的文档](https://www.torproject.org/docs/installguide.html.en)。
 
-### Enabling Tor mode
+### 启用 Tor 模式
 
-If you are already running a `keybase service` in the background, simply adding `--tor-mode` to your commands will not work - for commands other than `service`, the flag is only effective when the service is not already running, so you will have to use either of the following methods:
+如果你已经在后台运行 `keybase service`，仅仅向命令添加 `--tor-mode` 是不起作用的 - 对于除 `service` 以外的命令，该标志仅在服务尚未运行时有效，因此你必须使用以下任一方法：
 
-#### Temporarily by running service with an explicitly set flag
+#### 通过显式设置标志运行服务来临时启用
 
-If you'd like to use Keybase in Tor mode just for a single session, first run `keybase ctl stop` to shut down the services running in the background, then run `keybase --tor-mode=leaky|strict service`. While this service is running, all `keybase` commands in other terminals will access our servers through the Tor network.
+如果你想仅在单次会话中使用 Tor 模式的 Keybase，请首先运行 `keybase ctl stop` 关闭后台运行的服务，然后运行 `keybase --tor-mode=leaky|strict service`。当此服务运行时，其他终端中的所有 `keybase` 命令都将通过 Tor 网络访问我们的服务器。
 
-*Please note that at this point starting the Keybase GUI will shut down that service and restart it in default mode.*
+*请注意，此时启动 Keybase GUI 将关闭该服务并以默认模式重新启动它。*
 
-#### Permanently by changing service's configuration
+#### 通过更改服务配置永久启用
 
 ```bash
-# "leaky" mode which simply tunnels all traffic through Tor
+# "leaky" 模式，简单地通过 Tor 隧道传输所有流量
 keybase config set tor.mode leaky
-# "strict" mode which makes the requests fully anonymous
+# "strict" 模式，使请求完全匿名
 keybase config set tor.mode strict
 
-# Restart the service, making sure that the GUI is not running
+# 重启服务，确保 GUI 未运行
 ```
 
-### A short demo
+### 简短演示
 
-To enable Tor with the default options, just set the Tor mode flag to `leaky`:
+要使用默认选项启用 Tor，只需将 Tor 模式标志设置为 `leaky`：
 
 ```bash
-# enable leaky tor mode using either of the methods described above
+# 使用上述任一方法启用 leaky tor 模式
 keybase id malgorithms@twitter
 ```
 
-And you'll get an output like:
+你会得到类似如下的输出：
 
 ```
 ▶ INFO Identifying chris
@@ -531,22 +529,22 @@ And you'll get an output like:
 ✔ admin of DNS zone chriscoyne.com, but the result isn't reliable over Tor: found TXT entry keybase-site-verification=2_UwxonS869gxbETQdXrKtIpmV1u8539FmGWLQiKdew
 ```
 
-All network traffic is now protected via Tor, so the server or network eavesdroppers can't discern your IP address, but the server can still see your login credentials. This mode of operation is akin to [Tor anonymity mode(3)](https://trac.torproject.org/projects/tor/wiki/doc/TorifyHOWTO#mode3:userwithnoanonymityusingToranyrecipient). It won't protect you from a Keybase server breach, but it will prevent your ISP (or any other nefarious network snoopers) from knowing you use Keybase.
+所有网络流量现在都通过 Tor 保护，因此服务器或网络窃听者无法识别你的 IP 地址，但服务器仍然可以看到你的登录凭据。这种操作模式类似于 [Tor 匿名模式(3)](https://trac.torproject.org/projects/tor/wiki/doc/TorifyHOWTO#mode3:userwithnoanonymityusingToranyrecipient)。它不能保护你免受 Keybase 服务器泄露的影响，但它可以防止你的 ISP（或任何其他恶意网络窥探者）知道你在使用 Keybase。
 
-Note that not everything could be trusted in the above attempt to identify `@malgorithms`. The Keybase CLI printed out that the DNS record for `chriscoyne.com` is untrusted, due to the fact that DNS and naked HTTP are inherently unreliable over Tor; relay nodes can make up whatever they want, and a malicious node can fake a proof.
+请注意，在上述识别 `@malgorithms` 的尝试中，并非所有内容都是可信的。Keybase CLI 打印出 `chriscoyne.com` 的 DNS 记录不可信，因为 DNS 和裸 HTTP 在 Tor 上本质上是不可靠的；中继节点可以编造任何它们想要的内容，恶意节点可以伪造证明。
 
-### Strict mode
+### 严格模式
 
-*Strict mode is currently broken, we are working on a fix.*
+*严格模式目前已损坏，我们正在修复。*
 
-If you want a higher level of privacy, you can ask for <em>strict</em> Tor mode, which will withhold all user-identifying information from the server, akin to [Tor anonymity mode(1)](https://trac.torproject.org/projects/tor/wiki/doc/TorifyHOWTO#mode1:useranonymousanyrecipient) For example, try this:
+如果你想要更高程度的隐私，你可以要求 *strict*（严格）Tor 模式，这将向服务器隐瞒所有用户识别信息，类似于 [Tor 匿名模式(1)](https://trac.torproject.org/projects/tor/wiki/doc/TorifyHOWTO#mode1:useranonymousanyrecipient)。例如，尝试这个：
 
 ```bash
-# enable strict tor mode using either of the methods described above
+# 使用上述任一方法启用 strict tor 模式
 keybase follow malgorithms@twitter
 ```
 
-And you'll get an output like:
+你会得到类似如下的输出：
 
 ```markdown
 warn: In Tor mode: strict=true; proxy=localhost:9050
@@ -563,17 +561,16 @@ info: ✔ Wrote tracking info to local database
 info: Success!
 ```
 
-Notice a few new things going on. In the third line of output, there's a warning that the client skipped syncing its local view of your profile with the server's. If it did, someone analyzing traffic on the server could correctly guess that a lookup of Alice directly followed by a lookup of Bob implies that Alice was following or ID'ing Bob. So the lookup of Alice is suppressed. Also note that the client doesn't offer to write a follower statement to the server, which would also divulge the user's identity. Instead, it just settles for writing following information to the local store.
+注意发生的一些新事情。在输出的第三行，有一个警告，客户端跳过了将其本地视图的个人资料与服务器同步。如果它同步了，服务器上分析流量的人可能会正确地猜出，直接查找 Bob 之后的查找 Alice 意味着 Alice 正在关注或识别 Bob。因此，对 Alice 的查找被抑制了。还要注意，客户端不提供向服务器写入关注者声明，这也将泄露用户的身份。相反，它只是满足于将关注信息写入本地存储。
 
-Some commands won't work at all in strict mode. For instance, if you try to log-in
-afresh:
+有些命令在严格模式下根本无法工作。例如，如果你尝试重新登录：
 
 ```bash
 keybase logout
 keybase login
 ```
 
-You'll get:
+你会得到：
 
 ```markdown
 ▶ WARNING Failed to load advisory secret store options from remote: We can't send out PII in Tor-Strict mode; but it's needed for this operation
@@ -581,68 +578,68 @@ You'll get:
 ```
 
 {#
-<h3>Configuring Tor Support</h3>
+<h3>配置 Tor 支持</h3>
 
-<p>The relevant options are:</p>
+<p>相关选项包括：</p>
 <ul>
 
-  <li><strong>Enable Tor</strong>: turn on Tor support.  Default to anonymity mode(3) as described above.
+  <li><strong>启用 Tor</strong>：开启 Tor 支持。默认为如上所述的匿名模式(3)。
     <ul class="sub-ul">
-      <li>Command line: `--tor-mode=[strict|leaky]`</li>
-      <li>Config file: `{ "tor" : { "enabled" : true }}`</li>
-      <li>Environment variable: `TOR_ENABLED=1`</li>
-      <li>Default: OFF</li>
+      <li>命令行：`--tor-mode=[strict|leaky]`</li>
+      <li>配置文件：`{ "tor" : { "enabled" : true }}`</li>
+      <li>环境变量：`TOR_ENABLED=1`</li>
+      <li>默认值：OFF</li>
     </ul>
   </li>
 
-  <li><strong>Enable Tor Strict Mode</strong>: Hide all identifying user information from the server,
-     and route all traffic through the given Tor SOCKS proxy (anonymity mode(1)). If present, it implies
-     Tor mode is turned on.
+  <li><strong>启用 Tor 严格模式</strong>：向服务器隐藏所有识别用户信息，
+     并通过给定的 Tor SOCKS 代理路由所有流量（匿名模式(1)）。如果存在，意味着
+     Tor 模式已开启。
      <ul class="sub-ul">
-      <li>Command line: `--tor-strict`</li>
-      <li>Config file: `{ "tor" : { "strict" : true } }`</li>
-      <li>Environment variable: `TOR_STRICT=1`</li>
-      <li>Default: OFF</li>
+      <li>命令行：`--tor-strict`</li>
+      <li>配置文件：`{ "tor" : { "strict" : true } }`</li>
+      <li>环境变量：`TOR_STRICT=1`</li>
+      <li>默认值：OFF</li>
      </ul>
   </li>
 
-  <li><strong>Enable Tor "Leaky" Mode</strong>: If you've specified <em>strict</em> mode
-     in your configuration or environment, but want to turn strict mode off temporarily
-     (say, to log in), you can specify this flag.
+  <li><strong>启用 Tor "Leaky" 模式</strong>：如果你在配置或环境
+     中指定了 <em>strict</em> 模式，但想暂时关闭严格模式
+     （例如，登录），你可以指定此标志。
      <ul class="sub-ul">
-      <li>Command line: `--tor-leaky`</li>
-      <li>Environment variable: `TOR_LEAKY=1`</li>
-      <li>Default: OFF</li>
+      <li>命令行：`--tor-leaky`</li>
+      <li>环境变量：`TOR_LEAKY=1`</li>
+      <li>默认值：OFF</li>
      </ul>
    </li>
 
-  <li><strong>Tor Hidden Address</strong>: Specify the Tor hidden address of the Keybase server
-    (or a mirror).  If specified, implies that Tor mode should be turned on.
+  <li><strong>Tor 隐藏地址</strong>：指定 Keybase 服务器（或镜像）的 Tor 隐藏地址。
+    如果指定，意味着 Tor 模式应该开启。
      <ul class="sub-ul">
-      <li>Command line: `--tor-hidden-address foofoobar.onion:80`</li>
-      <li>Config file: `{ "tor" : { "hidden_address" : "foofoobar.onion:80"} }`</li>
-      <li>Environment variable: `TOR_HIDDEN_ADDRESS=foofoobar.onion:80`</li>
-      <li>Default: `keybase5wmilwokqirssclfnsqrjdsi7jdir5wy7y7iu3tanwmtp6oid.onion`</li>
+      <li>命令行：`--tor-hidden-address foofoobar.onion:80`</li>
+      <li>配置文件：`{ "tor" : { "hidden_address" : "foofoobar.onion:80"} }`</li>
+      <li>环境变量：`TOR_HIDDEN_ADDRESS=foofoobar.onion:80`</li>
+      <li>默认值：`keybase5wmilwokqirssclfnsqrjdsi7jdir5wy7y7iu3tanwmtp6oid.onion`</li>
      </ul>
   </li>
 
-  <li><strong>Tor Proxy</strong>: Specify the host and port of your Tor proxy.
-    If specified, implies that Tor mode should be turned on.
+  <li><strong>Tor 代理</strong>：指定 Tor 代理的主机和端口。
+    如果指定，意味着 Tor 模式应该开启。
      <ul class="sub-ul">
-      <li>Command line: `--tor-proxy localhost:9050`</li>
-      <li>Config file: `{ "tor" : { "proxy" : "localhost:9050"} }`</li>
-      <li>Environment variable: `TOR_PROXY=localhost:9050`</li>
-      <li>Default: `localhost:9050`</li>
+      <li>命令行：`--tor-proxy localhost:9050`</li>
+      <li>配置文件：`{ "tor" : { "proxy" : "localhost:9050"} }`</li>
+      <li>环境变量：`TOR_PROXY=localhost:9050`</li>
+      <li>默认值：`localhost:9050`</li>
      </ul>
   </li>
 
 </ul>
 #}
 
-### Web Support
+### Web 支持
 
-As part of Tor support, we've also exposed `https://keybase.io` as a hidden address; this is a marginal improvement over standard anonymous Tor browsing, since your traffic need not traverse an exit node.  Our hidden address is:
+作为 Tor 支持的一部分，我们也公开了 `https://keybase.io` 作为隐藏地址；这比标准的匿名 Tor 浏览略有改进，因为你的流量不需要经过出口节点。我们的隐藏地址是：
 
 > *http://keybase5wmilwokqirssclfnsqrjdsi7jdir5wy7y7iu3tanwmtp6oid.onion*
 
-Note that the command-line client uses this hidden address internally, by default.
+请注意，命令行客户端默认在内部使用此隐藏地址。

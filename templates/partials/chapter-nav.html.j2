@@ -1,6 +1,6 @@
 <div class="side-nav">
     <nav class="chapter-nav">
-        <p class="chapter-nav__label">Chapters</p>
+        <p class="chapter-nav__label">章节</p>
         <ol class="chapter-nav__list">
             {%- for chapter_name in tree["chapters"] %}
                 {% set chapter = tree["sections"][chapter_name][0] %}
@@ -21,7 +21,7 @@
                 </li>
             {% endfor %}
         </ol>
-        <p class="chapter-nav__label">Appendices</p>
+        <p class="chapter-nav__label">附录</p>
         <ol class="chapter-nav__list">
             {%- for appendix_name in tree["appendices"] %}
                 {% set chapter = tree["sections"][appendix_name][0] %}

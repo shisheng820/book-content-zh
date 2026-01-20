@@ -1,12 +1,11 @@
-# Teams: Naming, Merkle Tree Integration, And Signature Chains
+# 团队：命名、Merkle 树集成和签名链
 
-## Naming and IDs and the Merkle Tree
+## 命名、ID 和 Merkle 树
 
-Each team gets a 16-byte unique identifier, which is immutable over the lifetime of the team.
-For root teams, the first 15 bytes of the identifier are the first 15 bytes of the SHA256
-hash of the team, followed by the byte `0x24`. This means that root teams can never be renamed.
+每个团队都有一个 16 字节的唯一标识符，该标识符在团队的生命周期内是不可变的。
+对于根团队，标识符的前 15 个字节是团队名称的 SHA256 哈希的前 15 个字节，后面跟着字节 `0x24`。这意味着根团队永远不能重命名。
 
-For instance, the take the team `Keybase`. The following JavaScript in Node:
+例如，以团队 `Keybase` 为例。在 Node 中运行以下 JavaScript：
 
 ```javascript
 const crypto = require('crypto');
@@ -19,47 +18,40 @@ var hexed = suffixed.toString('hex')
 console.log(hexed);
 ```
 
-Outputs the string `05327b776e5fbf5ee3d7a5905bff26`.  And indeed the team ID for the root `Keybase` team is
-`05327b776e5fbf5ee3d7a5905bff2624`, which is [publicly visible](https://keybase.io/_/api/1.0/merkle/path.json?leaf_id=05327b776e5fbf5ee3d7a5905bff2624) in the Main merkle tree.
+输出字符串 `05327b776e5fbf5ee3d7a5905bff26`。实际上，根 `Keybase` 团队的团队 ID 是
+`05327b776e5fbf5ee3d7a5905bff2624`，这在主 Merkle 树中是 [公开可见的](https://keybase.io/_/api/1.0/merkle/path.json?leaf_id=05327b776e5fbf5ee3d7a5905bff2624)。
 
-When clients create new Keybase subteams, they generate a random 15 byte value, and then attach a `0x25`
-suffix to make an ID.
+当客户端创建新的 Keybase 子团队时，它们会生成一个随机的 15 字节值，然后附加一个 `0x25`
+后缀来制作一个 ID。
 
-Both subteams and root teams have sigchains that are inserted into the main Merkle Tree, indexed by their
-IDs. In the case of root teams, any external observer can see the existence of the team in the tree, and
-can further observe if the team is updated. They are not, however, allowed to see the actual links in the
-team's sigchain unless they have access to the team. For subteams, any observer can see the existence
-of the subteam's ID in the Keybase Merkle tree, and also when it updates, but they will not know the
-name of the subteam of the parent of the subteam just based on the ID.
+子团队和根团队都有签名链，这些签名链按其 ID 索引插入到主 Merkle 树中。
+对于根团队，任何外部观察者都可以在树中看到团队的存在，并且可以进一步观察团队是否更新。
+但是，除非他们有权访问该团队，否则他们无法看到团队签名链中的实际链接。
+对于子团队，任何观察者都可以在 Keybase Merkle 树中看到子团队 ID 的存在，以及它何时更新，
+但他们无法仅根据 ID 知道子团队的名称或子团队的父级。
 
-Though this construction is simple, it has a notable shortcoming.  Outside
-observers might be able to guess the team's parent based on correlated changes
-to leaves in the tree. Though members of the `adidas` teams can't know the
-names of teams like `nike.hr`, `nike.hr.interns`, or `nike.acquisitions.puma`,
-they can infer the **shape** of `nike`'s subteam tree, and when those subteams
-are updated. We think this slight data leak is worth it, since it allows all
-users to audit the integrity of Keybase's operations.
+虽然这种结构很简单，但它有一个明显的缺点。外部观察者可能能够根据树中叶子的相关更改猜测团队的父级。
+虽然 `adidas` 团队的成员无法知道像 `nike.hr`、`nike.hr.interns` 或 `nike.acquisitions.puma` 这样的团队名称，
+但他们可以推断出 `nike` 子团队树的 **形状**，以及这些子团队何时更新。
+我们认为这种轻微的数据泄露是值得的，因为它允许所有用户审计 Keybase 操作的完整性。
 
-Teams live in the Merkle tree alongside of regular users, but they can't collide since user IDs end
-in suffixes `0x00` or `0x19`.  It is theoretically possible to allow a user named `acme` and a team
-named `acme`, since they will map to IDs `822b33ad87c148a0a20a5ba7cd5ebc19` and `822b33ad87c148a0a20a5ba7cd5ebc24`
-respectively. But we currently disallow such a construction for the sake of clarify and simplicity.
-At some point in the future, these constraints might be relaxed.
+团队与普通用户一起存在于 Merkle 树中，但它们不会发生冲突，因为用户 ID 以后缀 `0x00` 或 `0x19` 结尾。
+理论上允许一个名为 `acme` 的用户和一个名为 `acme` 的团队，因为它们将分别映射到 ID `822b33ad87c148a0a20a5ba7cd5ebc19` 和 `822b33ad87c148a0a20a5ba7cd5ebc24`。
+但为了清晰和简单起见，我们目前不允许这种结构。
+在未来的某个时候，这些限制可能会放宽。
 
-## Team Sigchains
+## 团队签名链 (Team Sigchains)
 
-Like Keybase users, Keybase teams have their own "signature chains" or "sigchains".  A sigchain is an append-only
-data structure that is appended to whenever a mutation is needed. Users mutate their identities whenever they
-add external proofs, add or revoke devices, follow or unfollow friends. Teams mutate their composition whenever
-they add, remove, upgrade or downgrade members, whenever they add or rename subteams, whenever their cryptographic
-keys rotate, etc.  The general shape of the sigchain links are as in [user sigchains](../sigchain), but the
-new `team` section of the JSON signature body captures team-specific features. Also, all team signature
-links are in the [V2 format](sigchain_v2).
+像 Keybase 用户一样，Keybase 团队也有自己的“签名链”或“sigchains”。签名链是一个仅追加的数据结构，每当需要变动时就会追加。
+用户在添加外部证明、添加或撤销设备、关注或取消关注朋友时会变动其身份。
+团队在添加、移除、升级或降级成员，添加或重命名子团队，加密密钥轮换等情况下会变动其组成。
+签名链链接的一般形状如 [Keybase 签名链 V2](/docs/teams/sigchain) 中所示，但 JSON 签名主体中新的 `team` 部分捕获了特定于团队的功能。
+此外，所有团队签名链接都采用 [Keybase 签名链 V2](/docs/teams/sigchain) 格式。
 
 ### team.root
 
-`team.root` signatures are the initial signature of a new root team. All root team sigchains must begin
-with such a signature. Here is an example snippet from a `team.root` chain link:
+`team.root` 签名是新根团队的初始签名。所有根团队签名链必须以这样的签名开始。
+以下是 `team.root` 链链接的示例片段：
 
 ```javascript
 "team": {
@@ -84,21 +76,19 @@ with such a signature. Here is an example snippet from a `team.root` chain link:
 "version": 2
 ```
 
-The team section specifies the team's name, the team's ID (determined as above), the initial members of the team, and the initial
-public keys for the team. As with [Per-User Keys](puk), a reverse signature is computed with the per-team signing key
-over the entire chain link. See below for a more complete description of team key cryptographic specifics.
+团队部分指定了团队名称、团队 ID（如上所述确定）、团队的初始成员以及团队的初始公钥。
+与 [每用户密钥 (Per-User Keys)](/docs/teams/puk) 一样，使用每团队签名密钥对整个链链接计算反向签名。
+有关团队密钥密码学细节的更完整描述，请参见下文。
 
-Team role lists are specified with regular Keybase UIDs. If a user has reset his/her account, the UID is the form
-`<uid>%<seqno>`, where `<seqno>` is the earliest sigchain seqno for the user since the user's reset.
+团队角色列表使用常规 Keybase UID 指定。如果用户重置了他/她的账户，UID 的形式为 `<uid>%<seqno>`，
+其中 `<seqno>` 是自用户重置以来用户的最早签名链序列号。
 
-Teams must always have at least one owner (the current user), but the owner of
-the team can specify additional admins, readers, writers and owners when
-creating or team.
+团队必须始终至少有一名所有者（当前用户），但团队的所有者可以在创建团队时指定额外的管理员、读者、作者和所有者。
 
 ### team.subteam_head
 
-`team.subteam_head` is similar to `team.root`, but represents the first link a subteam's sigchain.
-An example snippet from such a chain looks like this:
+`team.subteam_head` 类似于 `team.root`，但代表子团队签名链的第一个链接。
+此类链的示例片段如下所示：
 
 ```javascript
  "team": {
@@ -125,23 +115,19 @@ An example snippet from such a chain looks like this:
 "type": "team.subteam_head",
 ```
 
-Like `team.root` chainlinks, `team.subteam_head` chainlinks contain subteam names, subteam IDs,
-initial membership lists, and cryptographic keys. They have additional subobjects:
+像 `team.root` 链链接一样，`team.subteam_head` 链链接包含子团队名称、子团队 ID、初始成员列表和加密密钥。
+它们有额外的子对象：
 
-* `parent` is a pointer to sigchain link in the parent team that authorized this subteam's creation;
-* `admin` is a pointer to some ancestor team sigchain that shows where the power comes from
-to perform this operation. Due to the recursive nature of implicit adminship, an admin from
-`nike`, `nike.hr`, or `nike.hr.interns` can create the subteam `nike.hr.interns.2019`. The
-`admin` section of the signature tells readers of this sigchain where exactly to find
-the authorization of this signing user to have performed this operation.
+* `parent` 是指向授权此子团队创建的父团队签名链链接的指针；
+* `admin` 是指向某个祖先团队签名链的指针，显示执行此操作的权力来源。
+由于隐式管理员身份的递归性质，来自 `nike`、`nike.hr` 或 `nike.hr.interns` 的管理员可以创建子团队 `nike.hr.interns.2019`。
+签名的 `admin` 部分确切地告诉此签名链的读者在哪里可以找到此签名用户执行此操作的授权。
 
 ### team.new_subteam
 
-When a new subteam is created, two links are written. The creator writes `team.subteam_head`
-link to the head of the new subteam, and a `team.new_subteam` link to the parent team. As filesystems,
-the parent controls the namespace that all children are written to. So writing to the parent
-enforces serializability and consistency of the namespace for child teams.  Here's an example
-snippet:
+当创建一个新的子团队时，会写入两个链接。创建者将 `team.subteam_head` 链接写入新子团队的头部，
+并将 `team.new_subteam` 链接写入父团队。作为文件系统，父级控制所有子级写入的命名空间。
+因此，写入父级强制执行命名空间的可序列化和一致性。这是一个示例片段：
 
 ```javascript
  "team": {
@@ -159,15 +145,13 @@ snippet:
 "type": "team.new_subteam",
 ```
 
-Both the server and clients should check that every `team.new_subteam` link has a corresponding
-`team.subteam_head` the new subteam, and that the sequence numbers and hashes line up
-properly. Here `team.id` is the ID of the parent team, and `team.subteam.id` is the ID of
-the new child team.
+服务器和客户端都应检查每个 `team.new_subteam` 链接是否有对应的 `team.subteam_head` 新子团队，
+并且序列号和哈希是否正确对齐。这里 `team.id` 是父团队的 ID，`team.subteam.id` 是新子团队的 ID。
 
 ### team.change_membership
 
-`team.change_membership` links allow admins to change the membership of a team or subteam. Here
-is an example snippet:
+`team.change_membership` 链接允许管理员更改团队或子团队的成员资格。
+这是一个示例片段：
 
 ```javascript
 "team": {
@@ -198,29 +182,21 @@ is an example snippet:
 "type": "team.change_membership",
 ```
 
-As with `team.subteam_head` links, these links must explicitly specify where
-an admin's permissions come from. And like a `team.root` or
-`team.subteam_head` link, a `team.change_memberhip` link has a `members`
-subobject to describe changes.  By including a user ID in the `none` list, the
-admin removes the user from the group. The admin can upgrade or downgrade an
-existing user by specifying their UID in a different role list (since a user
-can only take one role in a team at a time). In the above example, if the user
-`93b82086be2f8e206cd6bbef8483b219` was previously an admin of this group,
-specifying her as a `writer` will be considered a downgrade in roles. An admin
-can add a new user here by just including the user's UID in the appropriate
-list. So for instance, if user `00aa4b027e3e132f918d3205d6e96819` was not a part
-of this team before, they are a now a reader in the team after this update.
+与 `team.subteam_head` 链接一样，这些链接必须明确指定管理员的权限来自何处。
+就像 `team.root` 或 `team.subteam_head` 链接一样，`team.change_memberhip` 链接有一个 `members` 子对象来描述更改。
+通过在 `none` 列表中包含用户 ID，管理员将用户从群组中移除。
+管理员可以通过在不同的角色列表中指定其 UID 来升级或降级现有用户（因为用户在团队中一次只能担任一个角色）。
+在上面的示例中，如果用户 `93b82086be2f8e206cd6bbef8483b219` 之前是该组的管理员，
+将其指定为 `writer` 将被视为角色降级。管理员可以在此处通过将用户的 UID 包含在适当的列表中来添加新用户。
+因此，例如，如果用户 `00aa4b027e3e132f918d3205d6e96819` 之前不是该团队的一部分，在此更新后他们现在是团队中的读者。
 
-Note that when users are removed from a team, the admin performing the change
-should also rotate the team's keys. She can do so by specifying
-a `per_team_key` section and uploading encrypted keys for the remaining
-members.
+请注意，当用户从团队中移除时，执行更改的管理员还应轮换团队的密钥。
+她可以通过指定 `per_team_key` 部分并为其余成员上传加密密钥来做到这一点。
 
 ### team.rotate_key
 
-`team.rotate_key` specifies that a team's cryptographic shared keys are rotated, but without
-any corresponding changes in membership. It might be needed, for instance, when
-a member of the team resets one of his devices (see [CLKRs](clkr)). Here is an example snippet:
+`team.rotate_key` 指定团队的加密共享密钥已轮换，但成员资格没有任何相应的更改。
+例如，当团队成员重置其设备之一时可能需要这样做（请参阅 [级联惰性密钥轮换 (CLKR)](/docs/teams/clkr)）。这是一个示例片段：
 
 ```javascript
 "team": {
@@ -235,13 +211,11 @@ a member of the team resets one of his devices (see [CLKRs](clkr)). Here is an e
 "type": "team.rotate_key",
 ```
 
-The `per_team_key` subobject is just as in team (or subteam) creation, but the key difference
-here is that `generation` is set to a number greater than `1`, since the key is being
-rotated.
+`per_team_key` 子对象与团队（或子团队）创建中的一样，但这里的关键区别是 `generation` 设置为大于 `1` 的数字，因为密钥正在轮换。
 
 ### team.leave
 
-When a non-admin wants to leave a team, they sign a "leave" statement to this effect:
+当非管理员想要离开团队时，他们会签署一份“离开”声明，大意如下：
 
 ```javascript
 "team": {
@@ -250,19 +224,17 @@ When a non-admin wants to leave a team, they sign a "leave" statement to this ef
 "type": "team.leave",
 ```
 
-Team readers and writers can make `team.leave` statements. Admins are not allowed to; they need
-to downgrade themselves to readers or writers first.
+团队读者和作者可以发表 `team.leave` 声明。管理员不允许；他们需要先将自己降级为读者或作者。
 
 ### team.rename_subteam
 
-Unlike root teams, subteams can be renamed, but only if their position in the team tree doesn't
-change. For instance, `nike.hr` can be renamed to `nike.human_resources` but not to `nike.subdivisions.hr`.
-The rename will have a cascading effect. In the above example, `nike.hr.interns` would be renamed to
-`nike.human_resources.interns`. Here's an example of such a link, which lives in the *parent team*
-of the team being renamed.  So for instance, the above renaming would happen in `nike`'s team chain,
-so that the parent can serialize all changes to its namespace without fear of conflicting updates.
+与根团队不同，子团队可以重命名，但前提是它们在团队树中的位置不改变。
+例如，`nike.hr` 可以重命名为 `nike.human_resources`，但不能重命名为 `nike.subdivisions.hr`。
+重命名将产生级联效应。在上面的示例中，`nike.hr.interns` 将被重命名为 `nike.human_resources.interns`。
+这是此类链接的示例，它位于被重命名团队的 *父团队* 中。
+因此，例如，上述重命名将发生在 `nike` 的团队链中，以便父级可以序列化对其命名空间的所有更改，而不必担心更新冲突。
 
-Here's an example:
+这是一个示例：
 
 ```javascript
 "team" : {
@@ -281,14 +253,13 @@ Here's an example:
 
 ```
 
-Here, `team.subteam.name` specifies the new name for the team.
+在这里，`team.subteam.name` 指定了团队的新名称。
 
 ### team.reaname_up_pointer
 
-As with `team.new_subteam` head and `team.subteam_head`, whenever a team's subteam
-namespace is changed, we make updates to both chains, the parent and the child. Thus,
-the above `tean.rename_subteam` update in `adidas` has a companion `rename_up_pointer`
-link in `adidas.omg`'s chain. Example shown here:
+与 `team.new_subteam` 头部和 `team.subteam_head` 一样，每当团队的子团队命名空间发生更改时，
+我们都会对父链和子链进行更新。因此，`adidas` 中的上述 `team.rename_subteam` 更新在 `adidas.omg` 的链中有一个伴随的 `rename_up_pointer` 链接。
+示例如下：
 
 ```javascript
 {
@@ -307,18 +278,15 @@ link in `adidas.omg`'s chain. Example shown here:
 },
 "type" : "team.rename_up_pointer"
 ```
+
 ### team.invite
 
-Admins can invite members into teams without their being Keybase users. The invites
-can be referred to by social media handles or by email addresses. In the former case,
-when users sign up, admins can check that the social media proofs were satisfactory
-before keying the team for the user.  In the case of `email`-based invitations,
-the admin has to take Keybase's word for the legitimacy of this proof. Admins who
-don't have open email invitations will never rekey via this server-trusted TOFU
-system, so it's strictly opt-in.
+管理员可以邀请非 Keybase 用户的成员加入团队。邀请可以通过社交媒体句柄或电子邮件地址进行引用。
+在前一种情况下，当用户注册时，管理员可以在为用户提供团队密钥之前检查社交媒体证明是否令人满意。
+在基于 `email` 的邀请的情况下，管理员必须相信 Keybase 对此证明的合法性。
+没有打开电子邮件邀请的管理员将永远不会通过此服务器信任的 TOFU 系统重新生成密钥，因此它是严格选择加入的。
 
-Here's an example snippet:
-
+这是一个示例片段：
 
 ```javascript
 "team" : {
@@ -356,22 +324,17 @@ Here's an example snippet:
 "type" : "team.invite"
 ```
 
-There are few more details to point out.  First off, we can cancel previously issued
-invitations, as seen in: `"cancel": [ "117b4f1d1048042cb67e204c84d07927" ]`.  Second,
-there is this funny notion of a "keybase" invitation. What's happening here is that
-the user `l52701844` is a Keybase user but doesn't a [Per-User Key](puk).  They must
-fix this situation first, and once their PUK is established, a team admin can swing by
-and rekey the team for the user.  It shares so much machinery with off-site invitations
-that we've implemented it as a funny sort of invitation.
+还有一些细节需要指出。首先，我们可以取消以前发出的邀请，如：`"cancel": [ "117b4f1d1048042cb67e204c84d07927" ]` 中所示。
+其次，这里有一个有趣的“keybase”邀请概念。这里发生的事情是，用户 `l52701844` 是 Keybase 用户，
+但没有 [每用户密钥 (Per-User Keys)](/docs/teams/puk)。他们必须先解决这种情况，一旦建立了自己的 PUK，
+团队管理员就可以过来为该用户重新生成团队密钥。它与站外邀请共享很多机制，以至于我们将它实现为一种有趣的邀请。
 
-Admins or owners must issue invitations. Any admin can close the loop by keying the
-team for the user once the user has signed up and has established a PUK. See [CLKR](clkr)
-for more information on how the Keybase server orchestrates this background keying operation.
+管理员或所有者必须发出邀请。一旦用户注册并建立了 PUK，任何管理员都可以通过为用户生成团队密钥来完成闭环。
+有关 Keybase 服务器如何协调此后台密钥生成操作的更多信息，请参见 [级联惰性密钥轮换 (CLKR)](/docs/teams/clkr)。
 
 ### team.delete_root
 
-An owner can delete a root team. This operation is not reversable, and it kills the
-team for all time:
+所有者可以删除根团队。此操作不可逆，并且永久删除团队：
 
 ```javascript
 "team": {
@@ -382,9 +345,8 @@ team for all time:
 
 ### team.delete_subteam
 
-A subteam admin (implicit or explicit) can delete a subteam, freeing up its name in the
-namespace for a potential recreation later in time. For instance, in the `adidas` parent
-chain below:
+子团队管理员（隐式或显式）可以删除子团队，释放命名空间中的名称以便将来可能重新创建。
+例如，在下面的 `adidas` 父链中：
 
 ```javascript
 "team": {
@@ -404,7 +366,7 @@ chain below:
 
 ### team.delete_up_pointer
 
-A `team.delete_up_pointer` accompanies the `team.delete_subteam` above. For example:
+`team.delete_up_pointer` 伴随上面的 `team.delete_subteam`。例如：
 
 ```javascript
 "team": {
@@ -424,36 +386,25 @@ A `team.delete_up_pointer` accompanies the `team.delete_subteam` above. For exam
 "type": "team.delete_up_pointer",
 ```
 
-## POST Endpoint and Parameters
+## POST 端点和参数
 
-When mutating a team, users post signatures of the above form to the
-`/_/api/1.0/sig/multi.json` endpoint. Multiple signatures can be, and
-are often required to be posted in one HTTP post. For instance,
-rename, and subteam deletion operations need to mutate multiple
-team sigchains at the same time, and do so on the server inside of
-a single database transaction.
+在变动团队时，用户将上述形式的签名发布到 `/_/api/1.0/sig/multi.json` 端点。
+多个签名可以（并且通常需要）在一个 HTTP post 中发布。
+例如，重命名和子团队删除操作需要同时变动多个团队签名链，并在服务器上的单个数据库事务中执行。
 
-Some relevant fields involved in these posts are:
+涉及这些 post 的一些相关字段包括：
 
-* `per_team_key` — The encryption of a new per team key for the team member's PUKs,
- using NaCl's DH primitive
-* `downgrade_lease_id` — As preestablished lease needed to safely remove authority, which ensures
-that no racing operations are trying to use that authority at the same time. See
-[Downgrade Leases](downgrade_leases).
-* `implicit_team_keys` — Like `per_team_key`, but DH boxes for *subteams* of the teams
-being operated. Needed when a user is promoted to admin of team `T`, and therefore needs
-access to all transitive subteams of `T`.
+* `per_team_key` — 为团队成员的 PUK 加密的新团队密钥，使用 NaCl 的 DH 原语
+* `downgrade_lease_id` — 安全移除权限所需的预先建立的租约，确保没有竞争操作同时尝试使用该权限。
+请参阅 [降级租约 (Downgrade Leases)](/docs/teams/downgrade-leases)。
+* `implicit_team_keys` — 像 `per_team_key`，但是是针对正在操作的团队的 *子团队* 的 DH 盒子。
+当用户被提升为团队 `T` 的管理员，因此需要访问 `T` 的所有传递子团队时需要。
 
-## GET Endpoint
+## GET 端点
 
-Team users can load team sigchains via the `/_/api/1.0/team/get.json`
-endpoint, which takes a variety of parameters. The server will return the
-links in the team's sigchain, and the accompanying encryptions of per-team
-keys for the team. Note that if a non-admin is loading a team, some links
-might appear "stubbed", meaning their outer contents will be returned, but
-their inner contents will be elided. This feature allows, for example. the
-admin of `nike` to hide the existence of the subteam `nike.merger_with_puma`
-from the members of `nike.interns`, etc, by hiding the contents of the
-`team.rename_subteam` link. However, readers of the team can still reconstruct
-the full sigchain without fear of server tampering, since the outer links
-contain sequence numbers, previous hashes, and link types.
+团队用户可以通过 `/_/api/1.0/team/get.json` 端点加载团队签名链，该端点采用各种参数。
+服务器将返回团队签名链中的链接，以及随附的团队密钥加密。
+请注意，如果非管理员加载团队，某些链接可能显示为“存根 (stubbed)”，意味着将返回其外部内容，但省略其内部内容。
+此功能允许，例如，`nike` 的管理员对 `nike.interns` 的成员隐藏 `nike.merger_with_puma` 子团队的存在，
+等等，方法是隐藏 `team.rename_subteam` 链接的内容。
+但是，团队的读者仍然可以重建完整的签名链，而不必担心服务器篡改，因为外部链接包含序列号、先前的哈希和链接类型。

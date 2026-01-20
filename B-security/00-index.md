@@ -1,55 +1,56 @@
-{% set section_title = "Security" %}
-{% set section_subtitle = "Learn how Keybase keeps your stuff  safe." %}
-{% set page_title = "Learn about Security on Keybase" %}
-{% set page_description = "Your Keybase account and everything you share through it are protected by public-key cryptography. Learn how end-to-end encryption keeps your data secure." %}
+{% set section_title = "安全" %}
+{% set section_subtitle = "了解 Keybase 如何保护你的数据安全。" %}
+{% set page_title = "了解 Keybase 上的安全" %}
+{% set page_description = "你的 Keybase 账户和你通过它分享的一切都受到公钥加密的保护。了解端到端加密如何保护你的数据安全。" %}
 
-# Security on Keybase
-<div class="compose-highlight" data-text="tl;dr">Public-key cryptography makes it easy for you to safely and securely share or store anything you want on Keybase.</div>
+# Keybase 安全
 
-#### Your account is protected by public-key cryptography.
-Your Keybase [account](/account) is protected by public-key cryptography. Your [devices](/account#devices) are cryptographically linked to your account, ensuring that only you can access it. 
+<div class="compose-highlight" data-text="摘要">公钥加密使你可以轻松、安全地在 Keybase 上分享或存储任何你想分享或存储的内容。</div>
 
-[Proofs](/account#proofs) and [following](/account#following) help ensure that you’re really you on Keybase. They’re backed by public-key cryptography. 
+#### 你的账户受公钥加密保护。
 
-#### Everything you store or share on Keybase is end-to-end encrypted.
-Everything you store or share through your Keybase account—in [Chat](/chat), [Files](/files), [Teams](/teams), [Git](/git), [Sites](/sites), and [Wallet](/wallet)—is automatically end-to-end encrypted. Only you and your intended recipients can read what you share. Not even Keybase can access it.
+你的 Keybase [账户](/account) 受公钥加密保护。你的 [设备](/account#devices) 与你的账户加密链接，确保只有你可以访问它。
 
-{% set section_title = "Security" %}
+[证明](/account#proofs) 和 [关注](/account#following) 有助于确保你在 Keybase 上确实是你自己。它们由公钥加密支持。
 
-#### Briefly, here’s how public-key cryptography works.
-We’ll start with some terms that will be useful to understand.
+#### 你在 Keybase 上存储或分享的一切都是端到端加密的。
 
-**Encryption** is the process of scrambling info or data so that it can’t be read. **Decryption** reverses the process so info or data can be read again. A **key** is used in the process—basically a ton of math that we won’t get into—of encrypting or decrypting.
+你通过 Keybase 账户存储或分享的一切——在 [聊天](/chat)、[文件](/files)、[团队](/teams)、[Git](/git)、[站点](/sites) 和 [钱包](/wallet) 中——都会自动进行端到端加密。只有你和你的预期接收者才能阅读你分享的内容。甚至 Keybase 也无法访问它。
 
-Encryption and decryption can happen symmetrically or asymmetrically. In **symmetric encryption**, the same key is used to both scramble and unscramble the data. In **asymmetric encryption**, a **key pair**—two different keys, usually a public and a private key—are used.
+{% set section_title = "安全" %}
 
-A **public key** is widely published so anyone can access it. It’s usually used to encrypt data. A **private key** is private and usually used to decrypt data. A public key cannot be used to try and guess or hack a private key.  
+#### 简而言之，这就是公钥加密的工作原理。
 
-#### Both your public and private key help secure your account.
-Keybase uses **256-bit encryption**. This means someone would have to try more than 115 quattuorvigintillion possible keys to hack your private key. Not even a hundred thousand computers could try all those keys in trillions of years.
+我们将从一些有助于理解的术语开始。
 
-This makes it safe for your public key to be public, as it is on Keybase. Keeping your public key public allows your contacts to safely and easily share encrypted info with you without having to rely on other—potentially unsafe—channels. 
+**加密** 是将信息或数据打乱，使其无法阅读的过程。**解密** 是逆过程，使信息或数据可以再次被阅读。**密钥** 用于加密或解密的过程——基本上是我们不会深入探讨的大量数学运算。
 
-When you and your contacts use Keybase, they encrypt using your public key and you can decrypt with your private key. On Keybase, this end-to-end encryption happens automatically in [Chat](/chat), [Files](files), [Teams](/teams), [Sites](/sites), [Wallet](/wallet), and [Git](/git). 
+加密和解密可以对称或非对称地发生。在 **对称加密** 中，同一个密钥用于打乱和还原数据。在 **非对称加密** 中，使用 **密钥对**——两个不同的密钥，通常是一个公钥和一个私钥。
 
-#### Your private keys are only stored on your devices.
-For extra security, your private keys are **only** stored on the device(s) you use Keybase on. They’re not even stored on Keybase’s servers. So if Keybase gets hacked, the security of your account isn’t compromised. 
+**公钥** 广泛发布，任何人都可以访问。它通常用于加密数据。**私钥** 是私有的，通常用于解密数据。公钥不能用于尝试猜测或破解私钥。
 
-(A new key pair is created for every device you add to your account. Learn more on the [blog](https://keybase.io/blog/keybase-new-key-model).) 
+#### 你的公钥和私钥都有助于保护你的账户。
 
-#### Protecting both your account and your data gives you more security.
-Every message or file you share or receive through Keybase is end-to-end encrypted using your public and private keys. No one else can read them—not even Keybase.
+Keybase 使用 **256 位加密**。这意味着有人必须尝试超过 115 quattuorvigintillion 个可能的密钥才能破解你的私钥。甚至十万台计算机在数万亿年内也无法尝试完所有这些密钥。
 
-Public-key cryptography is also used to encrypt information shared through secure websites (those with URLS that start with https://), emails sent with the PGP protocol, and cryptocurrencies like Lumens. But, the information you share on secure websites or in emails is only as secure as your account—or as the username and password—you use to access them. 
+这使得你的公钥公开是安全的，就像在 Keybase 上一样。保持公钥公开允许你的联系人安全、轻松地与你分享加密信息，而无需依赖其他——可能不安全的——渠道。
 
-Thank goodness your Keybase [account](/account) is more secure than that.
+当你和你的联系人使用 Keybase 时，他们使用你的公钥加密，你可以使用你的私钥解密。在 Keybase 上，这种端到端加密在 [聊天](/chat)、[文件](files)、[团队](/teams)、[站点](/sites)、[钱包](/wallet) 和 [Git](/git) 中自动发生。
 
-#### Keybase is reviewed by global cyber security experts. 
-Read the 2018 report by the global cyber security and risk mitigation experts, NCC Group: [Keybase Protocol Security Review](https://www.nccgroup.trust/us/our-research/keybase-protocol-security-review/).
+#### 你的私钥仅存储在你的设备上。
 
+为了额外的安全性，你的私钥 **仅** 存储在你使用 Keybase 的设备上。它们甚至不存储在 Keybase 的服务器上。因此，如果 Keybase 被黑客攻击，你的账户安全也不会受到损害。
 
+（你添加到账户的每个设备都会创建一个新的密钥对。在 [博客](https://keybase.io/blog/keybase-new-key-model) 上了解更多信息。）
 
+#### 保护你的账户和数据给你更多的安全性。
 
+你通过 Keybase 分享或接收的每条消息或文件都使用你的公钥和私钥进行端到端加密。没有其他人可以阅读它们——甚至 Keybase 也不行。
 
+公钥加密也用于加密通过安全网站（URL 以 https:// 开头的网站）、使用 PGP 协议发送的电子邮件以及像 Lumens 这样的加密货币共享的信息。但是，你在安全网站或电子邮件中分享的信息仅与你用于访问它们的账户——或用户名和密码——一样安全。
 
+谢天谢地，你的 Keybase [账户](/account) 比那更安全。
 
+#### Keybase 由全球网络安全专家审查。
+
+阅读全球网络安全和风险缓解专家 NCC Group 的 2018 年报告：[Keybase 协议安全审查](https://www.nccgroup.trust/us/our-research/keybase-protocol-security-review/)。

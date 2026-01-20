@@ -1,21 +1,20 @@
 
-# Keybase Signature Chain V2
+# Keybase 签名链 V2
 
-Sigchain V2 is an expansion on the previous version of the sigchain ([V1](../sigchain)).
-As we've been building out Keybase, mobile and teams in particular, we've discovered new requirements for the sigchain,
-and have made (backwards-compatible) changes accordingly:
+签名链 V2 是对签名链先前版本（[V1](https://keybase.io/docs/sigchain)）的扩展。
+随着我们一直在构建 Keybase，特别是移动端和团队功能，我们发现了签名链的新需求，并相应地进行了（向后兼容的）更改：
 
-  * Compression: As is, the sigchain is quite bloated. If you start a conversation with [Chris Coyne](https://keybase.io/chris), you'll have to download his full sigchain, which is ~6MB big (3MB compressed) and growing.  The bulk of it is chris following other users, which is mixed in with his crucial key and device updates.  Each sigchain link is about 6k big right now.  On mobile, this will be especially painful, since you'll have to download a ton of data (potentially over a spotty link) before you can start talking with chris.
-  * Semi-private links: some links might be withheld from some (most) viewers, because they contain private information (that the server can see). Examples include the members of teams.
+*   压缩：目前的签名链非常臃肿。如果你开始与 [Chris Coyne](https://keybase.io/chris) 对话，你必须下载他的完整签名链，大小约为 6MB（压缩后 3MB）且还在增长。其中大部分是 Chris 关注的其他用户，这与他关键的密钥和设备更新混合在一起。目前每个签名链链接大约 6k 大。在移动设备上，这将非常痛苦，因为在你可以开始与 Chris 交谈之前，你必须下载大量数据（可能通过不稳定的连接）。
+*   半私有链接：一些链接可能会对部分（大多数）查看者隐藏，因为它们包含私人信息（服务器可以看到）。例如团队成员。
 
-This document explains the V2 construction at a high level.
+本文档从高层次解释了 V2 的结构。
 
-## Example
+## 示例
 
-Let's say you had a V1 link of the form:
+假设你有一个 V1 链接，形式如下：
 
 ```javascript
-ar inner_link = {
+var inner_link = {
   "body": {
     "key": {
       "eldest_kid": "01013ef90b4c4e62121d12a51d18569b57996002c8bdccc9b2740935c9e4a07d20b40a",
@@ -117,7 +116,7 @@ ar inner_link = {
 }
 ```
 
-You'll note this JSON blob is 2.4k big (after stripping away whitespace).  In sigchain V2, we introduce a new wrapper object:
+你会注意到这个 JSON blob 有 2.4k 大（去除空格后）。在签名链 V2 中，我们引入了一个新的包装对象：
 
 ```javascript
 var outer_link = msgpack.pack([
@@ -130,48 +129,37 @@ var outer_link = msgpack.pack([
 ])
 ```
 
-The relevant components are:
+相关组件包括：
 
+*   **位置 0**: `version` — 对于所有 V2 链接，值为 `2`
+*   **位置 1**: `seqno` — 在上面的示例中，值为 `278`，描述了此链链接在签名链中的序列号。一如既往，这必须是严格顺序的。它必须与内部链接的 `seqno` 匹配。
+*   **位置 2**: `prev` — 上一个外部链接的完整 SHA2 哈希，经过 msgpack 编码后。在上面的示例中，值为 `PmSQP8Pm6CScHv43wBBqFoZ7c9ItLztn6828B1WD4OU=`（Base64）。
+*   **位置 3**: `curr` — 内部链接的完整 SHA2 哈希；`hash(payload_json)`。在这个例子中，值为 `Nl6GvU1ABnORNY4s2sKRyxNl9Pyx1r/TQeA/eYRMnA4=`（Base64）。
+*   **位置 4**: `type` — 签名链链接的类型，使用下面的数值表。在上面的示例中，我们的值为 `3`，对应于 `track`。
+*   **位置 5**: `seqno_type` — 用户和团队可以拥有公共和“半私有”的签名链。在“半私有”链中，服务器可以看到内部链接的值，并可以根据访问控制机制选择性地公开它。如果不显式指定，这里的值是隐含的。用户链的默认值是 `1`，表示 `PUBLIC`（公开）。团队的默认值是 `3`，表示 `SEMIPRIVATE`（半私有）。
 
-  * **Position 0**: `version` — value is `2` for all V2 links
-  * **Position 1**: `seqno` — In the above example, the value is `278` which describes the sequence number of this chainlink in the sigchain. As always, this must be an exactly sequential sequence. It must match `seqno` of the inner link.
-  * **Position 2**: `prev` — The full SHA2 hash of the previous outer link, after msgpack encoding. In the above example, the value is `PmSQP8Pm6CScHv43wBBqFoZ7c9ItLztn6828B1WD4OU=` (in base64).
-  * **Position 3**: `curr` — The full SHA2 hash of the inner link; `hash(payload_json)`. In this example, the value is
-`Nl6GvU1ABnORNY4s2sKRyxNl9Pyx1r/TQeA/eYRMnA4=` (in base64)
-  * **Position 4**: `type` — The type of the sigchain link, using the numerical table below. In the above example, we have a value
-  of `3` that corresponds to `track`.
-  * **Position 5**: `seqno_type` — Users and teams can have both public and "semiprivate" sigchains. In "semiprivate" chains, the server can see the value of the inner link, and can selectively expose it, based on access control mechanisms. The value here
-  is implied if it's not specified explicitly. The default value for user's chains is `1`, which means `PUBLIC`. The default
-  values for teams is `3`, which means `SEMIPRIVATE`.
+## 生成链链接
 
-## Generating Chain Links
+如果你在你的 Node 解释器中运行这个小程序，你会得到一个 75 字节大的缓冲区，比上面的节省了大量空间！
 
-If you run this little program in your node interpreter, you'll get a buffer that's 75 bytes big, a huge savings over the above!
-
-Now, when a user actually signs a new link into their sigchain, they'll sign the value:
+现在，当用户实际签署一个新链接到他们的签名链时，他们将签署该值：
 
 ```javascript
 var input = Buffer.from(outer_link,"binary")
 var sig = device_key.sign(input)
 ```
 
-When a client posts a signature, it now posts:
+当客户端发布签名时，它现在发布：
 
-  * `outer_link` as shown above
-  * `inner_link` as before
-  * `sig(outer_link)`
+*   `outer_link` 如上所示
+*   `inner_link` 和以前一样
+*   `sig(outer_link)`
 
-When other clients replay sigchains, they always get `outer_links` but
-sometimes do not download `inner_links` either to save bandwidth or because they
-are unauthorized. A client who is decoding a full sigchain must manually check
-that the outer values match the inner values, and should reject links that
-don't match.
+当其他客户端重放签名链时，它们总是获得 `outer_links`，但有时不下载 `inner_links`，要么是为了节省带宽，要么是因为它们未被授权。解码完整签名链的客户端必须手动检查外部值是否与内部值匹配，并应拒绝不匹配的链接。
 
-## Constants
+## 常量
 
-From [JavaScript](https://github.com/keybase/proofs/blob/c75faba42b3d6f17f972614e6bf1fe9a45716d26/src/constants.iced#L40-L68)
-or [Go](https://github.com/keybase/client/commit/da752f40b3ff4bce5fca8e4dce66fe3116802d03/go/libkb/chain_link_v2.go#L15-L43), here
-are the numerical equivalents of all proof types:
+从 [JavaScript](https://github.com/keybase/proofs/blob/c75faba42b3d6f17f972614e6bf1fe9a45716d26/src/constants.iced#L40-L68) 或 [Go](https://github.com/keybase/client/commit/da752f40b3ff4bce5fca8e4dce66fe3116802d03/go/libkb/chain_link_v2.go#L15-L43) 代码中，这里是所有证明类型的数值等价物：
 
 ```iced
 sig_types_v2:
@@ -205,9 +193,7 @@ sig_types_v2:
     delete_up_pointer : 44
 ```
 
-Similarly, from [JavaScript](https://github.com/keybase/proofs/blob/c75faba42b3d6f17f972614e6bf1fe9a45716d26/src/constants.iced#L88-L92) and
-[Go](https://github.com/keybase/client/blob/da752f40b3ff4bce5fca8e4dce66fe3116802d03/go/libkb/constants.go#L611-L615),
-here are the sigchain sequence types:
+同样，从 [JavaScript](https://github.com/keybase/proofs/blob/c75faba42b3d6f17f972614e6bf1fe9a45716d26/src/constants.iced#L88-L92) 和 [Go](https://github.com/keybase/client/blob/da752f40b3ff4bce5fca8e4dce66fe3116802d03/go/libkb/constants.go#L611-L615) 代码中，这里是签名链序列类型：
 
 ```iced
 seq_types :

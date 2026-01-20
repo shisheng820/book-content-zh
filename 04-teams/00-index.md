@@ -1,180 +1,180 @@
-{% set section_title = "Teams" %}
-{% set section_subtitle = "Use Keybase Files, Chat, and Git with groups of people." %}
-{% set page_title = "Learn about using Keybase with Teams" %}
-{% set page_description = "Use Keybase for end-to-end encrypted chat, files, and Git with teams. Collaborate with groups of people to get work done safely and securely. Learn more." %}
+{% set section_title = "团队" %}
+{% set section_subtitle = "与群组一起使用 Keybase 文件、聊天和 Git。" %}
+{% set page_title = "了解如何使用 Keybase 团队" %}
+{% set page_description = "使用 Keybase 进行端到端加密的团队聊天、文件和 Git。与群组协作，安全可靠地完成工作。了解更多。" %}
 
-# Keybase for Teams
-Use Keybase Teams to work, connect, and organize. A team on Keybase is simply a group of people—colleagues, cabals, families, flashmobs, magic circles—any group.
+# Keybase 团队
+使用 Keybase 团队来工作、联系和组织。Keybase 上的团队仅仅是一群人——同事、阴谋集团、家庭、快闪族、魔法圈子——任何群体。
 
-Teams can [chat](/chat), use [files](/files), and [collaborate on Git](/git).
+团队可以 [聊天](/chat)、使用 [文件](/files) 并 [在 Git 上协作](/git)。
 
-Like everything else on Keybase, team chats, files, and Git are end-to-end encrypted. What you and your team share, store, and commit stays between you and your team.
+像 Keybase 上的其他一切一样，团队聊天、文件和 Git 都是端到端加密的。您和您的团队分享、存储和提交的内容只在您和您的团队之间保留。
 
-Cryptography also protects the integrity of teams on Keybase. Every team member gets a shared key pair. The private key only lives on their devices and is changed anytime someone on the team is removed or revokes a device. This key guarantees that only team admins can add or remove people and edit their permissions. Even if Keybase’s servers are compromised, or if Keybase’s employees are coerced, we can’t access that key and can’t add unauthorized people or “ghost users” into teams. Only team members added by an admin can access that team. Period.
+密码学也保护了 Keybase 上团队的完整性。每个团队成员都会获得一个共享密钥对。私钥仅存在于他们的设备上，并且每当团队中有人被移除或吊销设备时，私钥就会更改。这个密钥保证只有团队管理员可以添加或移除人员并编辑他们的权限。即使 Keybase 的服务器被攻破，或者 Keybase 的员工被胁迫，我们也无法访问该密钥，也无法将未经授权的人员或“幽灵用户”添加到团队中。只有管理员添加的团队成员才能访问该团队。句号。
 
-Likewise, person-to-person interactions remain private. Team admins and owners can’t access one-on-one chats between team members or any other interactions they’re not explicitly a part of.
+同样，人与人之间的互动保持私密。团队管理员和所有者无法访问团队成员之间的一对一聊天或任何其他他们未明确参与的互动。
 
-No snooping—anywhere, ever—on Keybase.
+在 Keybase 上，没有任何地方、任何时候会有窥探。
 
-## Managing a team
-Before you create a team, there are a few things you should know:
-* Teams are public. Everyone can see that they exist but not necessarily who is in them.
-* Team members can choose to publish the teams they belong to on their profiles.
-* Team names must be unique.
-* Team names cannot be changed.
-* Team names must be lowercase letters (a-z), numbers, and underscores (no spaces).
+## 管理团队
+在创建团队之前，有几件事您应该知道：
+* 团队是公开的。每个人都可以看到它们的存在，但不一定能看到谁在其中。
+* 团队成员可以选择在他们的个人资料上公布他们所属的团队。
+* 团队名称必须是唯一的。
+* 团队名称无法更改。
+* 团队名称必须是小写字母 (a-z)、数字和下划线（无空格）。
 
-Learn more about names on Keybase in [Usernames](account#usernames).
+在 [用户名](/account#用户名) 中了解更多关于 Keybase 命名的信息。
 
-### Adding and removing people
-You can create a team from scratch. Or if your team’s on Slack, you can [import it into Keybase](https://keybase.io/slack-importer/).
+### 添加和移除人员
+您可以从头开始创建团队。或者如果您的团队在 Slack 上，您可以 [将其导入 Keybase](https://keybase.io/slack-importer/)。
 
-Adding people by Keybase username is the quickest way to create a team. If you add people by their social handle, email, or phone numbers, they’ll need to create a Keybase account if they don’t already have one.
+通过 Keybase 用户名添加人员是创建团队最快的方式。如果您通过社交账号、电子邮件或电话号码添加人员，如果他们还没有 Keybase 账户，则需要创建一个。
 
-As you add people to a team, they’re announced in the team chat. All new team members can search and read the entire team chat history, except for exploding messages sent before they joined.
+当您向团队添加人员时，会在团队聊天中通告。所有新团队成员都可以搜索和阅读整个团队聊天记录，除了在他们加入之前发送的阅后即焚消息。
 
-If you remove a team member, they lose access to all team chats and folders. Removed team members cannot rejoin a team unless an admin adds them again.
+如果您移除团队成员，他们将失去对所有团队聊天和文件夹的访问权限。已移除的团队成员无法重新加入团队，除非管理员再次添加他们。
 
-#### Roles and permissions
-When you add someone to a team, you’ll assign them a role that gives them specific permissions. In most cases, most people should be writers. If you’re managing an [open team](teams#build-community), you might want your team members to be readers. You can always change roles later.
+#### 角色和权限
+当您向团队添加某人时，您将分配给他们一个角色，赋予他们特定的权限。在大多数情况下，大多数人应该是作者 (writers)。如果您正在管理一个 [开放团队](/teams#建立社区)，您可能希望您的团队成员是读者 (readers)。您可以随时更改角色。
 
 <div class="table-wrapper">
     <h5><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 600">
         <path fill="currentColor" d="M286.17 419a18 18 0 1018 18 18 18 0 00-18-18zm111.92-147.6c-9.5-14.62-39.37-52.45-87.26-73.71q-9.1-4.06-18.38-7.27a78.43 78.43 0 00-47.88-104.13c-12.41-4.1-23.33-6-32.41-5.77-.6-2-1.89-11 9.4-35L198.66 32l-5.48 7.56c-8.69 12.06-16.92 23.55-24.34 34.89a51 51 0 00-8.29-1.25c-41.53-2.45-39-2.33-41.06-2.33-50.61 0-50.75 52.12-50.75 45.88l-2.36 36.68c-1.61 27 19.75 50.21 47.63 51.85l8.93.54a214 214 0 00-46.29 35.54C14 304.66 14 374 14 429.77v33.64l23.32-29.8a148.6 148.6 0 0014.56 37.56c5.78 10.13 14.87 9.45 19.64 7.33 4.21-1.87 10-6.92 3.75-20.11a178.29 178.29 0 01-15.76-53.13l46.82-59.83-24.66 74.11c58.23-42.4 157.38-61.76 236.25-38.59 34.2 10.05 67.45.69 84.74-23.84.72-1 1.2-2.16 1.85-3.22a156.09 156.09 0 012.8 28.43c0 23.3-3.69 52.93-14.88 81.64-2.52 6.46 1.76 14.5 8.6 15.74 7.42 1.57 15.33-3.1 18.37-11.15C429 443 434 414 434 382.32c0-38.58-13-77.46-35.91-110.92zM142.37 128.58l-15.7-.93-1.39 21.79 13.13.78a93 93 0 00.32 19.57l-22.38-1.34a12.28 12.28 0 01-11.76-12.79L107 119c1-12.17 13.87-11.27 13.26-11.32l29.11 1.73a144.35 144.35 0 00-7 19.17zm148.42 172.18a10.51 10.51 0 01-14.35-1.39l-9.68-11.49-34.42 27a8.09 8.09 0 01-11.13-1.08l-15.78-18.64a7.38 7.38 0 011.34-10.34l34.57-27.18-14.14-16.74-17.09 13.45a7.75 7.75 0 01-10.59-1s-3.72-4.42-3.8-4.53a7.38 7.38 0 011.37-10.34L214 225.19s-18.51-22-18.6-22.14a9.56 9.56 0 011.74-13.42 10.38 10.38 0 0114.3 1.37l81.09 96.32a9.58 9.58 0 01-1.74 13.44zM187.44 419a18 18 0 1018 18 18 18 0 00-18-18z"></path>
-    </svg> Keybase Teams: Roles & Permissions</h5>
+    </svg> Keybase 团队：角色与权限</h5>
     <div class="sub-wrapper">
         <table>
             <tr>
                 <th class="empty">&nbsp;</th>
-                <th>Owners</th>
-                <th>Admins</th>
-                <th>Writers</th>
-                <th>Readers</th>
+                <th>所有者 (Owners)</th>
+                <th>管理员 (Admins)</th>
+                <th>作者 (Writers)</th>
+                <th>读者 (Readers)</th>
             </tr>
             <tr>
-                <th>Write and read chat messages</th>
-                <td class="yes">Yes</td>
-                <td class="yes">Yes</td>
-                <td class="yes">Yes</td>
-                <td class="yes">Yes</td>
+                <th>读写聊天消息</th>
+                <td class="yes">是</td>
+                <td class="yes">是</td>
+                <td class="yes">是</td>
+                <td class="yes">是</td>
             </tr>
             <tr>
-                <th>View, edit, and save files</th>
-                <td class="yes">Yes</td>
-                <td class="yes">Yes</td>
-                <td class="yes">Yes</td>
-                <td class="other">View only</td>
+                <th>查看、编辑和保存文件</th>
+                <td class="yes">是</td>
+                <td class="yes">是</td>
+                <td class="yes">是</td>
+                <td class="other">仅查看</td>
             </tr>
             <tr>
-                <th>Create chat channels</th>
-                <td class="yes">Yes</td>
-                <td class="yes">Yes</td>
-                <td class="yes">Yes</td>
-                <td class="no">No</td>
+                <th>创建聊天频道</th>
+                <td class="yes">是</td>
+                <td class="yes">是</td>
+                <td class="yes">是</td>
+                <td class="no">否</td>
             </tr>
             <tr>
-                <th>Create subteams</th>
-                <td class="yes">Yes</td>
-                <td class="yes">Yes</td>
-                <td class="no">No</td>
-                <td class="no">No</td>
+                <th>创建子团队</th>
+                <td class="yes">是</td>
+                <td class="yes">是</td>
+                <td class="no">否</td>
+                <td class="no">否</td>
             </tr>
             <tr>
-                <th>Add and remove team members</th>
-                <td class="yes">Yes</td>
-                <td class="yes">Yes</td>
-                <td class="no">No</td>
-                <td class="no">No</td>
+                <th>添加和移除团队成员</th>
+                <td class="yes">是</td>
+                <td class="yes">是</td>
+                <td class="no">否</td>
+                <td class="no">否</td>
             </tr>
             <tr>
-                <th>Manage team members’ roles</th>
-                <td class="yes">Yes</td>
-                <td class="yes">Yes</td>
-                <td class="no">No</td>
-                <td class="no">No</td>
+                <th>管理团队成员的角色</th>
+                <td class="yes">是</td>
+                <td class="yes">是</td>
+                <td class="no">否</td>
+                <td class="no">否</td>
             </tr>
             <tr>
-                <th>Delete team</th>
-                <td class="yes">Yes</td>
-                <td class="no">No</td>
-                <td class="no">No</td>
-                <td class="no">No</td>
+                <th>删除团队</th>
+                <td class="yes">是</td>
+                <td class="no">否</td>
+                <td class="no">否</td>
+                <td class="no">否</td>
             </tr>
             <tr>
-                <th>Add bots</th>
-                <td class="yes">Yes</td>
-                <td class="yes">Yes</td>
-                <td class="no">No</td>
-                <td class="no">No</td>
+                <th>添加机器人</th>
+                <td class="yes">是</td>
+                <td class="yes">是</td>
+                <td class="no">否</td>
+                <td class="no">否</td>
             </tr>
         </table>
     </div>
 </div>
 
-### Leaving a team
-If you leave a team, any messages and files you shared remain with the team, but you lose access to them. You can only rejoin a team if you are added again by an admin or owner.
+### 离开团队
+如果您离开团队，您分享的任何消息和文件仍保留在团队中，但您将失去对它们的访问权限。您只有在被管理员或所有者再次添加后才能重新加入团队。
 
-### Deleting a team
-A team can only be deleted by the team owner. A team can only be deleted if there are no subteams. If a team or subteam is deleted, all team chats are lost forever, all data in the team folder(s) is lost forever, and all team members are notified.
+### 删除团队
+团队只能由团队所有者删除。只有在没有子团队的情况下才能删除团队。如果团队或子团队被删除，所有团队聊天将永远丢失，团队文件夹中的所有数据将永远丢失，并且所有团队成员都会收到通知。
 
-## Team features
-Teams can be what we call [big teams](teams#organize-chats-in-channels), [subteams](teams#share-private-messages-and-files), or [open teams](teams#build-community). Each has different features and abilities.
+## 团队功能
+团队可以是我们要说的 [大团队](/teams#在频道中组织聊天)、[子团队](/teams#分享私密消息和文件) 或 [开放团队](/teams#建立社区)。每个都有不同的功能和能力。
 
-### Big teams
-#### Organize chats in channels.
-If you create channels for a chat, your team becomes a big team. It doesn’t matter how many people are in it; even two people can be a big team.
+### 大团队
+#### 在频道中组织聊天。
+如果您为聊天创建频道，您的团队就会成为一个大团队。里面有多少人并不重要；即使是两个人也可以是一个大团队。
 
-Channels are a way to organize chats. They’re useful for focusing conversations on a specific project or idea but they’re not private. Everyone on a team can search and read all messages and files shared in any and every channel. To share private messages or files, you need to [create a subteam](teams#subteams).
+频道是一种组织聊天的方式。它们对于将对话集中在特定项目或想法上很有用，但它们不是私密的。团队中的每个人都可以搜索和阅读在任何和每个频道中分享的所有消息和文件。要分享私密消息或文件，您需要 [创建一个子团队](/teams#子团队)。
 
-### Subteams
-#### Share private messages and files.
-A subteam is a private group created within a team. A subteam can include members of a team as well as people who are not a part of that team.
+### 子团队
+#### 分享私密消息和文件。
+子团队是在团队内部创建的私密群组。子团队可以包括团队成员以及不属于该团队的人员。
 
-For example, an organization may want to create a subteam for a hiring committee. The hiring committee subteam could include team members as well as board members that aren’t a part of the team.
+例如，一个组织可能希望为招聘委员会创建一个子团队。招聘委员会子团队可以包括团队成员以及不属于该团队的董事会成员。
 
-In a subteam, you can share private chats and files within a team. Only members of the subteam can read them. And while teams are public (outsiders may see that they exist but can’t necessarily see who is in them), subteams are stealthy. People who aren’t in them can’t even see that they exist.
+在子团队中，您可以在团队内分享私密聊天和文件。只有子团队的成员可以阅读它们。虽然团队是公开的（局外人可能看到它们存在，但不一定能看到谁在其中），但子团队是隐秘的。不在其中的人甚至看不到它们的存在。
 
-Just like any other team, a subteam becomes a big team when you add chat channels. But permissions and roles work a little differently:
-* Only team owners and admins can make subteams.
-* Subteams do not have owners.
-* Subteams may have “implicit admins,” people who are admins of the parent team but not of this subteam. Implicit admins do not have access to files and messages shared within a subteam, but they can add themselves to the subteam and gain access.
-* When implicit admins add anyone (including themselves) to a team, it is announced to the other members.
+就像任何其他团队一样，当您添加聊天频道时，子团队就会成为一个大团队。但权限和角色的工作方式略有不同：
+* 只有团队所有者和管理员可以创建子团队。
+* 子团队没有所有者。
+* 子团队可能有“隐式管理员”，即父团队的管理员但不是该子团队的管理员。隐式管理员无法访问子团队内分享的文件和消息，但他们可以将自己添加到子团队并获得访问权限。
+* 当隐式管理员将任何人（包括他们自己）添加到团队时，会向其他成员通告。
 
-### Open teams
-#### Build community.
-Anyone can join an open team. So, if you’re building a community, you might want to make an open team. You can also let Keybase know about it and we may be able to help get the word out.
+### 开放团队
+#### 建立社区。
+任何人都可以加入开放团队。所以，如果您正在建立一个社区，您可能想创建一个开放团队。您也可以让 Keybase 知道，我们或许可以帮助宣传。
 
-If you know of an open team you’d like to join, for example `keybasefriends` or `stellar.public`, you can select `Join a team` to request being added. Since you can’t necessarily see who’s on a team, Keybase pings the admin for you. The admin can accept or ignore your request.
+如果您知道您想加入的一个开放团队，例如 `keybasefriends` 或 `stellar.public`，您可以选择 `加入团队` 请求被添加。由于您不一定能看到谁在团队中，Keybase 会为您 ping 管理员。管理员可以接受或忽略您的请求。
 
-## Chat for Teams
-Chat for Teams works pretty much the same way it does for individuals. Learn more in [Chat](/chat).
+## 团队聊天
+团队聊天的工作方式与个人聊天几乎相同。在 [聊天](/chat) 中了解更多。
 
-A chat is automatically created for each team. Team members with the right permissions can organize chats with [channels](teams#channels) and manage chat [privacy](teams#privacy).
+每个团队都会自动创建一个聊天。拥有适当权限的团队成员可以使用 [频道](/teams#频道) 组织聊天并管理聊天 [隐私](/teams#隐私)。
 
-### Channels
-Owners, admins, and writers (everyone except readers) can create channels to organize team chats. If you add a channel to a team chat, your team becomes a big team (and the chat moves to the lower part of your inbox).
+### 频道
+所有者、管理员和作者（除读者外的所有人）可以创建频道来组织团队聊天。如果您向团队聊天添加频道，您的团队将成为一个大团队（并且聊天会移至收件箱的下半部分）。
 
-Channels are not private. Everyone on a team can read messages and files shared in any team channel.
+频道不是私密的。团队中的每个人都可以阅读在任何团队频道中分享的消息和文件。
 
-If you delete a chat channel, all messages will be lost and gone forever.
+如果您删除聊天频道，所有消息都将丢失并永远消失。
 
-### Privacy
-Everyone on a team can search and read all of the messages and files shared in team chats. But when team members chat directly with each other, their messages remain private. Team owners or admins can’t access private chats.
+### 隐私
+团队中的每个人都可以搜索和阅读团队聊天中分享的所有消息和文件。但是，当团队成员直接相互聊天时，他们的消息保持私密。团队所有者或管理员无法访问私密聊天。
 
-By default, your entire chat history is saved and searchable forever. But team owners can manage how long messages are saved. Messages can be auto-deleted never or at set intervals as short as 30 seconds and as long as 365 days.
+默认情况下，您的整个聊天记录将永久保存并可搜索。但团队所有者可以管理消息保存多长时间。消息可以设置为永不自动删除，或在短至 30 秒、长至 365 天的设定间隔后自动删除。
 
-To keep chats or files private to specific team members, create a [subteam](teams#share-private-messages-and-files).
+要使聊天或文件对特定团队成员保持私密，请创建 [子团队](/teams#分享私密消息和文件)。
 
-## Files for Teams
-Files for Teams on Keybase works pretty much the same way it works for individuals. Learn more in [Files](/files).
+## 团队文件
+Keybase 上的团队文件的工作方式与个人文件几乎相同。在 [文件](/files) 中了解更多。
 
-Teams and subteams can store up to 100 GB of documents, photos, and videos. Anything you store or share with a team on Keybase is automatically end-to-end encrypted. Only the people on that team can access team files. But, everyone on a team can access every file.
+团队和子团队最多可以存储 100 GB 的文档、照片和视频。您在 Keybase 上与团队存储或分享的任何内容都会自动进行端到端加密。只有该团队的人员才能访问团队文件。但是，团队中的每个人都可以访问每个文件。
 
-To make files private to specific team members, [create a subteam](teams#subteams).
+要使文件对特定团队成员保持私密，请 [创建子团队](/teams#子团队)。
 
-## Git for Teams
-Git for Teams on Keybase works pretty much the same way it works for individuals. Learn more in [Git](/git).
+## 团队 Git
+Keybase 上的团队 Git 的工作方式与个人 Git 几乎相同。在 [Git](/git) 中了解更多。
 
-Git repositories on Keybase are free, encrypted, authenticated, and private. They’re especially useful for sharing secret or private content within teams. Repositories shared with teams can be viewed in the Keybase app.
+Keybase 上的 Git 仓库是免费的、加密的、经过身份验证的和私密的。它们对于在团队内分享机密或私密内容特别有用。与团队分享的仓库可以在 Keybase 应用中查看。
 
-To see a demo, ask to join the team `keybasefriends`.
+要观看演示，请请求加入团队 `keybasefriends`。

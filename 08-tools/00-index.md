@@ -1,54 +1,60 @@
-{% set section_title = "Tools" %}
-{% set section_subtitle = "Encrypt, decrypt, sign, and verify messages and files." %}
-{% set page_title = "Learn about using Keybase Tools" %}
-{% set page_description = "Encrypt, decrypt, verify, and sign messages and files. Store and share documents, photos, and videos, safely and securely anywhere. Learn more." %}
+{% set section_title = "工具" %}
+{% set section_subtitle = "加密、解密、签名和验证消息及文件。" %}
+{% set page_title = "了解如何使用 Keybase 工具" %}
+{% set page_description = "加密、解密、验证和签名消息及文件。在任何地方安全、可靠地存储和共享文档、照片和视频。了解更多。" %}
 
-# Keybase Tools
-Everywhere else in Keybase, encryption, decryption, signing, and verifying happen seamlessly. All you see are messages and files that you can read or store, safely and securely, within Keybase. 
+# Keybase 工具
 
-But, you can also encrypt, decrypt, sign, and verify messages and files that need to exist outside of Keybase but remain safe and secure. 
+在 Keybase 的其他地方，加密、解密、签名和验证都是无缝进行的。你看到的只是可以在 Keybase 内部安全、可靠地读取或存储的消息和文件。
 
-Messages and files that have been encrypted or signed through Keybase are converted into a Keybase format called [Saltpack](https://saltpack.org/) (you’ll see Saltpack in the file names). (Encrypted or signed text is also known as **ciphertext**.) 
+但是，你也可以加密、解密、签名和验证那些需要存在于 Keybase 之外但仍需保持安全可靠的消息和文件。
 
-Among other things, this allows you to encrypt or sign messages or files and then share or store them safely anywhere. You can decrypt and verify messages and files from others.
+通过 Keybase 加密或签名的消息和文件会转换为一种称为 [Saltpack](https://saltpack.org/) 的 Keybase 格式（你会看到文件名中有 Saltpack）。（加密或签名的文本也被称为 **密文**。）
 
-## Encrypting
-Encrypt a message or file you want to share with someone specific. 
+除此之外，这允许你加密或签名消息或文件，然后在任何地方安全地分享或存储它们。你可以解密和验证来自他人的消息和文件。
 
-Just copy and paste, type it right in, drag and drop, or find a file. Keybase will use your recipient’s public key to encrypt the message or file so only they can decrypt and read it. 
+## 加密
 
-You can encrypt something for anyone using their Keybase, Twitter, Facebook, GitHub, Reddit, or Hacker News username. If they’re not on Keybase yet, they’ll need an account before they can decrypt it. 
+加密你想与特定人员分享的消息或文件。
 
-An encrypted message can be copied and pasted or exported so you can easily store or share it anywhere. 
+只需复制粘贴、直接输入、拖放或查找文件。Keybase 将使用接收者的公钥加密消息或文件，以便只有他们才能解密和读取它。
 
-The encrypted file is automatically saved alongside your original file in the Saltpack format. From there, you can put the encrypted file anywhere you like. Rest assured that only your recipient will be able to read it.
+你可以为任何使用 Keybase、Twitter、Facebook、GitHub、Reddit 或 Hacker News 用户名的人加密内容。如果他们还没有加入 Keybase，他们需要一个账户才能解密它。
 
-### Signing encrypted data
-If you choose to sign an encrypted message or file, your private key will also be used. So, when your message is decrypted by the recipient, they’ll know for certain that you encrypted it and it hasn’t been changed by anyone else. 
+加密的消息可以复制粘贴或导出，以便你可以轻松地在任何地方存储或分享它。
 
-If you do not sign the message or file, the recipient will be able to decrypt it but they won’t necessarily know it came from you.
+加密的文件会自动以 Saltpack 格式与原始文件保存在一起。从那里，你可以将加密的文件放在任何你喜欢的地方。请放心，只有你的接收者才能读取它。
 
-## Decrypting
-If someone uses Keybase to encrypt a message or file just for you, you can simply copy and paste or drag and drop it in the app to decrypt it with your private key. 
+### 签名加密数据
 
-When you copy and paste, be sure to include “BEGIN KEYBASE SALTPACK MESSAGE.” and “END KEYBASE SALTPACK MESSAGE.” You may also have to remove any extra spaces that occur as a result of copying and pasting.
+如果你选择签名加密的消息或文件，你的私钥也将被使用。因此，当接收者解密你的消息时，他们将确切地知道是你加密了它，并且它没有被其他人更改。
 
-When you decrypt something, you’ll also be able to see whether or not it’s signed by a specific person. If it is signed, their private key was used so you know that the message hasn’t been tampered with by anyone else.
+如果你不签名该消息或文件，接收者将能够解密它，但他们不一定知道它来自你。
 
-## Signing
-Sign messages or files when you want people to know for certain that it was encrypted by you.
+## 解密
 
-If you sign a message or file, anyone who has it can decrypt it and verify that it came from you. Signing is different from encrypting and then choosing to sign because the ability to decrypt isn’t limited to a specific recipient. 
+如果有人使用 Keybase 专门为你加密消息或文件，你只需在应用中复制粘贴或拖放它，即可用你的私钥解密它。
 
-When you sign a message or file, your private key is used in the encryption. No one can guess your private key, but when the message or file is decrypted, they’ll be able to see that it came from you.
+当你复制粘贴时，请务必包含 “BEGIN KEYBASE SALTPACK MESSAGE.” 和 “END KEYBASE SALTPACK MESSAGE.”。你可能还需要删除因复制粘贴而产生的任何多余空格。
 
-A signed file is automatically saved alongside your original file in the Saltpack format. From there, you can put the signed, encrypted file anywhere you like. Recipients will know that it came from you when they verify and decrypt it.
+当你解密某些内容时，你还可以看到它是否由特定人员签名。如果已签名，说明使用了他们的私钥，因此你知道该消息未被其他人篡改。
 
-## Verifying
-Verify a message or file to decrypt it and see who it came from. 
+## 签名
 
-Verifying is the inverse of signing. Anyone on Keybase can verify and decrypt a signed message. 
+当你想让人们确信消息或文件是由你加密的时，请对其进行签名。
 
-When you copy and paste, be sure to include “BEGIN KEYBASE SALTPACK SIGNED MESSAGE.” and “END KEYBASE SALTPACK SIGNED MESSAGE.” You may also have to remove any extra spaces that occur as a result of copying and pasting.
+如果你签名一条消息或文件，任何拥有它的人都可以解密并验证它来自你。签名与加密然后选择签名不同，因为解密能力并不限于特定接收者。
 
-When you verify a message or file, you’ll be able to read it, know who it came from and that it hasn’t been tampered with by anyone else. 
+当你签名消息或文件时，你的私钥用于加密。没人能猜出你的私钥，但当消息或文件被解密时，他们将能够看到它来自你。
+
+签名的文件会自动以 Saltpack 格式与原始文件保存在一起。从那里，你可以将签名、加密的文件放在任何你喜欢的地方。接收者在验证和解密时会知道它来自你。
+
+## 验证
+
+验证消息或文件以解密它并查看它来自谁。
+
+验证是签名的逆过程。任何 Keybase 用户都可以验证和解密已签名的消息。
+
+当你复制粘贴时，请务必包含 “BEGIN KEYBASE SALTPACK SIGNED MESSAGE.” 和 “END KEYBASE SALTPACK SIGNED MESSAGE.”。你可能还需要删除因复制粘贴而产生的任何多余空格。
+
+当你验证消息或文件时，你将能够读取它，知道它来自谁，并且未被其他人篡改。

@@ -1,168 +1,83 @@
-# Server
+# 服务器 (Server)
 
-We've been working on Keybase.io for a little over half a year now, and we
-would like it succeed, but we're a little bit nervous. The more successful we
-are, the more valuable target we become.
+我们开发 Keybase.io 已经半年多了，我们希望它能成功，但我们也有一点紧张。我们越成功，我们就越成为有价值的目标。
 
-Here are the attacks we are most concerned about:
+以下是我们最担心的攻击：
 
-  1. Server DDOS'ed
-  1. Server compromised; attacker corrupts server-side code and keys to send bad data to clients
-  1. Server compromised; attacker distributes corrupted client-side code
+  1. 服务器被 DDoS 攻击
+  1. 服务器被入侵；攻击者破坏服务器端代码和密钥，向客户端发送坏数据
+  1. 服务器被入侵；攻击者分发损坏的客户端代码
 
-We've taken some steps to protect the service from these attacks,
-and we wanted to describe them so you know what to look for.
+我们已经采取了一些措施来保护服务免受这些攻击，我们想描述一下它们，以便你知道该寻找什么。
 
-## What Keybase is Really Doing
+## Keybase 实际上在做什么
 
-Before we can describe how we protect keybase, we have to describe what it's
-actually doing, and what warrants protection.  The central function of Keybase
-is to store, in a standardized format, public signatures for our users.  The
-important signatures are of the form:
+在描述我们如何保护 Keybase 之前，我们必须描述它实际上在做什么，以及什么值得保护。Keybase 的核心功能是以标准化格式存储我们用户的公开签名。重要的签名形式如下：
 
-   1. **Identity proofs**: "I am Joe on Keybase and MrJoe on Twitter"
-   1. **Follower statements**: "I am Joe on Keybase and I just looked at Chris's identity"
-   1. **Key ownership**: "I am Joe on Keybase and here's my public key"
-   1. **Revocations**: "I take back what I said earlier"
+   1. **身份证明 (Identity proofs)**："我是 Keybase 上的 Joe，也是 Twitter 上的 MrJoe"
+   1. **关注者声明 (Follower statements)**："我是 Keybase 上的 Joe，我刚刚查看了 Chris 的身份"
+   1. **密钥所有权 (Key ownership)**："我是 Keybase 上的 Joe，这是我的公钥"
+   1. **撤销 (Revocations)**："我收回我之前说的话"
 
-For instance, when Joe wants to establish a connection to an identity on
-Twitter, he would sign a statement of the first form, and then post that
-statement both on Twitter and Keybase.  Outside observers can then reassure
-themselves that the accounts Joe on Keybase and MrJoe on Twitter are controlled
-by the same person.  This person is usually the intended keyholder, but of
-course could be an attacker who broke into **both** accounts.
+例如，当 Joe 想要建立与 Twitter 上身份的连接时，他会签署第一种形式的声明，然后将该声明发布在 Twitter 和 Keybase 上。外部观察者随后可以确信 Keybase 上的 Joe 和 Twitter 上的 MrJoe 是由同一个人控制的。这个人通常是预期的密钥持有者，但当然也可能是入侵了 **两个** 账户的攻击者。
 
-When an honest Joe signs such a proof, he also signs the hash of his previous
-signature. Thus, outside observers who want to verify all of Joe's signatures
-need only verify the last in the chain; the others follow.  For example, I
-last signed a [statement](https://keybase.io/_/api/1.0/sig/get.json?sig_id=5dc95450ceb878b3cdfe35d7ecd92695733046c6731132754fa303ebb3cac81a0f)
-that I follow Keybase user [al3x](https://keybase.io/al3x). I signed a JSON blob that
-contains relevant information about me and Alex, and also the key-value pair
-`"prev":"d0bd03..."`, where `d0bd03...` is the SHA-256 hash of the
-previous JSON blob I signed.
+当诚实的 Joe 签署这样的证明时，他也会签署他前一个签名的哈希值。因此，想要验证 Joe 所有签名的外部观察者只需验证链中的最后一个；其他的随之而来。例如，我最近签署了一份 [声明](https://keybase.io/_/api/1.0/sig/get.json?sig_id=5dc95450ceb878b3cdfe35d7ecd92695733046c6731132754fa303ebb3cac81a0f)，表示我关注 Keybase 用户 [al3x](https://keybase.io/al3x)。我签署了一个包含关于我和 Alex 的相关信息的 JSON 数据块，以及键值对 `"prev":"d0bd03..."`，其中 `d0bd03...` 是我签署的上一个 JSON 数据块的 SHA-256 哈希值。
 
-For a given user, the sum total of their signatures captures the state they
-wish to remember and to advertise to the world.  For instance, my  current
-profile shows that I am maxtaco on Twitter, that I was TacoPlusPlus on GitHub,
-but now I'm maxtaco there, too, and that I believe the Chris who is
-malgorithms on Twitter and malgorithms on GitHub is the "correct" Chris Coyne.
-Five signatures (one of which is a revocation) comprise this state; and
-an honest Keybase server should always show everyone these five
-signatures, so we can faithfully reconstruct my state in our clients.
+对于给定用户，他们签名的总和捕捉了他们希望记住并向世界展示的状态。例如，我目前的个人资料显示我是 Twitter 上的 maxtaco，我曾是 GitHub 上的 TacoPlusPlus，但现在我在那里也是 maxtaco，并且我相信 Twitter 上的 malgorithms 和 GitHub 上的 malgorithms 是"正确"的 Chris Coyne。五个签名（其中一个是撤销）构成了这种状态；诚实的 Keybase 服务器应该始终向所有人展示这五个签名，以便我们可以在客户端忠实地重建我的状态。
 
-## Attacks 1 and 2: DDOS and Corrupted Data
+## 攻击 1 和 2：DDoS 和数据损坏
 
-We mentioned three attacks on this system. Consider the first two, which aim
-to prevent honest clients from retrieving signature data for honest users.  A
-blunt attacker might DDoS Keybase's servers, preventing anyone from accessing
-Keybase's data. A more sophisticated attacker might root keybase's server,
-compromise its signing keys, and start sending back corrupted data to honest
-clients.
+我们提到了针对该系统的三种攻击。考虑前两种，旨在阻止诚实客户端检索诚实用户的签名数据。粗暴的攻击者可能会对 Keybase 的服务器进行 DDoS 攻击，阻止任何人访问 Keybase 的数据。更复杂的攻击者可能会获取 Keybase 服务器的 root 权限，破坏其签名密钥，并开始向诚实客户端发送损坏的数据。
 
-Two mechanisms, enforced by clients and third-party observers, defend against
-both attacks:
+由客户端和第三方观察者强制执行的两种机制可以防御这两种攻击：
 
-   1. All user signature chains must grow monotonically, and can never be "rolled back"
-   1. Whenever a user posts an addition to a signature chain, the site must
-      sign and advertise a change in global site state, and these updates are [totally
-      ordered](http://en.wikipedia.org/wiki/Total_order).
+   1. 所有用户签名链必须单调增长，永远不能"回滚"
+   1. 每当用户向签名链发布添加内容时，站点必须签署并通告全局站点状态的更改，并且这些更新是 [全序的](http://en.wikipedia.org/wiki/Total_order)。
 
 
-### Untrusted Mirrors
+### 不受信任的镜像
 
-The first implication of these requirements is that untrusted third parties
-can mirror the site state, and clients can access data from either the Keybase
-server or the mirrors. By requirement (2), the server must publish and sign
-all site updates. A client doesn't care where these updates come from, as long
-as the signature verifies, and the site state jibes with the signature.
+这些要求的第一个含义是，不受信任的第三方可以镜像站点状态，客户端可以从 Keybase 服务器或镜像访问数据。根据要求 (2)，服务器必须发布并签署所有站点更新。客户端不关心这些更新来自哪里，只要签名通过验证，并且站点状态与签名一致即可。
 
-(We're not aware of third-party mirrors *yet*, and our reference client
-would need some modifications to handle a read-only server. However, we
-encourage all to scrape our APIs in preparation.)
+（我们 *目前* 尚未意识到有第三方镜像，并且我们的参考客户端需要一些修改才能处理只读服务器。但是，我们鼓励所有人抓取我们的 API 以做准备。）
 
-### Be Honest or Get Caught
+### 诚实否则被抓
 
-The second implication of these requirements is that a compromised server
-has a choice of acting like an honest server, or making "mistakes" that
-honest users can detect.  An attacker who gains control of the server can:
+这些要求的第二个含义是，受损的服务器可以选择像诚实服务器一样行事，或者犯下诚实用户可以检测到的"错误"。获得服务器控制权的攻击者可以：
 
-   1. Selectively rollback a user's signature chain and/or suppress updates
-   1. Fake a "key update", and append signatures at the end of a user's chain
-   1. Show different versions of the site state to different users
+   1. 选择性地回滚用户的签名链和/或抑制更新
+   1. 伪造"密钥更新"，并在用户链的末尾附加签名
+   1. 向不同用户展示不同版本的站点状态
 
-Since version v0.3.0, the Keybase [command-line client](https://keybase.io/docs/command_line)
-defends clients from these server attacks. Take the example of what happens when
-[I](https://keybase.io/max) ["follow"](https://keybase.io/docs/server_security/following) [Alex](https://keybase.io/al3x).  My client downloads both
-of our signature chains from the server, and runs them through cryptographic verification,
-checking that our hash chains are well-formed and signed. It furthermore
-checks new data against cached data and complains if the server has "rolled back" either
-chain.  My client prevents a compromised server from changing Alex's key
-the same way it prevents Eve from impersonating Alex: it checks for corroboration
-of Alex's identity and key proofs on other services (like Twitter, GitHub and DNS).
+自 v0.3.0 版本以来，Keybase [命令行客户端](/guides/command-line) 保护客户端免受这些服务器攻击。以当 [我](https://keybase.io/max) ["关注"](https://keybase.io/docs/server_security/following) [Alex](https://keybase.io/al3x) 时发生的情况为例。我的客户端从服务器下载我们两人的签名链，并对它们进行加密验证，检查我们的哈希链是否格式正确并已签名。它还会根据缓存数据检查新数据，并在服务器"回滚"任一链时报错。我的客户端防止受损服务器更改 Alex 密钥的方式与防止 Eve 冒充 Alex 的方式相同：它检查其他服务（如 Twitter、GitHub 和 DNS）上 Alex 身份和密钥证明的佐证。
 
-To prevent the server from ["forking"](https://www.usenix.org/legacy/events/osdi04/tech/full_papers/li_j/li_j.pdf?q=untrusted) my view of the site data from Alex's, my client checks
-that all signature chains are accurately captured in the site's global
-[Merkle Tree](http://en.wikipedia.org/wiki/Merkle_tree) data structure.
-It downloads the [root](https://keybase.io/_/api/1.0/merkle/root.json?seqno=2728)
-of this tree from the server, and verifies it against the site's
-[public key](https://keybase.io/docs/server_security/our_merkle_key). If the check
-passes, it fetches the [signed root block](https://keybase.io/_/api/1.0/merkle/block.json?hash=c2cca49b3d84915ba7bcae1290bda223badce2d667bf769df87c3f81efb192ca268055a719693b4a3682d9391d8be8e42a75760f01cc39a330e6f42bb308518e). My UID is `dbb165...`, so my client follows the `db...` path
-down the tree, which is block [`68b5d3...`](https://keybase.io/_/api/1.0/merkle/block.json?hash=68b5d3599be9acbe97bcc45603a322f85f8a99b9cbc696592fe1088c3a099a45d929f0bc2fae2230f0b31b5e4b4122365f50b34fcf91a94a357df90a83e3b013).  Now, my leaf is visible, showing my signature chain
-finishing off at link 42, with hash `d0bd03...`, which matches the data it fetched
-earlier.  My client does the same for Alex's chain.  After all checks succeed,
-my client signs my chain, Alex's chain and also Merkle root at the time
-of the signature; it posts [this signature](https://keybase.io/_/api/1.0/sig/get.json?uid=dbb165b7879fe7b1174df73bed0b9500&low=43) as a follower statement.
+为了防止服务器将我的站点数据视图与 Alex 的视图 ["分叉"](https://www.usenix.org/legacy/events/osdi04/tech/full_papers/li_j/li_j.pdf?q=untrusted)，我的客户端会检查所有签名链是否准确地捕获在站点的全局 [Merkle 树](http://en.wikipedia.org/wiki/Merkle_tree) 数据结构中。它从服务器下载这棵树的 [根](https://keybase.io/_/api/1.0/merkle/root.json?seqno=2728)，并根据站点的 [公钥](/docs/server/our-merkle-key) 对其进行验证。如果检查通过，它会获取 [已签名的根块](https://keybase.io/_/api/1.0/merkle/block.json?hash=c2cca49b3d84915ba7bcae1290bda223badce2d667bf769df87c3f81efb192ca268055a719693b4a3682d9391d8be8e42a75760f01cc39a330e6f42bb308518e)。我的 UID 是 `dbb165...`，所以我的客户端沿着树向下跟随 `db...` 路径，即块 [`68b5d3...`](https://keybase.io/_/api/1.0/merkle/block.json?hash=68b5d3599be9acbe97bcc45603a322f85f8a99b9cbc696592fe1088c3a099a45d929f0bc2fae2230f0b31b5e4b4122365f50b34fcf91a94a357df90a83e3b013)。现在，我的叶子可见，显示我的签名链结束于链接 42，哈希值为 `d0bd03...`，这与它之前获取的数据相匹配。我的客户端对 Alex 的链做同样的事情。所有检查成功后，我的客户端签署我的链、Alex 的链以及签名时的 Merkle 根；它将 [此签名](https://keybase.io/_/api/1.0/sig/get.json?uid=dbb165b7879fe7b1174df73bed0b9500&low=43) 作为关注者声明发布。
 
-A very sophisticated attacker could show my client and Alex's client
-different signed Merkle roots, but must maintain these forks permanently
-and [can never merge](http://www.scs.stanford.edu/nyu/02fa/sched/sundr.pdf).
-Users "comparing notes" out-of-band immediately expose server duplicity.
+一个非常复杂的攻击者可以向我的客户端和 Alex 的客户端展示不同的签名 Merkle 根，但必须永久维护这些分叉并且 [永远无法合并](http://www.scs.stanford.edu/nyu/02fa/sched/sundr.pdf)。用户带外"比较笔记"会立即暴露服务器的欺诈行为。
 
-## Keybase Client Integrity
+## Keybase 客户端完整性
 
-Thus, the keybase clients in the wild play a crucial role in keeping the Keybase server
-honest.  They check the integrity of user signature chains, and can find
-evidence of malicious rollback.  They alert Alice when her following of
-Bob breaks, if either Bob or the server was compromised.
-They check the site's published Merkle tree root for consistency against
-known signature chains.  And they sign proofs when all these checks complete,
-setting up known safe checkpoints to hold the server accountable to in the future.
+因此，广泛使用的 Keybase 客户端在保持 Keybase 服务器诚实方面起着至关重要的作用。它们检查用户签名链的完整性，并能发现恶意回滚的证据。当 Alice 对 Bob 的关注中断时（如果 Bob 或服务器受损），它们会提醒 Alice。它们根据已知的签名链检查站点发布的 Merkle 树根的一致性。当所有这些检查完成后，它们签署证明，建立已知的安全检查点，以便将来追究服务器的责任。
 
-So everything depends on the integrity of the Keybase clients, that they
-are functioning properly and aren't compromised.  We offer several
-safeguards to protect client integrity.  First, we keep an Open API and state that
-our open-source client is simply a *reference client*, and that developers are free
-to make new clients in different languages if they think we've done a bad job.
-Second, we sign all updates to the Keybase reference client, and
-provide an [update mechanism](https://github.com/keybase/node-installer/wiki/Update-Architecture)
-to download new clients without trusting HTTPS, only the integrity
-of our key.  We keep that private key offline, so that it wouldn't be compromised
-in the case of a server compromise.
+所以一切都取决于 Keybase 客户端的完整性，即它们正常运行且未受损。我们提供多种保障措施来保护客户端完整性。首先，我们保持开放 API 并声明我们的开源客户端只是一个 *参考客户端*，如果开发人员认为我们做得不好，他们可以自由地用不同的语言制作新的客户端。其次，我们签署对 Keybase 参考客户端的所有更新，并提供一种 [更新机制](https://github.com/keybase/node-installer/wiki/Update-Architecture) 来下载新客户端，而无需信任 HTTPS，只需信任我们密钥的完整性。我们将该私钥保持离线状态，以便在服务器受损的情况下它不会受损。
 
-We fully understand that users of the Keybase Web client don't get these guarantees.
-But our hope is that enough users will use the Keybase command-line client
-to keep the Web users safe, by catching server misbehavior in the case of a
-compromise.
+我们完全理解 Keybase Web 客户端的用户无法获得这些保证。但我们希望有足够多的用户使用 Keybase 命令行客户端来保护 Web 用户的安全，即在发生入侵时通过捕获服务器的不当行为。
 
-## Next Steps
+## 下一步
 
-The purpose of this article was to explain the security mechanisms the keybase
-system currently has in place. Going forward, it would be great if third
-parties were interested in hosting untrusted mirrors. These mirrors could
-eventually become auditors, too, allowing Alice and Bob to compare notes and
-convince themselves they're seeing a consistent view of the site's state.
+本文的目的是解释 Keybase 系统目前已有的安全机制。展望未来，如果第三方有兴趣托管不受信任的镜像，那就太好了。这些镜像最终也可能成为审计员，允许 Alice 和 Bob 比较笔记并确信他们看到的是站点状态的一致视图。
 
-And...an update! We're now publishing the merkle root into [the bitcoin block chain](/docs/server_security/merkle_root_in_bitcoin_blockchain).
+而且...一个更新！我们现在正在将 Merkle 根发布到 [比特币区块链](/docs/server/merkle-root-in-bitcoin-blockchain) 中。
 
-Thanks for reading, and happy keybasing!
+感谢阅读，祝 Keybase 使用愉快！
 
 
 
-## Meet your sigchain (and everyone else’s)
+## 认识你的签名链 (sigchain)（以及其他人的）
 
-Every Keybase account has a public signature chain (called a *sigchain*), which is an ordered list of statements about how the account has changed over time. When you [follow](/docs/server_security/following) someone, add a key, or connect a website, your client signs a new statement (called a *link*) and publishes it to your sigchain.
+每个 Keybase 账户都有一个公共签名链（称为 *sigchain*），这是一个关于账户随时间变化的有序声明列表。当你 [关注](/docs/server_security/following) 某人、添加密钥或连接网站时，你的客户端会签署一个新声明（称为 *链接*）并将其发布到你的签名链。
 
-As JSON (some fields removed), a sigchain looks like this:
+作为 JSON（删除了一些字段），签名链看起来像这样：
 
 ```json
 [
@@ -222,32 +137,32 @@ As JSON (some fields removed), a sigchain looks like this:
 ]
 ```
 
-This sigchain is from a user who…
+这个签名链来自一个用户，他…
 
-1. Signed up for Keybase from a device called “squares” which generated a [NaCl](http://nacl.cr.yp.to/) device key
-2. Proved their GitHub account
-3. Used squares to add another device called “rectangles” with its own key
-4. Used rectangles to follow [cecileb](https://keybase.io/cecileb)
+1. 从名为 "squares" 的设备注册了 Keybase，该设备生成了一个 [NaCl](http://nacl.cr.yp.to/) 设备密钥
+2. 证明了他们的 GitHub 账户
+3. 使用 squares 添加了另一个名为 "rectangles" 的设备，它有自己的密钥
+4. 使用 rectangles 关注了 [cecileb](https://keybase.io/cecileb)
 
-You can try browsing a real sigchain [online](https://keybase.io/max/sigchain) or through [the API](https://keybase.io/_/api/1.0/sig/get.json?uid=dbb165b7879fe7b1174df73bed0b9500). Since sigchains are **public**, you can do this for any user on Keybase!
+你可以尝试 [在线](https://keybase.io/max/sigchain) 或通过 [API](https://keybase.io/_/api/1.0/sig/get.json?uid=dbb165b7879fe7b1174df73bed0b9500) 浏览真实的签名链。由于签名链是 **公开的**，你可以对 Keybase 上的任何用户执行此操作！
 
-Every sigchain link is signed by one of the user’s keys and includes a sequence number and the hash of the previous link. Because of this, the server can’t create links on its own or omit links without invalidating the whole sigchain. We use a [public Merkle tree](/docs/server_security) to make it difficult for us to roll back a sigchain to an earlier state without being noticed.
+每个签名链链接都由用户的一个密钥签名，并包含序列号和前一个链接的哈希值。正因为如此，服务器无法自行创建链接或在不使整个签名链无效的情况下省略链接。我们使用 [公共 Merkle 树](/docs/server_security) 使我们难以在不被注意的情况下将签名链回滚到早期状态。
 
-## Sibkeys
+## 兄弟密钥 (Sibkeys)
 
-A Keybase account can have any number of sibling keys (called *sibkeys*) which can all sign links. This is different from PGP, which has a “master key” that you’re expected to keep tucked away in a fireproof safe — because if you misplace a device that has a copy of it, your only option is to [revoke the whole key and start from scratch](http://www.apache.org/dev/key-transition.html). We discuss this problem in [a blog post](/blog/keybase-new-key-model).
+一个 Keybase 账户可以拥有任意数量的兄弟密钥（称为 *sibkeys*），它们都可以签署链接。这与 PGP 不同，PGP 有一个你应该藏在防火保险箱里的"主密钥"——因为如果你弄丢了存有副本的设备，你唯一的选择就是 [撤销整个密钥并从头开始](http://www.apache.org/dev/key-transition.html)。我们在 [一篇博客文章](/blog/keybase-new-key-model) 中讨论了这个问题。
 
-You add and remove sibkeys by adding links to your sigchain. Since every link is checked against the state of the account *at that point in the sigchain*, old links remain valid even if their signing keys are revoked later. Revoking a key doesn’t affect your identity proofs, other keys, or followers.
+你可以通过向签名链添加链接来添加和移除兄弟密钥。由于每个链接都根据 *该点签名链上的* 账户状态进行检查，因此即使旧链接的签名密钥后来被撤销，旧链接仍然有效。撤销密钥不会影响你的身份证明、其他密钥或关注者。
 
-## Playback
+## 回放 (Playback)
 
-To find the current state of an account (e.g. when you run `keybase id max`), the client starts out assuming that the key specified for the account in the Merkle tree is a sibkey, then *plays back* the sigchain link by link, keeping track of valid sibkeys and the effects of other links.
+要查找账户的当前状态（例如，当你运行 `keybase id max` 时），客户端首先假设 Merkle 树中为该账户指定的密钥是兄弟密钥，然后逐个链接地 *回放* 签名链，跟踪有效的兄弟密钥和其他链接的影响。
 
-*An implementation detail: since accounts can be reset, it actually starts playback at the most recent link whose `eldest_kid` matches the one in the Merkle tree.*
+*一个实现细节：由于账户可以重置，它实际上是从 `eldest_kid` 与 Merkle 树中的匹配的最近链接开始回放。*
 
-## Link structure
+## 链接结构
 
-A complete version of the first link from the sigchain above looks like this:
+上面签名链中第一个链接的完整版本如下所示：
 
 ```json
 {
@@ -285,462 +200,15 @@ A complete version of the first link from the sigchain above looks like this:
 }
 ```
 
-Some properties are common to every type of link. Here’s an overview:
-
-- `body` – Information specific to the type of link, plus some common properties:
-  - `type` – The type of the link
-  - `device` – Optional details about the device that made the link
-  - `key` – Information about the key that will sign the link. Contains these properties:
-    - `host` – Currently always “keybase.io”
-    - `eldest_kid` – The [KID](/docs/api/1.0/kid) of the eldest key in this subchain. If missing, then eldest key is assumed to be the signing key (helps to identify account resets)
-    - `kid` – The key’s KID
-    - `key_id`: For a PGP key, the last eight bytes of its fingerprint (legacy)
-    - `fingerprint`: For a PGP key, its full fingerprint
-    - `uid`: The user ID of the sigchain’s owner
-    - `username`: The username of the sigchain’s owner
-
-    *When a PGP key is being introduced or updated, there can also be a `full_hash` property which is a SHA-256 hash of an armored copy of the public key. This pins the key to a specific version.*
-- `client` – Optional version information about the client that made the link
-- `ctime` – When the link was created, as a [Unix timestamp](https://en.wikipedia.org/wiki/Unix_time)
-- `expire_in` – How long the statement made by the link should be considered valid, in seconds, or `0` if it doesn’t expire
-- `merkle_root` – The creation time, hash, and sequence number of the Merkle tree root at the time the link was created
-- `prev` – The hash of the previous sigchain link when packed as [canonical JSON](/docs/api/1.0/canonical_packings), or `null` if this is the first link
-- `seqno` – Specifies that this is the *n*th link in the user’s sigchain
-- `tag` – Currently always “signature”. There may be other tag types in the future.
-
-Properties have been added and deprecated over time, so there’s some duplication and not all links in the wild have them all.
-
-## Link types
-
-Each section below starts with an example `body` (and leaves out `key`, `device`, and `version`, which were described above).
-
-### `eldest`
-
-```json
-{
-	"type": "eldest"
-}
-```
-
-Appears at the beginning of a sigchain or after an account reset (may not have been inserted by legacy clients). The link’s signing key becomes the account’s first sibkey.
-
-### `sibkey`
-
-```json
-{
-	"type": "sibkey",
-	"sibkey": { "kid": "01204…", "reverse_sig": "g6Rib…" }
-}
-```
-
-Add a new sibkey to the account. `reverse_sig` is a signature of the link by the new sibkey itself, made with the `reverse_sig` field set to `null`, and makes sure that a user can’t claim another user’s key as their own.
-
-### `subkey`
-
-```json
-{
-	"type": "subkey",
-	"subkey": { "kid": "01216…", "parent_kid": "01204…" }
-}
-```
-
-Add a new encryption-only *subkey* to the account. We plan to use these in the future.
-
-### `pgp_update`
-
-```json
-{
-	"type": "pgp_update",
-	"pgp_update": {
-		"kid": "01012ba0d60aa99320643f47eb787dc637821bc77cc89ccffbdbfd62124c1c22c1460a",
-		"key_id": "0DAA1A4AB1D88291",
-		"fingerprint": "5e685e60eb8733654dcb00570daa1a4ab1d88291",
-		"full_hash": "e02a1871c01285608c5bac3fb00be419b982c3c312c2c517ec6a1d9f7323be4f",
-	}
-}
-```
-
-Update a PGP key to a new version (which may have new subkeys, revoked subkeys, new user IDs…). The `pgp_update` section contains the same properties a `key` section would. `full_hash` is expected to have changed, the other properties should be unchanged.
-
-### `revoke`
-
-```json
-{
-	"type": "revoke",
-	"revoke": {
-		"kids": [ "01201…", "01215…" ],
-		"sig_ids": [ "038cd…", "f927c…" ]
-	}
-}
-```
-
-Remove the keys in `kids` from your account. Any previous links they’ve signed are still valid, but they can no longer sign new links and other users should no longer encrypt for them after seeing the `revoke` link. Also reverse the effects of the links in `sig_ids` — this can be used to remove, for instance, a `web_service_binding`.
-
-### `web_service_binding`
-
-```json
-{
-	"type": "web_service_binding",
-	"service": { "name": "github", "username": "keybase" }
-}
-```
-
-Claim, “I am `username` on the website `name`”. The client will look for a copy of the link and signature on the website, in an appropriate place. The server searches for the proof when the link is first posted, and caches its permalink (e.g. the tweet, on Twitter, the Gist, on GitHub) so that the client doesn’t have to rediscover it each time.
-
-The `service` section can also look like this, which claims that you control the given domain name (the client looks for the proof in DNS):
-
-```json
-{ "domain": "keybase.io", "protocol": "dns" }`
-```
-
-…or like this, which claims that you control the given website (the client looks for the proof at a known path):
-
-```json
-{ "hostname": "keybase.io", "protocol": "http:" }`
-```
-
-### `track` (to 'follow' someone)
-
-We call this "follow" around the interface now, but our old word is "track"...so that's what you'll see in your sig chain:
-
-```json
-{
-	"type": "track",
-	"track": {
-		"id": "673a7…",
-		"basics": {
-			"id_version": 30,
-			"last_id_change": 1440211236,
-			"username": "cecileb"
-		},
-		"key": {
-			"kid": "01018…",
-			"key_fingerprint": "6f989…"
-		},
-		"pgp_keys": [
-			{
-				"kid": "01018…",
-				"key_fingerprint": "6f989…"
-			}
-		],
-		"remote_proofs": [
-			{
-				"ctime": 1437414090,
-				"curr": "ee483…",
-				"etime": 1595094090,
-				"remote_key_proof": {
-					"check_data_json": {
-						"name": "twitter",
-						"username": "cecileboucheron"
-					},
-					"proof_type": 2,
-					"state": 1
-				},
-				"seqno": 1,
-				"sig_id": "02ad8…",
-				"sig_type": 2
-			}
-		]
-	}
-}
-```
-
-Make a [snapshot of another user’s identity](/docs/server_security/following) that your other devices trust. The `track` section contains these properties:
-
-- `id` – Their user ID
-- `basics` – Contains their username and identity generation. The server bumps the identity generation whenever the state of any of their proofs changes, as a hint to the client that it should recheck them all and possibly alert the user to the change.
-- `key` – Contains the KID and fingerprint (if applicable) of their eldest key.
-- `pgp_keys` – An array of the KID and fingerprint of every one of their PGP keys
-- `remote_proofs` – An array of objects which represent their proofs. Many properties are copied directly from the relevant links in the followee’s sigchain, but there are some non-obvious ones:
-  - `curr` – The hash of the link which contains the proof
-  - `sig_type` – An integer representation of the proof’s link type, currently always `2` (`web_service_binding`)
-  - `remote_key_proof`
-    - `check_data_json` – The `service` section of the identity proof link
-	- `proof_type` – An integer representation of the account being proven (Twitter, GitHub, etc.)
-	- `state` – An integer representation of whether the client could successfully verify the proof when making the tracking statement.
-
-A repeat `follow` link for the same user replaces the previous one (the user may have re-followed due to a change in proofs).
-
-### `untrack` (to "unfollow" someone)
-
-```json
-{
-	"type": "untrack",
-	"untrack": {
-		"basics": { "username": "maria" },
-		"id": "47968…"
-	}
-}
-```
-
-Stop following a user. Your other devices will resume checking their identity proofs and presenting them to you whenever you interact with them. `id` is the user’s UID.
-
-### `cryptocurrency`
-
-```json
-{
-	"type": "cryptocurrency",
-	"cryptocurrency": { "address": "1BYzr…", "type": "bitcoin" }
-}
-```
-
-Advertise a cryptocurrency address. Currently Bitcoin, Zcash and Zcash sapling addresses are supported.
-
-### `per_user_key`
-
-```json
-{
-	"per_user_key": {
-		"encryption_kid": "0121ef031c4b97e9e7febbfcce64952acba528a0f1b3f67b9c4264fa0a4ebefd401b0a",
-		"generation": 15,
-		"reverse_sig": "hKRib2R5hqhkZXRhY2hlZ...",
-		"signing_kid": "0120eb42e0f5db28909adae170de9f5fc24016dc716b4fcc5f6b3956ee1e4937e9880a"
-    },
-    "type": "per_user_key",
-}
-```
-Add or rotate a [Per-user](https://keybase.io/docs/teams/puk) signing and encryption key.
-`reverse_sig` is the signature over the sigchain link with new per-user signing key itself.
-The `generation` number starts at one and increments whenever the per-user keys are rotated, typically
-after a device revocation.
-
-##### footnote 1: PGP key servers and lying by omission
-
-When someone changes a PGP key — to update its expiration date or add a signature, for example — they’re expected to broadcast the change to a [key server](https://en.wikipedia.org/wiki/Key_server_\(cryptographic\)). That key server is responsible for forwarding the change to other key servers, and so on. Eventually, someone else can ask any other key server if there have been updates to the key, and receive them.
-
-Notably, nothing stops someone from making a change to their PGP key on one computer, a different change on another computer, and sending each change to a different key server. The key servers are expected to share updates and offer their own combined versions of the key for download.
-
-The design of PGP keys stops an attacker from creating fake updates, but a dishonest key server can still choose to ignore updates that revoke keys, revoke signatures, and add expiration dates, but publish updates that add new keys, add new signatures, and take away expiration dates.
-
-Keybase sigchains aim to avoid this.
-
-<div id="page-doc-following">
-
-  <h2>Understanding following (previously called "tracking")</h2>
-
-  <div class="row">
-    <div class="col-sm-8">
-      <p>
-        We get some big questions about Keybase following:
-      </p>
-      <ul class="questions">
-        <li class="question">When should I follow?</li>
-        <li class="question">What does it get me?</li>
-        <li class="question">Is it a "web of trust?"</li>
-      </ul>
-      <p>
-        Hopefully this page can clarify and answer your q's.
-      </p>
-    </div>
-    <div class="col-sm-4">
-        <img src="https://keybase.io/images/tracking/man_in_the_middle.jpg" class="img-responsive img-dreaming" width="1110" height="1113">
-    </div>
-  </div>
-
-
-  <h3>But first, the goal of Keybase</h3>
-
-  <p>
-    Keybase aims to provide public keys that can be trusted without any backchannel communication. If you need someone's public key,
-    you should be able to get it, and know it's the right one, without talking to them in person.
-  </p>
-
-  <p>
-    This is a daunting proposition: servers can be hacked or coerced into lying about a key. So when you run a Keybase
-    client - whether it's our <a href="/docs/cli">reference client</a> or someone else's - that client needs to be
-    highly skeptical about what the server says.
-  </p>
-
-
-  <p>
-    When the Keybase server replies <b>"this is twitter user @maria2929's public key"</b>, there has to be a protocol for verification.
-  </p>
-
-  <div class="row">
-    <div class="col-sm-3">
-      <img src="https://keybase.io/images/tracking/dreams_of_maria.jpg" class="img-responsive img-dreaming" width="1110" height="975">
-    </div>
-    <div class="col-sm-9">
-      <p>
-        Therefore, any cryptographic action on Maria follows 3 basic steps:
-      </p>
-      <ol>
-          <li>The server provides maria's info</li>
-          <li>Your client verifies her identity proofs on its own</li>
-          <li>You perform a human review of her usernames</li>
-      </ol>
-      <p>Let's go over these three steps.</p>
-    </div>
-  </div>
-
-  <h2>Step 1: the request</h2>
-  <p>
-    When you wish to encrypt a message for your friend Maria, you might execute a command like this:
-  </p>
-  <hcode>bash
-  keybase encrypt maria -m "grab a beer tonight?"
-  </hcode>
-  <p>
-    So, first, your client asks the Keybase server who this mysterious maria is.
-  </p>
-  <p>
-    Keybase, the <i>server</i>, provides a response that explains its view of "maria".
-    Technically speaking, it's a JSON object and there's a little more data in there, but the meat is something like this:
-  </p>
-  <hcode>json
-  {
-    "keybase_username": "maria",
-    "public_key":       "---- BEGIN PGP PUBLIC KEY...",
-    "twitter_username": "@maria2929",
-    "twitter_proof":    "https://twitter.com/maria2929/2423423423"
-  }</hcode>
-  <p>
-    Keybase has done its own server-side verification of maria, and it won't pass back identities that it hasn't checked.
-  </p>
-
-
-  <div class="row row-doc">
-    <div class="#{lcol}">
-      <h2>Step 2: the computer review</h2>
-      <p>
-        The keybase client does not trust the Keybase server. The server has just <i>claimed</i> that <b>keybase:maria</b> and <b>@maria2929</b> are the same person. But are they? In step
-        2, the client checks on its own.
-      </p>
-      <p>
-        Fortunately, the server included a link to maria's tweet. The Keybase client scrapes it.
-      </p>
-    </div>
-    <div class="#{rcol}">
-      <img src="/images/tracking/maria_twitter.jpg" class="img-responsive img-dreaming hidden-xs" width="1110" height="448">
-    </div>
-  </div>
-
-  <div class="row row-doc">
-    <div class="#{lcol}">
-      <img src="https://keybase.io/images/tracking/chalkboard.jpg" class="img-responsive img-dreaming" width="1110" height="971">
-    </div>
-    <div class="#{rcol} chalk-col">
-      <p>
-        To satisfy the client, the tweet must be special.  It must link to a signed statement which claims to be from maria on Keybase.
-      </p>
-      <p>
-        In simplest terms, the Keybase client guarantees that "maria" has access to three things: (1) the Keybase account, (2) the twitter account, and (3) the private key referenced
-        back in step 1.
-      </p>
-      <p>
-        All this happens really fast in the client with no inconvenience to you. And it happens for all of maria's identities: her twitter account, her personal website, her github account, etc.
-      </p>
-    </div>
-  </div>
-
-  <h2>Step 3: the human review</h2>
-
-  <p>
-    Recall, in Step 2 your client proved "maria" has a number of identities, and it cryptographically
-    verified all of them.  Now you can review the usernames it verified, to determine if it's the maria you wanted.
-  </p>
-<pre class="code code-highlighted">✔ <span class="hljs-string">maria2929</span> on <span class="hljs-attribute">twitter</span>: https://twitter.com/2131231232133333...
-✔ <span class="hljs-string">pasc4l_programmer</span> on <span class="hljs-attribute">github</span>: https://gist.github.com/pasc4...
-✔ admin of <span class="hljs-string">mariah20.com</span> via <span class="hljs-attribute">HTTPS</span>: https://mariah20/keybase.tx...
-
-Is this the maria you wanted? [y/N]</pre>
-  <p>
-    If it is, the Keybase client encrypts and you're done.
-  </p>
-
-  <h2>Finally: following</h2>
-
-  <p>
-    Steps 2 and 3 were easy enough, but it would stink to keep repeating them, every time you switched computers. Especially
-    the human review.
-    Ideally, once you're satisfied with maria, you can just do this from any computer:
-  </p>
-
-  <hcode>bash
-  # this should work with no interactivity
-  keybase encrypt maria -m "another beer?"
-  </hcode>
-
-  <p>
-    But we have a problem: recall, you don't trust the Keybase server.
-    So how can you get maria's info when you switch machines, without doing that username review thing again? The answer is following.
-  </p>
-
-  <p>
-    <b>"Following" (which we used to call "tracking") is taking a signed snapshot.</b>
-  </p>
-
-  <p>
-    Using your own private key, you can sign a snapshot of her identity. Specifically, you're signing the data from step 1, with some extra info about your own review.
-  </p>
-
-  <p>
-    When you switch computers, the Keybase server can provide you with your own definition of maria, which is signed by you, so it can't be tampered with.
-  </p>
-
-  <p>
-    Your client can continue to perform the computer review as often as it wants. If the tweet disappears, your client will want to know.
-  </p>
-
-  <p></p>
-
-
-  <div class="row row-doc">
-    <div class="col-sm-8">
-      <h3>The advantages of public following</h3>
-      <p>
-        When Maria is followed by 100 people, and they've all signed identical snapshots to yours, this is helpful.
-      </p>
-      <p>
-        If some of these statements are months old, but your own is only 1 day old, you can get some peace of mind that her identity was not compromised today, the day you decided to follow her.
-      </p>
-      <p>
-        This is not a web of trust. You can prove maria's identity, even if there are no other followers. But more followers means more confidence in the age of her account.
-      </p>
-    </div>
-    <div class="col-sm-4">
-      <img src="https://keybase.io/images/tracking/social.jpg" class="img-responsive img-dreaming" width="1110" height="1046">
-    </div>
-  </div>
-
-  <h3>Why follow now?</h3>
-
-  <p>
-    As hinted above, an older follower statement is superior to a new one. It's hard for a hacker to maintain a <i>public</i> compromise of all of maria's accounts over a span of many months. Maria or
-    maria's friends would surely notice.
-  </p>
-  <p>
-    By comparison, if you started following Maria right now, today could've been the day all her accounts were broken into, simultaneously.
-  </p>
-
-  <p>
-    Therefore, an older follower statement is a better one.
-  </p>
-
-  <p>
-    <b>A gentle conclusion:</b> if you find someone interesting on Keybase - say you know them, or you like to read things they write, or they're a software developer who might sign code - following them now makes sense. This will begin a long and auditable history of following their identity.
-  </p>
-
-  <hr>
-  <p>
-    <i>We hope this doc helps. We'll revise it as questions/suggestions arrive in our <a href="https://github.com/keybase/keybase-issues/issues/100">github issue #100 (I don't understand tracking)</a>.</i>
-  </p>
-
-  <div class="appendix">
-    <h5>footnote 1: the PGP web of trust</h5>
-    <p>
-      In the web of trust model, you know you have Maria's key because you trust John, and John signed a statement
-      saying that another key belongs to his friend "Carla", and then Carla in turn signed a statement saying that Maria is someone whose driver's license
-      and key fingerprint she reviewed at a party. Your trust of Maria's key is a function of these such connections.
-    </p>
-    <p style="text-align:center;">
-      <b>you</b> &rarr; john &rarr; carla &rarr; <b>maria</b><br>
-      <b>you</b> &rarr; herkimer &rarr; carla &rarr; <b>maria</b>
-    </p>
-    <p>
-      The PGP web of trust has existed for over 20 years. However it is very difficult to use, it requires in-person verifications,
-      and it's hard to know what trust level to assign transitively. (Herkimer reports that Carla was drunk; John can't remember, but he was drunk too, and who's Carla again???)
-    </p>
-  </div>
-
-</div>
+某些属性是每种类型链接通用的。概述如下：
+
+- `body` – 特定于链接类型的信息，加上一些通用属性：
+  - `type` – 链接的类型
+  - `device` – 关于创建链接的设备的可选详细信息
+  - `key` – 关于将签署链接的密钥的信息。包含这些属性：
+    - `host` – 目前始终是 "keybase.io"
+    - `eldest_kid` – 此子链中元老密钥 (eldest key) 的 [KID](/docs/api/1.0/kid)。如果缺失，则假定元老密钥是签名密钥（有助于识别账户重置）
+    - `kid` – 密钥的 KID
+    - `key_id`: 对于 PGP 密钥，其指纹的最后八个字节（旧版）
+    - `fingerprint`: 对于 PGP 密钥，其完整指纹
+    - `uid`: 签名链所有者的用户 ID

@@ -1,102 +1,74 @@
-# Teams High-Level Design
 
-This document provides a high-level description of Keybase teams, specifying applications,
-team roles and team structure.
+# 团队高层设计
 
-## Teams and Subteams
+本文档提供了 Keybase 团队的高层描述，指定了应用程序、团队角色和团队结构。
 
-A root team is a top-level identifier in the Keybase namespace, which obeys the
-same parsing rules as Keybase usernames.  So valid root teams include `nike`, `google`,
-or `friends_of_max`. These names are visible to the whole world, so if you create
-the team `lets_fire_bob`, the whole world will see it, they just won't be able to get
-any details about who the members are unless they are themselves team members.
+## 团队和子团队
 
-Subteams are nested below root teams.  So `nike.hr`, `nike.hr.interns`, and
-`nike.hr.interns.volleyball` are all valid subteams. The very existence of subteams
-are hidden from all who aren't members of the subteam. Thus, if you wanted to create
-the team `lets_fire_bob.just_kidding_fire_bruce`, then Bruce would have no way of
-knowing his number is up.
+根团队是 Keybase 命名空间中的顶级标识符，它遵循与 Keybase 用户名相同的解析规则。因此，有效的根团队包括 `nike`、`google` 或 `friends_of_max`。这些名称对全世界都是可见的，所以如果你创建了团队 `lets_fire_bob`（让我们解雇鲍勃），全世界都会看到它，只是除非他们自己是团队成员，否则他们无法获得有关成员是谁的任何详细信息。
 
-As we will see, every team and subteam has its own signature chain that's inserted
-directly into the Keybase global tree. But subteams exist in this tree under
-pseudonyms, pointed to by their parent teams. So they can remain private, but the
-team members can be certain that the Keybase servers aren't equivocating about
-the team definitions.
+子团队嵌套在根团队之下。所以 `nike.hr`、`nike.hr.interns` 和 `nike.hr.interns.volleyball` 都是有效的子团队。对于非子团队成员的所有人来说，子团队的存在本身就是隐藏的。因此，如果你想创建团队 `lets_fire_bob.just_kidding_fire_bruce`（让我们解雇鲍勃.开玩笑的解雇布鲁斯），那么 Bruce 将无法知道他的末日到了。
 
-## Applications
+正如我们将看到的，每个团队和子团队都有自己的签名链，该签名链直接插入 Keybase 全局树中。但是子团队在化名下存在于此树中，由其父团队指向。因此它们可以保持私有，但团队成员可以确定 Keybase 服务器没有对团队定义含糊其辞。
 
-[Chat](/blog/keybase-chat) and [KBFS](/docs/kbfs) are the two applications
-that we initially support with Keybase teams. In both cases, teams are
-mutable and uniquely identified by name, without fear of a malicious server
-remapping teams.
+## 应用程序
 
-For chat, every team like `nike.hr.interns.volleyball`, will have private chats,
-with multiple channels, and every member of the team, regardless of their role,
-will have full access to the chats.
+[聊天](/blog/keybase-chat) 和 [KBFS](/docs/crypto/kbfs) 是我们最初在 Keybase 团队中支持的两个应用程序。在这两种情况下，团队都是可变的，并由名称唯一标识，而不必担心恶意服务器重新映射团队。
 
-For KBFS, team shares will be available under paths such as `/keybse/team/nike`
-and `/keybase/team/nike.hr.interns.volleyball`.  Those with write permissions (or more)
-will be able to read and write the team, while those with only read permissions will lack
-write privileges.
+对于聊天，每个像 `nike.hr.interns.volleyball` 这样的团队都将拥有私人聊天，包含多个频道，并且团队的每个成员（无论其角色如何）都将拥有对聊天的完全访问权限。
 
-Right now, Keybase does not support shares across teams, like `/keybase/team/nike,adidas`,
-since so doing would reveal `nike`'s membership to `adidas`, and vice versa.
+对于 KBFS，团队共享将在诸如 `/keybse/team/nike` 和 `/keybase/team/nike.hr.interns.volleyball` 之类的路径下可用。那些拥有写入权限（或更高权限）的人将能够读取和写入团队，而那些只有读取权限的人将无法拥有写入权限。
 
-## Team Roles
+目前，Keybase 不支持跨团队共享，如 `/keybase/team/nike,adidas`，因为这样做会向 `adidas` 透露 `nike` 的成员身份，反之亦然。
 
-* A **team** is a group of keybase users, consisting of: **admins**, **owners**, **implicit admins**,
-  **readers** and **writers**.
-* A **reader** can read the KBFS folders for a team, and he can both read and write a team's chat.
-* A **writer** has all of the permissions of a reader, but can also write to the team's KBFS resources.
-* An **admin** can add or remove admins, readers, and writers to the team, and establish a subteam for the team. An admin can additionally deactivate a team as long as it's not a root team.
-* An **implicit admin** is one who is an admin of a parent subteam, but not this subteam
-* All explicit admins have read/write access to their teams, and get full access to server-gated
-keys, which in turn allow access to KBFS and chat data.
-* An implicit admin of a subteam who hasn't been explicitly added to the subteam does not get access to
-server-gated keys for that team, and therefore does not get access to KBFS and chat data.
-* Thus, a subteam can avoid dangerous situations in which all of its members have lost their access to data.
-* But Keybase can still enforce, for instance, that a sysadmin for Campbell Soup Corp. can't download the C*O team documents.
-* An **owner** is an admin for root team who additionally has the power to delete the team.
+## 团队角色
 
-The cryptographic mechanism here is that for any shared secret team key the
-team needs (for Chat or KBFS or Saltpack), the ultimate key used is an XOR of:
-(1) the shared key that is encrypted for all user's Per-User Keys; and (2) a
-server-stored key-half that is only distributed if the ACLs permit it. This
-setup gives the server the ability to break the user's attempt to decrypt
-their KBFS or Chat, but it has that ability anyways by just corrupting all of
-the ciphertexts.
+*   **团队**是一组 keybase 用户，包括：**所有者 (owners)**、**管理员 (admins)**、**隐式管理员 (implicit admins)**、**读者 (readers)** 和 **作者 (writers)**。
+*   **读者**可以读取团队的 KBFS 文件夹，并且可以读取和写入团队的聊天。
+*   **作者**拥有读者的所有权限，但也可以写入团队的 KBFS 资源。
+*   **管理员**可以向团队添加或删除管理员、读者和作者，并为团队建立子团队。管理员还可以停用团队，只要它不是根团队。
+*   **隐式管理员**是父子团队的管理员，但不是该子团队的管理员。
+*   所有显式管理员都拥有对其团队的读/写访问权限，并获得对服务器门控密钥的完全访问权限，这反过来允许访问 KBFS 和聊天数据。
+*   尚未显式添加到子团队的子团队隐式管理员无法获得对该团队的服务器门控密钥的访问权限，因此无法访问 KBFS 和聊天数据。
+*   因此，子团队可以避免所有成员都失去数据访问权限的危险情况。
+*   但是 Keybase 仍然可以强制执行，例如，Campbell Soup Corp. 的系统管理员无法下载 C*O 团队文档。
+*   **所有者**是根团队的管理员，此外还有权删除团队。
 
-## Access Matrix
+这里的加密机制是，对于团队需要的任何共享秘密团队密钥（用于聊天或 KBFS 或 Saltpack），最终使用的密钥是以下各项的异或：(1) 为所有用户的每用户密钥加密的共享密钥；(2) 仅在 ACL 允许的情况下才分发的服务器存储的密钥半部分。这种设置使服务器能够破坏用户解密其 KBFS 或聊天的尝试，但它无论如何都有这种能力，只需破坏所有密文即可。
 
-The above properties are summarized in the following access matrix:
+用户所在的团队将需要轮换其共享的对称密钥，但这可以懒惰地发生（在下一次写入之前）并且不在关键路径上（参见 [级联惰性密钥轮换 (CLKR)](/docs/teams/clkr)）。
+
+## 访问矩阵
+
+上述属性总结在以下访问矩阵中：
 
 <table class="access-matrix" id="main-table">
 <tr>
-	<th>role</th>
-	<th>owner</th>
-	<th>admin</th>
-	<th>implicit admin</th>
-	<th>writer</th>
-	<th>reader</th>
+	<th>角色</th>
+	<th>所有者</th>
+	<th>管理员</th>
+	<th>隐式管理员</th>
+	<th>作者</th>
+	<th>读者</th>
 </tr>
 <tr>
-	<td>add/remove owner</td>
+	<td>添加/删除所有者</td>
 	<td>1</td>
 	<td>0</td>
 	<td>0</td>
-	<td>0</td>
-	<td>0</td>
-</tr>
-<tr>
-	<td>add/remove readers,writers,admins</td>
-	<td>1</td>
-	<td>1</td>
-	<td>1</td>
 	<td>0</td>
 	<td>0</td>
 </tr>
 <tr>
-	<td>write TLF metadata</td>
+	<td>添加/删除读者、作者、管理员</td>
+	<td>1</td>
+	<td>1</td>
+	<td>1</td>
+	<td>0</td>
+	<td>0</td>
+</tr>
+<tr>
+	<td>写入 TLF 元数据</td>
 	<td>1</td>
 	<td>1</td>
 	<td>1</td>
@@ -104,15 +76,7 @@ The above properties are summarized in the following access matrix:
 	<td>0</td>
 </tr>
 <tr>
-	<td>read TLF metadata</td>
-	<td>1</td>
-	<td>1</td>
-	<td>1</td>
-	<td>1</td>
-	<td>1</td>
-</tr>
-<tr>
-	<td>ask TLF metadata to be rekeyed</td>
+	<td>读取 TLF 元数据</td>
 	<td>1</td>
 	<td>1</td>
 	<td>1</td>
@@ -120,52 +84,60 @@ The above properties are summarized in the following access matrix:
 	<td>1</td>
 </tr>
 <tr>
-	<td>read KBFS files</td>
+	<td>请求重新生成 TLF 元数据密钥</td>
+	<td>1</td>
+	<td>1</td>
+	<td>1</td>
+	<td>1</td>
+	<td>1</td>
+</tr>
+<tr>
+	<td>读取 KBFS 文件</td>
 	<td>1</td>
 	<td>1</td>
 	<td>0.5</td>
 	<td>1</td>
 	<td>1</td>
-	<td>implicit admin blocked by access control</td>
+	<td>隐式管理员被访问控制阻止</td>
 </tr>
 <tr>
-	<td>write KBFS files</td>
+	<td>写入 KBFS 文件</td>
 	<td>1</td>
 	<td>1</td>
 	<td>0.5</td>
 	<td>1</td>
 	<td>0</td>
-	<td>implicit admin blocked by access control</td>
+	<td>隐式管理员被访问控制阻止</td>
 </tr>
 <tr>
-	<td>read chat</td>
+	<td>读取聊天</td>
 	<td>1</td>
 	<td>1</td>
 	<td>0.5</td>
 	<td>1</td>
 	<td>1</td>
-	<td>implicit admin blocked by access control</td>
+	<td>隐式管理员被访问控制阻止</td>
 </tr>
 <tr>
-	<td>write chat</td>
+	<td>写入聊天</td>
 	<td>1</td>
 	<td>1</td>
 	<td>0.5</td>
 	<td>1</td>
 	<td>1</td>
-	<td>implicit admin blocked by access control</td>
+	<td>隐式管理员被访问控制阻止</td>
 </tr>
 <tr>
-	<td>make chat channels</td>
+	<td>创建聊天频道</td>
 	<td>1</td>
 	<td>1</td>
 	<td>1</td>
 	<td>1</td>
 	<td>0.5</td>
-	<td>readers blocked by access control</td>
+	<td>读者被访问控制阻止</td>
 </tr>
 <tr>
-	<td>create subteam of current team</td>
+	<td>创建当前团队的子团队</td>
 	<td>1</td>
 	<td>1</td>
 	<td>1</td>
@@ -173,31 +145,31 @@ The above properties are summarized in the following access matrix:
 	<td>0</td>
 </tr>
 <tr>
-	<td>can delete the team if is root team</td>
+	<td>如果是根团队，可以删除团队</td>
 	<td>1</td>
 	<td>0</td>
 	<td>N/A</td>
 	<td>0</td>
 	<td>0</td>
-	<td>root teams (e.g., nike) don't have implicit admins</td>
+	<td>根团队（例如 nike）没有隐式管理员</td>
 </tr>
 <tr>
-	<td>can delete the team if is a subteam</td>
+	<td>如果是子团队，可以删除团队</td>
 	<td>N/A</td>
 	<td>1</td>
 	<td>1</td>
 	<td>0</td>
 	<td>0</td>
-	<td>a subteam (e.g., nike.usa) can't have an owner</td>
+	<td>子团队（例如 nike.usa）不能有所有者</td>
 </tr>
 </table>
 
-### Legend
+### 图例
 
 <table class="access-matrix" id="legend">
-<tr><td class="explicit">Access Permitted (✓)</td></tr>
-<tr><td class="implicit">Access withheld via server-trusted Access Control (👮)</td></tr>
-<tr><td class="nada">Access cryptographically denied (✗)</td></tr>
+<tr><td class="explicit">允许访问 (✓)</td></tr>
+<tr><td class="implicit">通过服务器信任的访问控制拒绝访问 (👮)</td></tr>
+<tr><td class="nada">通过密码学拒绝访问 (✗)</td></tr>
 </table>
 
 <script>
@@ -208,4 +180,3 @@ $(function() {
   $(".access-matrix#main-table tr > td:first-child").addClass("right-label");
 });
 </script>
-

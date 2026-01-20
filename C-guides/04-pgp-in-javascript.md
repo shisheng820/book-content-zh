@@ -1,32 +1,32 @@
 {% set section_title = "kbpgp.js" %}
 
-# PGP in JavaScript
+# JavaScript 中的 PGP
 
-*kbpgp* is Keybase's implementation of PGP in JavaScript. It's easy to use, designed for concurrency, and stable in both Node.js and the browser. It's actively maintained and yours forever under a BSD license. This page begins a brief tutorial.
+*kbpgp* 是 Keybase 的 JavaScript PGP 实现。它易于使用，专为并发设计，并且在 Node.js 和浏览器中都很稳定。它目前正在积极维护中，并基于 BSD 许可证永久属于你。本页开始一个简短的教程。
 
 {# TODO: JavaScript mini app thing from https://keybase.io/kbpgp #}
 
-### Getting it 
+### 获取它
 
-Zip file (for the browser) 
+Zip 文件（用于浏览器）
 
 - [kbpgp-2.1.0-release.zip](https://keybase.io/kbpgp_public/releases/kbpgp-2.1.0-release.zip)
 
-For Node.js with NPM
+用于 Node.js（通过 NPM）
 
 ```
 npm install kbpgp
 ```
 
-Source from [GitHub](https://github.com/keybase/kbpgp)
+源码来自 [GitHub](https://github.com/keybase/kbpgp)
 
 ```
 git clone https://github.com/keybase/kbpgp.git
 ```
 
-### Getting started
+### 入门
 
-Browser
+浏览器
 
 ```
 <script src="kbpgp-2.1.0.js"></script>
@@ -39,13 +39,13 @@ var kbpgp = require('kbpgp');
 ```
 
 
-## Key Manager
+## Key Manager (密钥管理器)
 
-*Before you can perform any crypto, you need a KeyManager.*
+*在执行任何加密操作之前，你需要一个 KeyManager。*
 
-A KeyManager contains a public key and possibly the secret key and subkeys for a given person. Once you have a KeyManager instance, you can perform actions with the keys inside. For a sign-and-encrypt action, you'll need two KeyManagers: one containing the private key (for the signer), and one containing the public key (for the recipient).
+一个 KeyManager 包含一个公钥，可能还包含特定人员的私钥和子钥。一旦你有了一个 KeyManager 实例，你就可以使用其中的密钥执行操作。对于签名和加密操作，你需要两个 KeyManager：一个包含私钥（用于签名者），另一个包含公钥（用于接收者）。
 
-For example, assuming we have two KeyManager instances, `alice` and `chuck`, we might perform an encryption.
+例如，假设我们要执行加密，且有两个 KeyManager 实例：`alice` 和 `chuck`。
 
 ```javascript
 var params = {
@@ -59,18 +59,18 @@ kbpgp.box(params, function(err, result_string, result_buffer) {
 });
 ```
 
-kbpgp's `box` function performs all the work. Note that it calls back with both a string and a Buffer representation. The Buffer is either a [Node.js Buffer](http://nodejs.org/api/buffer.html) or, a browser-friendly object with similar features. 
+kbpgp 的 `box` 函数执行所有工作。请注意，它会回调返回字符串和 Buffer 表示形式。Buffer 要么是 [Node.js Buffer](http://nodejs.org/api/buffer.html)，要么是具有类似功能的浏览器友好对象。
 
-Pretty simple, right? So, how do you get a KeyManager? There are 2 ways:
+很简单，对吧？那么，如何获得 KeyManager 呢？有 2 种方法：
 
-- [Loading a key or key pair](#loading-a-key)
-- [Generating a new key pair](#generating-a-pair)
+- [加载密钥或密钥对](#loading-a-key)
+- [生成新的密钥对](#generating-a-pair)
 
-### Loading a key
+### <a id="loading-a-key"></a>加载密钥
 
-The following examples walk through the conversion of a PGP key string (in classic armored format) to a KeyManager.
+以下示例演示了将 PGP 密钥字符串（经典 ASCII armored 格式）转换为 KeyManager 的过程。
 
-#### Example 1 - a KeyManager from a public key
+#### 示例 1 - 从公钥创建 KeyManager
 
 ```javascript
 var alice_pgp_key = "-----BEGIN PGP PUBLIC ... etc.";
@@ -84,9 +84,9 @@ kbpgp.KeyManager.import_from_armored_pgp({
 });
 ```
 
-#### Example 2 - a KeyManager from a private key
+#### 示例 2 - 从私钥创建 KeyManager
 
-Now let's assume instead that we have alice's private key. Recall this includes her public key, so it's all we need. 
+现在假设我们有 alice 的私钥。回想一下，这包含了她的公钥，所以这就是我们需要的一切。
 
 ```javascript
 var alice_pgp_key    = "-----BEGIN PGP PRIVATE ... etc.";
@@ -111,9 +111,9 @@ kbpgp.KeyManager.import_from_armored_pgp({
 });
 ```
 
-#### Example 3 - a KeyManager from a public key, then adding private key
+#### 示例 3 - 从公钥创建 KeyManager，然后添加私钥
 
-The above example ([#2](example-2-a-keymanager-from-a-private-key)) can be performed in two steps. You can create a KeyManager instance with alice's public key, and then add her private key to it afterwards. This will generate an error if her private key does not match her public key.
+上面的示例 ([#2](example-2-a-keymanager-from-a-private-key)) 可以分两步执行。你可以使用 alice 的公钥创建一个 KeyManager 实例，然后将她的私钥添加到其中。如果她的私钥与公钥不匹配，这将产生错误。
 
 ```javascript
 var alice_public_key = "-----BEGIN PGP PUBLIC ... etc.";
@@ -146,15 +146,15 @@ kbpgp.KeyManager.import_from_armored_pgp({
 ```
 
 
-### Generating a pair
+### <a id="generating-a-pair"></a>生成密钥对
 
-You can create a KeyManager and generate new keys in one swoop.
+你可以创建一个 KeyManager 并一次性生成新密钥。
 
-At the end of the below process, we'll have a KeyManager instance, alice, which can be used for any crypto action. 
+在以下过程结束时，我们将拥有一个 KeyManager 实例 `alice`，它可用于任何加密操作。
 
-#### Example 1 - RSA - with custom settings
+#### 示例 1 - RSA - 使用自定义设置
 
-To illustrate a common use case, we'll generate subkeys for both signing and encryption. And, by the way, when kbpgp performs actions with KeyManagers, it automatically picks the appropriate subkey(s). 
+为了说明一个常见用例，我们将为签名和加密生成子钥。顺便说一句，当 kbpgp 使用 KeyManager 执行操作时，它会自动选择合适的子钥。
 
 ```javascript
 var F = kbpgp["const"].openpgp;
@@ -198,11 +198,11 @@ kbpgp.KeyManager.generate(opts, function(err, alice) {
 });
 ```
 
-So easy!
+太简单了！
 
-#### Example 2 - RSA - with sensible defaults
+#### 示例 2 - RSA - 使用合理的默认值
 
-The above parameters are reasonable. If you're happy with them, you can simply call the `KeyManager::generate_rsa` shortcut:
+上面的参数是合理的。如果你对它们满意，可以直接调用 `KeyManager::generate_rsa` 快捷方式：
 
 ```javascript
 kbpgp.KeyManager.generate_rsa({ userid : "Bo Jackson <user@example.com>" }, function(err, charlie) {
@@ -212,9 +212,9 @@ kbpgp.KeyManager.generate_rsa({ userid : "Bo Jackson <user@example.com>" }, func
 });   
 ```
 
-### Example 3 - ECC Keypairs - custom
+### 示例 3 - ECC 密钥对 - 自定义
 
-Kbpgp has support for Elliptic Curve PGP (see [RFC-6637](http://tools.ietf.org/html/rfc6637) for more details). You can provide the `ecc : true` option to the above generate call to make an ECC key pair rather than the standard PGP keypair. Keep in mind, though, that most GPG clients in the wild do not currently support ECC.
+Kbpgp 支持椭圆曲线 PGP (有关详细信息，请参阅 [RFC-6637](http://tools.ietf.org/html/rfc6637))。你可以向上述生成调用提供 `ecc : true` 选项，以生成 ECC 密钥对而不是标准 PGP 密钥对。但请记住，目前大多数 GPG 客户端并不支持 ECC。
 
 ```javascript
 var F = kbpgp["const"].openpgp;
@@ -245,9 +245,9 @@ kbpgp.KeyManager.generate(opts, function(err, alice) {
 });
 ```
 
-#### Example 4 - ECC Keypairs - with sensible defaults
+#### 示例 4 - ECC 密钥对 - 使用合理的默认值
 
-To use these default parameters, we also provide the shortcut:
+为了使用这些默认参数，我们同样提供了快捷方式：
 
 ```javascript
 kbpgp.KeyManager.generate_ecc({ userid : "<user@example.com>" }, function(err, charlie) {
@@ -257,9 +257,9 @@ kbpgp.KeyManager.generate_ecc({ userid : "<user@example.com>" }, function(err, c
 });
 ```
 
-#### Monitoring
+#### 监控
 
-All kbpgp functions support passing an "ASync Package" (ASP) object, for monitoring. Your ASP can have a progress_hook function, which will get called with info about its progress. This is especially important with RSA key generation, as it can take a little while. If this is in any kind of client app, you'll want to (a) show some indicator that you're doing work, and (b) have a cancel button. 
+所有 kbpgp 函数都支持传递一个“异步包” (ASync Package, ASP) 对象，用于监控。你的 ASP 可以有一个 progress_hook 函数，它将随进度信息被调用。这对于 RSA 密钥生成特别重要，因为它可能需要一点时间。如果这是在任何类型的客户端应用程序中，你会希望 (a) 显示一些指示器表明你正在工作，以及 (b) 有一个取消按钮。
 
 ```javascript
 var my_asp = new kbpgp.ASP({
@@ -280,9 +280,9 @@ var opts = {
 kbpgp.KeyManager.generate(opts, some_callback_function);
 ```
 
-#### Canceling
+#### 取消
 
-If you pass an ASP object, as described above, you can use it to cancel your process.
+如果你如上所述传递了一个 ASP 对象，你可以使用它来取消你的进程。
 
 ```javaascript
 kbpgp.KeyManager.generate(opts, some_callback_function);
@@ -293,39 +293,39 @@ setTimeout((function() {
 }), 1000);
 ```
 
-In the above example, if the generation has not completed within one second, work will halt and `some_callback_function` will immediately get called with `err, null`.
+在上面的例子中，如果生成未在一秒内完成，工作将停止，并且 `some_callback_function` 将立即被调用，参数为 `err, null`。
 
 
 ### API
 
-Given the `KeyManager` class (`kbpgp.KeyManager`), and an instance, `alice`, you can access the following functions.
+给定 `KeyManager` 类 (`kbpgp.KeyManager`) 和一个实例 `alice`，你可以访问以下函数。
 
-#### First, options notes
+#### 首先，选项说明
 
-1. When `opts` is expected as an argument, it is a dictionary. You may pass the empty dictionary, `{}`
-1. In any kbpgp function, you may set `opts.asp` as an ASP object to monitor progress and optionally cancel it. See the examples for more info.
+1. 当 `opts` 作为参数时，它是一个字典。你可以传递空字典 `{}`
+2. 在任何 kbpgp 函数中，你可以设置 `opts.asp` 为一个 ASP 对象来监控进度并可选地取消它。有关更多信息，请参阅示例。
 
 {# TODO: table #}
 
-- `KeyManager.generate(opts, cb)` `KeyManager.generate_rsa(opts, cb)` `KeyManager.generate_ecc(opts, cb)`: calls back with `err, key_manager` ([see examples](#generating-a-pair))
-- `KeyManager.import_from_armored_pgp(opts, cb)`: calls back with `err, key_manager`. If you're importing a private key, you'll want to check if it has a passphrase and unlock it. ([see examples](#loading-a-key))
-- `alice.has_pgp_private()`: returns true if alice's `key_manager` contains a private key
-- `alice.is_pgp_locked()`: returns true if alice's private key is passphrase-protected and locked
-- `alice.unlock_pgp(opts, cb)`: unlocks alice's private key if it's locked; calls back with any error ([see examples](#loading-a-key)); `opts.passphrase`: a string with alice's private key passphrase
-- `alice.check_pgp_public_eq(chuck)`: returns true if alice and another KeyManager instance (chuck) have identical primary and sub keys
-- `alice.merge_pgp_private(opts, cb)`: if alice has been loaded without a private key, this function lets you merge her private key in, after the fact. Once merged, if it is password protected, you'll want to (a) recognize this with `alice.is_pgp_locked()` and then (b) unlock it with `alice.unlock_pgp_key()`; `
-opts.armored`: a string with her private key, armored
-- `alice.export_pgp_public(opts, cb)`: calls back with `err, str`. This generates the standard PGP armored format of alice's public key. ([see example](#generating-a-pair))
-- `alice.export_pgp_private(opts, cb)`: calls back with `err, str`. This generates the standard PGP armored format of alice's key, protected with a passphrase. ([see example](#generating-a-pair)); `opts.passphrase`: a passphrase to protect they key
+- `KeyManager.generate(opts, cb)` `KeyManager.generate_rsa(opts, cb)` `KeyManager.generate_ecc(opts, cb)`: 回调返回 `err, key_manager` ([见示例](#generating-a-pair))
+- `KeyManager.import_from_armored_pgp(opts, cb)`: 回调返回 `err, key_manager`。如果你正在导入私钥，你会想要检查它是否有密码并解锁它。([见示例](#loading-a-key))
+- `alice.has_pgp_private()`: 如果 alice 的 `key_manager` 包含私钥，则返回 true
+- `alice.is_pgp_locked()`: 如果 alice 的私钥受密码保护且已锁定，则返回 true
+- `alice.unlock_pgp(opts, cb)`: 如果 alice 的私钥已锁定，则解锁它；回调返回任何错误 ([见示例](#loading-a-key))；`opts.passphrase`: 包含 alice 私钥密码的字符串
+- `alice.check_pgp_public_eq(chuck)`: 如果 alice 和另一个 KeyManager 实例 (chuck) 具有相同的主键和子键，则返回 true
+- `alice.merge_pgp_private(opts, cb)`: 如果 alice 加载时没有私钥，此函数允许你事后合并她的私钥。一旦合并，如果它是密码保护的，你会想要 (a) 用 `alice.is_pgp_locked()` 识别它，然后 (b) 用 `alice.unlock_pgp_key()` 解锁它；`
+opts.armored`: 包含她私钥的字符串（armored 格式）
+- `alice.export_pgp_public(opts, cb)`: 回调返回 `err, str`。这将生成 alice 公钥的标准 PGP armored 格式。([见示例](#generating-a-pair))
+- `alice.export_pgp_private(opts, cb)`: 回调返回 `err, str`。这将生成 alice 密钥的标准 PGP armored 格式，受密码保护。([见示例](#generating-a-pair))；`opts.passphrase`: 保护密钥的密码
 
-### Encrypting and/or signing
+### 加密和/或签名
 
- The steps to encrypt, sign, or both are all the same in kbpgp. The only difference is what [KeyManagers](#key-manager) you'll need. To sign something, you'll need a KeyManager containing a private key. And to encrypt something, you'll need one containing the public key of the recipient. If your KeyManagers contain subkeys, kbpgp will automatically use the appropriate ones. 
- 
-#### Example 1 - encrypt only
+在 kbpgp 中，加密、签名或两者兼有的步骤都是相同的。唯一的区别是你需要什么 [KeyManager](#key-manager)。要签名某些东西，你需要一个包含私钥的 KeyManager。要加密某些东西，你需要一个包含接收者公钥的 KeyManager。如果你的 KeyManager 包含子钥，kbpgp 将自动使用合适的子钥。
 
-Assumption: we have a KeyManager instance, `chuck`, for the recipient.
- 
+#### 示例 1 - 仅加密
+
+假设：我们有一个 KeyManager 实例 `chuck`，用于接收者。
+
 ```javascript
 var params = {
   msg:         "Chuck chucky, bo-bucky!",
@@ -337,9 +337,9 @@ kbpgp.box(params, function(err, result_string, result_buffer) {
 });
 ```  
 
-#### Example 2 - sign only
+#### 示例 2 - 仅签名
 
-Along the same lines, it's easy to sign a cleartext message. Just provide a `sign_with` KeyManager but leave off the `encrypt_for`. 
+同样，签署明文消息很容易。只需提供 `sign_with` KeyManager，但不提供 `encrypt_for`。
 
 ```javascript
 var params = {
@@ -352,9 +352,9 @@ kbpgp.box (params, function(err, result_string, result_buffer) {
 });
 ```
 
-#### Example 3 - sign+encrypt
+#### 示例 3 - 签名 + 加密
 
-Assumption: we also have a KeyManager instance, `alice`, for the sender.
+假设：我们也有一个 KeyManager 实例 `alice`，用于发送者。
 
 ```javascript
 var params = {
@@ -368,9 +368,9 @@ kbpgp.box (params, function(err, result_string, result_buffer) {
 });
 ```
 
-#### Example 4 - using input and output Buffers
+#### 示例 4 - 使用输入和输出 Buffer
 
-kbpgp can take *Node.js Buffers* as input, instead of strings. The following reads a .png file and writes a new encrypted copy of it. For more info, check out the kbpgp [buffers](#files-and-buffers) documentation.
+kbpgp 可以接受 *Node.js Buffer* 作为输入，而不是字符串。以下代码读取 .png 文件并写入一个新的加密副本。有关更多信息，请查看 kbpgp [buffers](#files-and-buffers) 文档。
 
 ```javaascript
 var kbpgp  = require('kbpgp');
@@ -387,11 +387,11 @@ kbpgp.box (params, function(err, result_string, result_buffer) {
 });
 ```
 
-Buffers are available in the browser, too, for doing HTML5 things with files. `kbpgp.Buffer` provides a browser-implementation that matches Node.js's.
+浏览器中也可以使用 Buffer，以便对文件进行 HTML5 操作。`kbpgp.Buffer` 提供了与 Node.js 匹配的浏览器实现。
 
-#### Example 5 - progress hooks and canceling
+#### 示例 5 - 进度钩子和取消
 
-Most kbpgp function can take a `kbpgp.ASP` object, which is used to monitor progress and check for cancelation requests.
+大多数 kbpgp 函数都可以接受一个 `kbpgp.ASP` 对象，用于监控进度并检查取消请求。
 
 ```javascript
 var asp = new kbpgp.ASP({
@@ -414,13 +414,13 @@ kbpgp.box(params, function(err, result_string, result_buffer) {
 asp.canceler().cancel();
 ```
 
-### Decrypting and verifying
+### 解密和验证
 
-Decrypting and verifying are slightly more complicated than encrypting or signing, because often, you don't know ahead of time which KeyManagers are required. For PGP messages that are signed and encrypted, you only know which verification key is needed after a successful decryption. Also, messages in PGP can be encrypted for multiple receivers, and any given receiver might only have access to one of many possible decryption keys.
+解密和验证比加密或签名稍微复杂一些，因为通常你不知道通过什么 KeyManager。对于签名和加密的 PGP 消息，你只有在成功解密后才知道需要哪个验证密钥。此外，PGP 中的消息可以为多个接收者加密，任何给定的接收者可能只能访问许多可能的解密密钥中的一个。
 
-In kbpgp, the `unbox` function handles the nitty-gritty of decryption and verification. You need to pass it a PGP message (encrypted, signed or both), and also a way to fetch keys midstream—a `kbpgp.KeyFetcher` object. You can use one of ours out-of-the-box or subclass your own (say, if you want to fetch keys from your server). 
+在 kbpgp 中，`unbox` 函数处理解密和验证的细节。你需要传递给它一个 PGP 消息（加密、签名或两者兼有），以及一种中途获取密钥的方法——一个 `kbpgp.KeyFetcher` 对象。你可以直接使用我们提供的，也可以子类化你自己的（例如，如果你想从你的服务器获取密钥）。
 
-#### Out-of-the-Box: The KeyRing
+#### 开箱即用：KeyRing
 
 ```javascript
 var ring = new kbpgp.keyring.KeyRing();
@@ -430,9 +430,9 @@ for (var i in kms) {
 }
 ```
 
-#### Decryption and Verification Example
+#### 解密和验证示例
 
-Decrypt and verify via the `unbox` function. Pass the message, the KeyFetcher (like `ring` above), an ASP if you intend to cancel or monitor progress, and a callback to fire when done: 
+通过 `unbox` 函数解密并验证。传递消息、KeyFetcher（如上面的 `ring`）、ASP（如果你打算取消或监控进度），以及完成时触发的回调：
 
 ```javascript
 var ring = new kbpgp.keyring.KeyRing;
@@ -459,34 +459,34 @@ kbpgp.unbox({keyfetch: ring, armored: pgp_msg, asp }, function(err, literals) {
 });
 ```
 
-`unbox` calls back with two arguments: an Error if something went wrong, and an array of `Literals` if not. `Literal` objects support the `toString(enc)` and `toBuffer()` methods. The former call takes an optional parameter which is an encoding; if none is supplied, kbpgp will use the encoding specified in the PGP message; you can specify `utf8`, `ascii`, `binary`, `base64` or `hex` if you want to override that encoding.
+`unbox` 回调有两个参数：如果出错则为 Error，否则为 `Literals` 数组。`Literal` 对象支持 `toString(enc)` 和 `toBuffer()` 方法。前者调用接受一个可选参数，即编码；如果没有提供，kbpgp 将使用 PGP 消息中指定的编码；如果你想覆盖该编码，可以指定 `utf8`、`ascii`、`binary`、`base64` 或 `hex`。
 
-This example shows that `unbox` handles both decryption and verification. To check if parts of the message were signed, make a `get_data_signer` call on each `Literal` in the message. Note that the same KeyManager that you loaded into your KeyFetcher shows up here. So if you augment that KeyManager with custom fields, they will be available here. 
+此示例表明 `unbox` 处理解密和验证。要检查消息的某些部分是否已签名，请对消息中的每个 `Literal` 调用 `get_data_signer`。请注意，你加载到 KeyFetcher 中的同一个 KeyManager 会出现在这里。因此，如果你用自定义字段扩充该 KeyManager，它们将在此处可用。
 
-#### The KeyFetcher Interface
+#### KeyFetcher 接口
 
- In a more general decryption/verification scenario, you might need to fetch the appropriate decryption and/or verification keys from secondary or remote storage. In this situation, you shouldn't use the KeyRing described above, but should instead provide a custom KeyFetcher.
+在更通用的解密/验证场景中，你可能需要从辅助或远程存储中获取适当的解密和/或验证密钥。在这种情况下，你不应该使用上述的 KeyRing，而应该提供一个自定义的 KeyFetcher。
 
-All usable KeyFetchers must implement one method: `fetch`. Given several PGP key IDs, and a flag specifying which operation is requested, the fetch method should call back with a `KeyManager`, if it could find one. 
+所有可用的 KeyFetcher 必须实现一个方法：`fetch`。给定几个 PGP 密钥 ID 和一个指定请求操作的标志，fetch 方法应该回调返回一个 `KeyManager`（如果能找到）。
 
-`fetch(ids,ops,cb)` is called with three arguments: 
+`fetch(ids,ops,cb)` 调用有三个参数：
 
-1. `ids`—An array of [Buffers](#files-and-buffers), each one containing a 64-bit ID of a PGP key. These keys might refer to subkeys, which are often employed in encrypting and signing messages.
-2. `ops`—Which crypto options are required of this key; a bitwise OR of constants from `kbpgp.const.ops`, which are:
+1. `ids`—[Buffers](#files-and-buffers) 数组，每个都包含一个 PGP 密钥的 64 位 ID。这些密钥可能引用子钥，通常用于加密和签名消息。
+2. `ops`—此密钥所需的加密选项；`kbpgp.const.ops` 中常量的按位或，包括：
     - encrypt : `0x1`
     - decrypt : `0x2`
     - verify : `0x4`
     - sign : `0x8`
-3. `cb`—A callback that when done, calls back with a triple: `(err,km,i)`
-    - `err` is an Error explaining what went wrong, or null on success.
-    - `km` is, in the case of success, a KeyManager that meets the given requirements
-    - `i` is, in the case of success, an integer indicating which of the keys was found in the lookup. If `0` is returned here, then `ids[0]` is the 64-bit ID of a key inside `km`. 
+3. `cb`—完成时的回调，回调返回一个三元组：`(err,km,i)`
+    - `err` 是解释出错原因的 Error，成功则为 null。
+    - `km` 是（成功时）满足给定要求的 KeyManager
+    - `i` 是（成功时）指示在查找中找到了哪个密钥的整数。如果此处返回 `0`，则 `ids[0]` 是 `km` 内密钥的 64 位 ID。
 
-### Files and buffers
+### <a id="files-and-buffers"></a>文件和 Buffer
 
-*In most of the examples, we've been dealing with string plaintexts and ciphertexts. Of course, sometimes you want to read and write files and convert to interesting strings such as hex or base64.*
+*在大多数示例中，我们处理的是字符串明文和密文。当然，有时你想要读取和写入文件并转换为有趣的字符串，如 hex 或 base64。*
 
-Recall when we were encrypting, we expected a string for the message: 
+回想一下，当我们加密时，我们期望消息是一个字符串：
 
 ```javascript
 var params = {
@@ -495,7 +495,7 @@ var params = {
 };
 ```
 
-In Node.js we can pass a [Node.js Buffer](http://nodejs.org/api/buffer.html) instead. This could come from a file. Keep in mind this file's buffer and output need to fit easily in memory. (For arbitrarily large files, streams will come soon in kbpgp's future.) 
+在 Node.js 中，我们可以传递一个 [Node.js Buffer](http://nodejs.org/api/buffer.html)。这可以来自文件。请记住，此文件的 Buffer 和输出需要能轻松放入内存。（对于任意大的文件，kbpgp 未来将支持流。）
 
 ```javascript
 fs.readFile('foo.png', function(err, buff) {
@@ -506,7 +506,7 @@ fs.readFile('foo.png', function(err, buff) {
 });
 ```
 
-In the browser, we have a similar Buffer available, `kbpgp.Buffer`. It behaves exactly the same as a Node.js buffer, thanks to [native-buffer-browserify](https://github.com/substack/native-buffer-browserify).
+在浏览器中，我们有类似的 Buffer 可用：`kbpgp.Buffer`。它的行为与 Node.js buffer 完全相同，这要归功于 [native-buffer-browserify](https://github.com/substack/native-buffer-browserify)。
 
 ```javascript
 // using a string as a Buffer, in the browser
@@ -516,9 +516,9 @@ var params = {
 };
 ```
 
-#### Outputting buffers
+#### 输出 Buffer
 
-kbpgp's `burn` function calls back with both a result_string (armored, when encrypting or signing), and a result_buffer (just raw binary data). The latter is either a Node.js Buffer, as discussed above, or, in the browser, a `kbpgp.Buffer`.
+kbpgp 的 `burn` 函数回调返回 result_string（加密或签名时的 armored 字符串）和 result_buffer（只是原始二进制数据）。后者要么是 Node.js Buffer（如上所述），要么在浏览器中是 `kbpgp.Buffer`。
 
 ```javascript
 kbpgp.burn(params, function(err, result_string, result_buffer) {
@@ -529,9 +529,9 @@ kbpgp.burn(params, function(err, result_string, result_buffer) {
 });
 ```
 
-#### In the browser, with HTML5
+#### 在浏览器中，使用 HTML5
 
-If you want to support file processing in the browser, you can use an HTML5 `FileReader` and convert a file's contents to a Buffer, right in the client side. Depending on the browser, you'll have memory constraints.
+如果你想在浏览器中支持文件处理，你可以使用 HTML5 `FileReader` 并将文件内容转换为 Buffer，就在客户端。根据浏览器的不同，你会有内存限制。
 
 ```javascript
 var f = some_html_5_file_object;
@@ -545,13 +545,13 @@ r.onloadend = function(file) {
 
 ### FAQ
 
-#### There's something missing from this documentation—how do I ______?
+#### 本文档缺少某些内容——我该如何______？
 
-The kbpgp website is brand new, and we're just getting started with the docs. Let us know in the [GitHub issues](https://github.com/keybase/kbpgp/issues).
+kbpgp 网站是全新的，我们才刚刚开始编写文档。请在 [GitHub issues](https://github.com/keybase/kbpgp/issues) 中告诉我们。
 
-#### What do you mean, "designed for concurrency"? 
+#### 你说的“专为并发设计”是什么意思？
 
-Crypto is CPU intensive. The worst offender is RSA key pair generation, when we hunt for big-assed prime numbers. This plus JavaScript's single-threadedness equals a nightmare. Consider this fun thing:
+加密是 CPU 密集型的。最糟糕的是 RSA 密钥对生成，此时我们要寻找巨大的素数。这加上 JavaScript 的单线程特性简直是一场噩梦。看看这个有趣的东西：
 
 ```javascript
 weird_sum = function() {
@@ -564,11 +564,11 @@ weird_sum = function() {
 console.log(weird_sum());
 ```
 
-The above function could take a few seconds in a browser, during which it would be unresponsive - no other JavaScript could run, no buttons or links could be clicked, nothing. It would pause your great life experience. In Node.js, your whole process would lock, and you'd go download Go.
+上述函数在浏览器中可能需要几秒钟，在此期间它将无响应——没有其他 JavaScript 可以运行，没有按钮或链接可以点击，什么都没有。它会暂停你美好的生活体验。在 Node.js 中，你的整个进程将锁定，你会去下载 Go。
 
-One solution in the browser is to farm this process off to a web worker. This often works, although web workers are new and somewhat buggy (at the time of this writing, it's not hard to crash Chrome's), and they have very high overhead. On the Node side, you could run a separate process just for performing math operations, and send RPCs to it. (Aside: this is a good idea anyway.)
+浏览器中的一种解决方案是将此过程转移到 Web Worker。这通常有效，尽管 Web Worker 是新的并且有些错误（在撰写本文时，让 Chrome 崩溃并不难），而且它们有很高的开销。在 Node 方面，你可以运行一个单独的进程来执行数学运算，并向其发送 RPC。（旁注：无论如何这都是个好主意。）
 
-Regardless of where you run it, a heavy math operation can be written with single-thread concurrency in mind. You just have to (1) do work in batches, (2) defer to the event loop periodically via `setTimeout` or `process.nextTick`, and (3) call back with an answer, instead of returning one. A simple example:
+无论你在哪里运行它，繁重的数学运算都可以考虑到单线程并发来编写。你只需要 (1) 分批工作，(2) 通过 `setTimeout` 或 `process.nextTick` 定期服从事件循环，以及 (3) 回调返回答案，而不是直接返回。一个简单的例子：
 
 ```javascript
 var _batch = function(a, batch_size, stop_at, cb) {
@@ -598,13 +598,13 @@ weird_sum(function(sum) {
 });
 ```
 
-Writing code like this - where you call back with an answer - is contagious. If foo calls bar, and bar calls back with an answer, foo can't return that answer. It also must call back.
+编写这样的代码——通过回调返回答案——是具有传染性的。如果 foo 调用 bar，bar 回调返回答案，foo 不能直接返回该答案。它也必须回调。
 
-All of kbpgp is written this way, although a bit prettier than the example above. Further, kbpgp supports abortions and progress hook functions, unlike the examples above. In summary, you can run kbpgp on the same thread as other code, without any problems.
+所有 kbpgp 都是这样编写的，尽管比上面的例子稍微漂亮一点。此外，kbpgp 支持中止和进度钩子函数，不像上面的例子。总之，你可以在与其他代码相同的线程上运行 kbpgp，没有任何问题。
 
-#### Why do you use CoffeeScript? Or rather, IcedCoffeeScript?
+#### 为什么你们使用 CoffeeScript？或者更确切地说，IcedCoffeeScript？
 
-We think CoffeeScript is a great improvement over JavaScript, because it amounts to more concise, easier to read code. As for [IcedCoffeeScript](http://maxtaco.github.io/coffee-script/), we wrote it! Well, specifically Max forked CoffeeScript. IcedCoffeeScript is the same as CoffeeScript but has two additions (`await` and `defer`) that make async programming much nicer. Note the complete lack of a worker function in our above example, converted to Iced:
+我们认为 CoffeeScript 是对 JavaScript 的巨大改进，因为它可以编写更简洁、更易读的代码。至于 [IcedCoffeeScript](http://maxtaco.github.io/coffee-script/)，是我们写的！嗯，具体来说是 Max fork 了 CoffeeScript。IcedCoffeeScript 与 CoffeeScript 相同，但有两个新增功能（`await` 和 `defer`），使异步编程更加美好。请注意我们在上面的示例中完全没有 worker 函数，转换为 Iced：
 
 ```coffeescript
 weird_sum = (cb) ->
@@ -616,24 +616,24 @@ weird_sum = (cb) ->
   cb x
 ```
 
-Of course, kbpgp is compiled to JavaScript as part of our build process, so you do not need to use CoffeeScript to use it.
+当然，作为我们构建过程的一部分，kbpgp 被编译为 JavaScript，因此你不需要使用 CoffeeScript 就可以使用它。
 
-#### Why don't you just use OpenPGP.js or Google's End-to-End for Keybase? 
+#### 为什么你们不直接在 Keybase 中使用 OpenPGP.js 或 Google 的 End-to-End？
 
-At the time of this writing, Google's End-to-End demands elliptic curve key generation -- and that is not compatible with the most popular PGP implementations. kbpgp can generate and handle both RSA and EC keys, so it's designed to work with the GPG and other PGP implementations.
+在撰写本文时，Google 的 End-to-End 需要椭圆曲线密钥生成——这与最流行的 PGP 实现不兼容。kbpgp 可以生成和处理 RSA 和 EC 密钥，因此它旨在与 GPG 和其他 PGP 实现配合使用。
 
-As for OpenPGP.js, in late 2013, we looked at OpenPGP.js. Unfortunately, at the time we saw some things we disliked. This has been discussed elsewhere, and Google's team has also commented on it. We have not reviewed OpenPGP.js in its current state. 
+至于 OpenPGP.js，在 2013 年底，我们查看了 OpenPGP.js。不幸的是，当时我们看到了一些我们不喜欢的东西。这已在别处讨论过，Google 团队也对此发表了评论。我们没有审查 OpenPGP.js 的当前状态。
 
-### In the wild!
+### 野外应用！
 
-These are community projects are using kbpgp. Let us know if you do something cool (email `chris@keybase.io`), and we'll add you. The Keybase team & KBPGP contributors have not audited and are **not responsible** for the projects below. 
+这些是使用 kbpgp 的社区项目。如果你做了一些很酷的事情（发送电子邮件至 `chris@keybase.io`），我们会添加你。Keybase 团队和 KBPGP 贡献者未审核且**不负责**以下项目。
 
-- [OnlyKey WebCrypt](https://apps.crp.to/encrypt?type=e), a serverless web app that integrates with [OnlyKey](https://crp.to/p/) and Keybase to provide PGP encryption everywhere on-the-go.
-- [Top Secret](https://playtopsecret.com/demo.html), a game inspired by the Snowden leaks. ([Kickstarter](https://www.kickstarter.com/projects/1928653683/top-secret-a-game-about-the-snowden-leaks))
-- [pgpkeygen.com](https://pgpkeygen.com/), an online PGP keygen using kbpgp.
-- [fnContact.com/pgpkeys](https://fncontact.com/pgpkeys), an online PGP keygen using kbpgp.
-- [PGP generator](https://thechiefmeat.github.io/pgp/), a site for PGP in the browser
+- [OnlyKey WebCrypt](https://apps.crp.to/encrypt?type=e)，一个无服务器 Web 应用程序，与 [OnlyKey](https://crp.to/p/) 和 Keybase 集成，随时随地提供 PGP 加密。
+- [Top Secret](https://playtopsecret.com/demo.html)，一款受斯诺登泄密事件启发的游戏。([Kickstarter](https://www.kickstarter.com/projects/1928653683/top-secret-a-game-about-the-snowden-leaks))
+- [pgpkeygen.com](https://pgpkeygen.com/)，一个使用 kbpgp 的在线 PGP 密钥生成器。
+- [fnContact.com/pgpkeys](https://fncontact.com/pgpkeys)，一个使用 kbpgp 的在线 PGP 密钥生成器。
+- [PGP generator](https://thechiefmeat.github.io/pgp/)，一个用于浏览器中 PGP 的网站
 
 ----
 
-We're just getting started with this tutorial and examples. Hit us up [on GitHub](https://github.com/keybase/kbpgp) if anything is missing.
+我们的教程和示例才刚刚开始。如果缺少任何内容，请[在 GitHub 上](https://github.com/keybase/kbpgp)联系我们。

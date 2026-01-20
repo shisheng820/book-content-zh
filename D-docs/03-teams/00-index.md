@@ -1,16 +1,16 @@
 
-# Teams
+# 团队
 
-Here is the technical documentation for teams:
+以下是关于团队的技术文档：
 
-* [Sigchain V2](/docs/teams/sigchain) is a discussion of changes to our sigchain format made for the sake of teams.
-* [Per-User Keys](/docs/teams/puk) describes how Keybase users, when using teams, share a secret key across all their devices.
-* [Design](/docs/teams/design) explains the high-level design goals of Teams
-* [Signature Chain Details](/docs/teams/details) describes the lower-level signature chain operation behind teams
-* [Crypto](/docs/teams/crypto) describes the lower-level cryptography behind teams
-{# * [Team Loader](/docs/teams/?) describes the process of loading teams in the Keybase client. #}
-* [Cascading Lazy Key Rotation](/docs/teams/clkr) describes the key rotation process for teams.
-* [Downgrade Leases](/docs/teams/downgrade-leases) describes how cross-chain operations are kept serializable and race-free
-* [Seitan Tokens V2](/docs/teams/seitan) describes how we securely invite a user to a team without server trust
-* [Fast Team Loader](/docs/teams/ftl) describes how team loading is fast-pathed on clients without primed caches
-* [Team Box Auditor](/docs/teams/box-auditor) describes how clients audit the server to make sure the teams' secret keys are keyed for the right users and devices
+* [签名链 V2](/docs/teams/sigchain) 讨论了为支持团队而对签名链格式所做的更改。
+* [每用户密钥](/docs/teams/puk) 描述了 Keybase 用户在使用团队时，如何在其所有设备之间共享一个密钥。
+* [设计](/docs/teams/design) 解释了团队的高层设计目标。
+* [签名链详情](/docs/teams/details) 描述了团队背后的底层签名链操作。
+* [密码学](/docs/teams/crypto) 描述了团队背后的底层密码学。
+{# * [团队加载器](/docs/teams/?) 描述了 Keybase 客户端中加载团队的过程。 #}
+* [级联惰性密钥轮换](/docs/teams/clkr) 描述了团队的密钥轮换过程。
+* [降级租约](/docs/teams/downgrade-leases) 描述了如何保持跨链操作的可序列化和无竞争。
+* [Seitan 代币 V2](/docs/teams/seitan) 描述了我们如何在不信任服务器的情况下安全地邀请用户加入团队。
+* [快速团队加载器](/docs/teams/ftl) 描述了在没有预热缓存的客户端上如何快速加载团队。
+* [团队黑盒审计器](/docs/teams/box-auditor) 描述了客户端如何审计服务器，以确保团队的密钥是为正确的用户和设备加密的。

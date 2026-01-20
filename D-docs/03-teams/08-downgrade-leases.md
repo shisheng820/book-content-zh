@@ -1,85 +1,71 @@
+# 降级租约 (Downgrade Leases)
 
-# Downgrade Leases
+## 背景
 
-## Background
+对于团队，我们通常面临在两个不同的签名链中对两个事件进行排序的问题，
+以确保，例如，一个密钥在被撤销之前（而不是之后）被用于签署团队更新，
+或者一个团队成员在他被降级之前（而不是之后）行使了他的管理员特权。
+我们最终有了一个简单且通用的解决方案，但有一个重要的边缘情况需要考虑。
+本文档详细介绍了 (1) 简单且通用的解决方案；(2) 令人烦恼的边缘情况；
+以及 (3) 修复这个（不幸的）边缘情况的机制。开始吧！
 
-For teams, we have the usual problem of ordering two events in two different
-sigchains, to ensure that, for instance, a key was used to sign a team update
-before it was revoked (rather than after), or a team member exercised his
-admin privileges before he was downgraded (and not after).  We finally have a
-simple and general solution, but there's one important corner case to
-consider. This document details (1) the simple and general solution; (2) the
-annoying corner case; and (3) the machinery to fix the (unfortunate) corner
-case.  Here goes!
+## 在团队中建立可证明的“发生于...之前”关系
 
+我们在两种情况下需要证明上述的“发生于...之前”关系。
+首先，当团队成员使用设备密钥更改团队时，他必须在密钥配置之后、密钥撤销之前进行。
+同样，当团队成员作为团队管理员行事时，他必须在他被指定为管理员之后、被移除管理员身份之前进行。
+这些关系在线性化的签名链中很简单，但当需要在跨链证明“发生于...之前”时就变得复杂了，
+就像刚才列举的两个例子中发生的那样。
 
-## Establishing Provable "Happens Before" Relationship With Teams
+### 一个通用且简单的解决方案
 
-We have two cases in which we need "happens before" relationship to be
-provable, described above.  First, when a team member uses a device key to
-change the team, he must do so after the key is provisioned, and before the
-key is revoked.  Similarly, when a team member is acting as a team admin, he
-must do so after he is designated an admin, and before he is removed as being
-one. These relationships are simple in linearized sigchains, but they are more
-complicated when "happens before" needs to be proven across chains, as happens
-in both the of the examples just listed.
+一般问题是建立 _a_ < _b_ < _c_ 的关系，其中 _a_ 和 _c_ 在一条签名链上，
+而 _b_ 在另一条上。例如，_a_ 是密钥被配置的时间，_b_ 是它被使用的时间，
+_c_ 是它被撤销的时间（对于未撤销的密钥，_c_ = ∞）。在这两种情况下，Keybase 客户端执行以下算法：
 
-### A General and Simple Solution
+1. 首先建立 _a_ < _b_:
+    1. 查看 _b_ 中的签名以确定在生成签名 _b_ 时最后看到的 Merkle 根哈希。这被捕获在签名的 `body.merkle_root.hash_meta` 字段中。
+    1. 向 Keybase 服务器请求从步骤 1.1 中的 Merkle 根到 _a_ 所在签名链尾部的 Merkle 路径。
+    1. 沿着 prev 指针从 _a_ 的尾部回溯到 _a_。
+1. 接下来建立 _b_ < _c_
+    1. 查看 _c_ 中的签名以获取 `body.merkle_root.hash_meta`
+    1. 向 Keybase 服务器请求从步骤 2.1 中的 Merkle 根到 _b_ 所在签名链尾部的 Merkle 路径
+    1. 沿着 prev 指针从 _b_ 的尾部回溯到 _b_
 
-The general problem is establishing an _a_ < _b_ < _c_ relationship, where _a_
-and _c_ are on one sigchain, and _b_ is on another. For example, _a_ is when a
-key was provisioned, _b_ is when it is used, and _c_ is when it is revoked (for
-non-revoked keys, _c_ = ∞). In both cases, a keybase client performs the
-following algorithm:
+步骤 (1) 和 (2) 中使用的技术基本相同，但有一个重要的区别。
+让我们先看步骤 (1)，建立 _a_ < _b_。为了让 _b_ 的签名者使用在 _a_ 中配置的密钥，他必须已经消费了
+Keybase Merkle 树到 _a_ 的配置之时或之后的一个点，因此，
+作为 `body.merkle_root.hash_meta` 嵌入的 Merkle 根必须包含一个带有 _a_ 的配置的签名链。
+我们当然应该在服务器上强制执行这个不变量，以防止有缺陷的客户端意外包含旧的 Merkle 根。
+但如果客户端工作正常，它们真的不需要改变。
 
-1. First establish _a_ < _b_:
-	1. Look at the signature in _b_ to determine the last seen Merkle Root hash at the time that signature b was made. This is captured in the `body.merkle_root.hash_meta` field of the signature.
-	1. Ask the keybase server for a merkle/path from the merkle root from step 1.1 down to the tail of the sigchain that a is in.
-	1. Walk back from the tail of _a_ to _a_ following prev pointers.
-1. Next establish _b_ < _c_
-	1. Look at the signature in _c_ for `body.merkle_root.hash_meta`
-	1. Ask the keybase server for a merkle/path from the merkle root from step 2.1 down to the tail of the sigchain that b is in
-	1. Walk back from the tail of _b_ to _b_ following prev pointers
+## 一个令人烦恼的边缘情况
 
-The technique used in steps (1) and (2) are basically the same, but there is
-an important difference.  Let's look first at step (1), establishing that _a_ <
-_b_. For the signer of _b_ to use the key provisioned in _a_, he must have consumed
-the Keybase merkle tree to a point at or after _a_'s provisioning, and
-therefore, the merkle root embedded as `body.merkle_root.hash_meta` must contain
-a sigchain with _a_'s provisioning in it.  We should of course enforce this
-invariant on the server, to prevent buggy clients from including old merkle
-roots by accident.  But the clients don't really need to change if they are
-working properly.
+当涉及到保证 _b_ < _c_ 时，我们就不那么幸运了。可能存在竞争，并且服务器可能接受这种交错：
 
-## An Annoying Corner Case
+1. 设备 B 下载最新的 Merkle 根 <i>t<sub>1</sub></i> 并签署 _b_
+1. 设备 C 在时间 <i>t<sub>2</sub></i> 生成声明 _c_ 撤销设备 B
+1. 设备 B 在时间 <i>t<sub>3</sub></i> 提交其更新 _b_，带有时间 <i>t<sub>1</sub></i> 的 `body.merkle_root.hash_meta`
+1. 设备 C 在时间 <i>t<sub>4</sub></i> 提交其更新 _c_，带有时间 <i>t<sub>2</sub></i> 的 `body.merkle_root.hash_meta`
 
-When it comes to guaranteeing that _b_ < _c_, we're not so lucky.   There could have been a race, and this interleaving might be acceptable to the server:
+服务器将允许这一系列事件发生，因为设备 B 在时间 <i>t<sub>3</sub></i> 是存活的，
+就在它于时间 <i>t<sub>4</sub></i> 被撤销之前。问题在于
+我们不能使用上面的技术让客户端证明 _b_ < _c_，
+因为 hash_meta 指针交叉了！换句话说，如果客户端试图证明 _b_ < _c_，它将跟随 `hash_meta` 指针 <i>t<sub>2</sub></i>，
+但不可能找到从 <i>t<sub>2</sub></i> 到 _b_ 的签名链的 `merkle_path`，
+因为 _b_ 发生在 <i>t<sub>2</sub></i> 之后。我们卡住了！
 
-1. Device B downloads the latest merkle root <i>t<sub>1</sub></i> and signs _b_
-1. Device C generates statement _c_ at time <i>t<sub>2</sub></i> that revokes device B
-1. Device B lands its update _b_ at time <i>t<sub>3</sub></i>, with `body.merkle_root.hash_meta` at time <i>t<sub>1</sub></i>
-1. Device C lands its update _c_ at time <i>t<sub>4</sub></i> with `body.merkle_root.hash_meta` at time <i>t<sub>2</sub></i>
+这里的关键概念差异在于 _a_ 导致了 _b_，因此 _a_ 必须
+在 _b_ 之前足够早发生，以便 _b_ 的签名者观察到 _a_。但是
+_b_ 并没有导致 _c_，因为撤销设备可能在任何时候发生。
+所以我们没有得到良好的排序保证。
 
-The server will allow this sequence of events to happen since device B was
-alive at the time <i>t<sub>3</sub></i>, just before it was revoked at
-time <i>t<sub>4</sub></i>. The problem is
-that we can't use the technique from above for clients to prove that _b_ < _c_
-because the hash_meta pointers have crossed! In other words, if a client is
-trying to prove that _b_ < _c_, it will follow the `hash_meta` pointer <i>t<sub>2</sub></i>,
-but can't possibly find a `merkle_path` from <i>t<sub>2</sub></i> down to a sigchain for _b_ that
-contains _b_ since _b_ happens after <i>t<sub>2</sub></i>.  We're stuck!
+## 解决方案
 
-The key conceptual difference here is that _a_ caused _b_ so therefore _a_ had
-to have happened enough before _b_ for the signer of _b_ to have observed _a_. But
-there is no sense in which _b_ caused _c_ since revoking a device can happen at
-any time. So we don't get the nice ordering guarantees.
+这是称为“降级租约”的解决方案。有两类重要的降级：(1) 当用户撤销设备时；(2) 当用户从群组中被移除或从管理员降级为非管理员时。在这一两种情况下，我们必须检查 _b_ < _c_，但容易受到刚才提到的降级竞争的影响。这是一个解决方案：
 
-## The Solution
-
-Here's the solution called "downgrade leases."  There are two classes of important downgrades: (1) when a user revokes a device; and (2) when a user is removed from a group or downgraded from admin to non-admin.  In both cases, we have to check that _b_ < _c_ but are susceptible to the downgrade race just mentioned. Here's a solution:
-
-1. Device C asks the server for a "lease" that covers some downgrade activity, like user u deprovisioning device B with device C.
-1. The server replies with a lease at merkle root time <i>t<sub>1</sub></i>.
-1. All actions that use device B are not valid if there is an outstanding lease for device B's revocation.  So we have to change all signature handlers to not just check if B is still active, but also to check if B isn't slated for imminent revocation.
-1. When device C uploads the revocation of B, the server checks that the revocation is properly leased, and that the `body.merkle_root.hash_meta` in the signature happens at or after the <i>t<sub>1</sub></i> specified in the lease.  If so, the revocation succeeds.
-1. It's possible for a client to die when holding a lease, so these leases expire after about a minute. The same solution is also employed whenever someone loses adminship privileges from a team, and the analogy holds exactly.
+1. 设备 C 向服务器请求涵盖某些降级活动的“租约”，例如用户 u 用设备 C 取消配置设备 B。
+1. 服务器回复一个在 Merkle 根时间 <i>t<sub>1</sub></i> 的租约。
+1. 如果存在针对设备 B 撤销的未完成租约，所有使用设备 B 的操作都无效。所以我们要更改所有签名处理程序，不仅要检查 B 是否仍然活跃，还要检查 B 是否没有被安排即将撤销。
+1. 当设备 C 上传 B 的撤销时，服务器检查撤销是否被正确租赁，并且签名中的 `body.merkle_root.hash_meta` 发生在租约中指定的 <i>t<sub>1</sub></i> 或之后。如果是，则撤销成功。
+1. 客户端在持有租约时可能会死亡，因此这些租约在大约一分钟后过期。每当有人从团队中失去管理员权限时，也会采用相同的解决方案，类比完全成立。

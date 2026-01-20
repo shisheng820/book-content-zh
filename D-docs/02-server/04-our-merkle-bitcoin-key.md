@@ -1,12 +1,12 @@
-<h2>Our Public Key for Publishing Merkle Roots to the Bitcoin Blockchain</h2>
+<h2>我们用于将 Merkle 根发布到比特币区块链的公钥</h2>
 
 <p>
   <code>1HUCBSJeHnkhzrVKVjaVmWg2QtZS1mdfaz</code>
 </p>
 
-<h3>Signatures</h3>
+<h3>签名</h3>
 
-We've signed this public key with our <a href="./our-code-signing-key">Code-signing key</a>.
+我们已经用我们的 <a href="./our-code-signing-key">代码签名密钥</a> 对此公钥进行了签名。
 
 
 ```
@@ -32,4 +32,3 @@ QjwajBRoj0bxNTpL
 =ItfX
 -----END PGP MESSAGE-----
 ```
-

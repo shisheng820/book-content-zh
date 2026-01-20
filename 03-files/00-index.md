@@ -1,52 +1,52 @@
-{% set section_title = "Files" %}
-{% set section_subtitle = "Share and store photos, videos, and documents." %}
-{% set page_title = "Learn about using Keybase for Files" %}
-{% set page_description = "Use Keybase for end-to-end encrypted file sharing and storage. Keep your most important documents, photos, and videos safe and secure. Learn more." %}
+{% set section_title = "文件" %}
+{% set section_subtitle = "分享和存储照片、视频和文档。" %}
+{% set page_title = "了解如何使用 Keybase 文件" %}
+{% set page_description = "使用 Keybase 进行端到端加密的文件共享和存储。确保您最重要的文档、照片和视频安全无虞。了解更多。" %}
 
-# Keybase for Files
-Keep your most important documents, photos, and videos safe and secure with Keybase Files.
+# Keybase 文件
+使用 Keybase 文件保护您最重要的文档、照片和视频的安全。
 
-You can easily store and share files from any device you use Keybase on. Individuals can store up to 250 GB and teams can store up to 100 GB.
+您可以从您使用 Keybase 的任何设备轻松存储和分享文件。个人最多可存储 250 GB，团队最多可存储 100 GB。
 
-Anything you add to Keybase Files is automatically end-to-end encrypted and **signed** by you. When a file is signed by you, your private key is used in the encryption. When it’s decrypted, your recipient knows for certain it came from you. Rest assured, they won’t be able to see or guess your private key.
+您添加到 Keybase 文件的任何内容都会自动进行端到端加密并由您 **签名**。当文件由您签名时，加密过程中使用了您的私钥。解密时，您的接收者可以确信它来自您。请放心，他们无法看到或猜出您的私钥。
 
-The important thing is: no phishing scams or malevolent links around here.
+重要的是：这里没有网络钓鱼诈骗或恶意链接。
 
-## Privacy
-Only the people you choose to share your files with can read or access them (not even Keybase can). You can keep private stuff—financial info, personal photos, your life philosophy—private.
+## 隐私
+只有您选择与之分享文件的人才能阅读或访问它们（甚至 Keybase 也不能）。您可以保持私密内容——财务信息、个人照片、您的人生哲学——私密。
 
-You can store and share files in private, public, or team folders, each with different privacy features.
+您可以在私密、公开或团队文件夹中存储和分享文件，每个文件夹都有不同的隐私功能。
 
-### Private folders
-Only you and the people you choose to share with can access files in your private folders.
+### 私密文件夹
+只有您和您选择分享的人才能访问您私密文件夹中的文件。
 
-To quickly share files with someone on Keybase, just create a new folder and name it like so: `yourusername,theirusername`. All the people named on the folder—and only those people—will have access to it. 
+要快速与 Keybase 上的某人分享文件，只需创建一个新文件夹并像这样命名：`yourusername,theirusername`。文件夹上列出的所有人——且只有这些人——将有权访问它。
 
-![ !Enable the Finder or Explorer integration to manage files from your desktop.](/img/files-finder.png)
+![ !启用 Finder 或 Explorer 集成以从您的桌面管理文件。](/static/img/files-finder.png)
 
-If you share a file with someone who doesn’t have a Keybase account, they’ll have to create one to access the file. This is an important security measure that ensures your files are only shared with the people you intend to share them with. It also guarantees to the person you’re sharing with that the files came from you (again, no phishing!).
+如果您与没有 Keybase 账户的人分享文件，他们必须先创建一个账户才能访问该文件。这是一个重要的安全措施，确保您的文件仅与您打算分享的人分享。这也向与您分享的人保证文件来自您（再次强调，没有网络钓鱼！）。
 
-### Public folders
-Anyone on the internet can view the files in your public folder. Since all of your Keybase files are signed, you can think of your public folder as a source of authenticity or authority. Anyone can view them and know that they definitely came from you.
+### 公开文件夹
+互联网上的任何人都可以查看您公开文件夹中的文件。由于您所有的 Keybase 文件都经过签名，您可以将您的公开文件夹视为真实性或权威性的来源。任何人都可以查看它们，并知道它们绝对来自您。
 
-You can also turn your public files into a simple website. Learn more in [Sites](/sites).
+您还可以将您的公开文件转变为一个简单的网站。在 [站点](/sites) 中了解更多。
 
-### Team folders
-A new folder is automatically created for every team to share files in. Files in a team folder can only be accessed by the people on that team. But everyone on a team can access all the files in the team folder.
+### 团队文件夹
+每个团队都会自动创建一个新文件夹用于分享文件。团队文件夹中的文件只能由该团队的人员访问。但团队中的每个人都可以访问团队文件夹中的所有文件。
 
-To share files with only specific team members, create a [subteam](teams#subteams). 
+要仅与特定团队成员分享文件，请创建 [子团队](/teams#子团队)。
 
-## Managing files
-You can add and organize files and folders any way you like inside your private, public, and team folders.
+## 管理文件
+您可以在私密、公开和团队文件夹中以您喜欢的任何方式添加和组织文件和文件夹。
 
-### Desktop integration
-When you install Keybase on your desktop computer, you can enable an integration to make your Keybase files available in Finder (on a Mac) or Explorer (on Windows).
+### 桌面集成
+当您在台式电脑上安装 Keybase 时，您可以启用集成，使您的 Keybase 文件在 Finder (Mac) 或资源管理器 (Windows) 中可用。
 
-This allows you to upload, organize, edit, or delete files right from Finder or Explorer.
+这允许您直接从 Finder 或资源管理器上传、组织、编辑或删除文件。
 
-You can also enable the integration later by going to Settings > Files.
+您稍后也可以通过转到 设置 > 文件 来启用集成。
 
-### Offline file access
-Your Keybase files don’t take up storage space on your computer or your device because they stream in when you need them and out when you don’t.
+### 离线文件访问
+您的 Keybase 文件不会占用您的电脑或设备上的存储空间，因为它们会在您需要时流入，不需要时流出。
 
-To make files available when you’re offline, sync folders to the devices you want to access them on.
+要在离线时使用文件，请将文件夹同步到您想要访问它们的设备上。

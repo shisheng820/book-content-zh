@@ -1,153 +1,153 @@
-{% set section_title = "Your Account" %}
-{% set section_subtitle = "Keybase accounts are trustworthy and secure. Learn how." %}
-{% set page_title = "Learn about your Keybase account" %}
-{% set page_description = "Keybase accounts are protected by end-to-end encryption. Devices, proofs, and following help keep it secure. Learn how." %}
+{% set section_title = "您的账户" %}
+{% set section_subtitle = "Keybase 账户值得信赖且安全可靠。了解它是如何做到的。" %}
+{% set page_title = "了解您的 Keybase 账户" %}
+{% set page_description = "Keybase 账户受端到端加密保护。设备、验证和关注有助于保持其安全性。了解详情。" %}
 
-# Your Keybase Account
-<div class="compose-highlight" data-text="tl;dr">Your Keybase account is secured by public-key cryptography. Installing Keybase on your computer or device, adding more devices and paper keys, adding proofs, and following all make your Keybase account more trustworthy and secure.</div>
+# 您的 Keybase 账户
+<div class="compose-highlight" data-text="摘要">您的 Keybase 账户通过公钥加密技术进行保护。在您的电脑或设备上安装 Keybase，添加更多设备和纸质密钥 (Paper Keys)，添加验证 (Proofs) 以及关注 (Following)，都能让您的 Keybase 账户更加可信和安全。</div>
 
-![ !Your username, devices, proofs, and followers are visible on your Keybase profile.](/img/account-profile.png)
+![ !您的用户名、设备、验证和关注者在您的 Keybase 个人资料中可见。](/static/img/account-profile.png)
 
-Your Keybase account and everything you store or share through it in [Chat](/chat), [Files](files), [Teams](/teams), [Sites](/sites), [Wallet](/wallet), and [Git](/git) are all protected with encryption.
+您的 Keybase 账户以及您通过它在 [聊天](/chat)、[文件](files)、[团队](/teams)、[站点](/sites)、[钱包](/wallet) 和 [Git](/git) 中存储或分享的所有内容都受到加密保护。
 
-When you create your Keybase account, it’s linked to your [devices](/account#devices). You further protect your account with [proofs](/account#proofs) and [following](/account#following). All of these actions are backed by public-key cryptography.
+当您创建 Keybase 账户时，它会与您的 [设备](/account#设备) 关联。您可以通过 [验证](/account#验证-proofs) 和 [关注](/account#关注-following) 进一步保护您的账户。所有这些操作都由公钥加密技术支持。
 
-You can learn more about how public-key cryptography works in [Security](/security). The gist is that, thanks to public-key cryptography your contacts can be sure your Keybase account belongs to you and that only you can access it. No phishing, spoofing, or scamming around here.
+您可以在 [安全](/security) 章节了解更多关于公钥加密的工作原理。简而言之，得益于公钥加密，您的联系人可以确定您的 Keybase 账户属于您，且只有您能访问它。这里没有网络钓鱼、欺骗或诈骗。
 
-#### Devices, proofs, and following help make your Keybase account trustworthy and secure.
-Lots of apps only require a username and password to create and protect an account. Your username theoretically lets others know that an account belongs to you. And your password theoretically allows only you to access it.
+#### 设备、验证和关注有助于让您的 Keybase 账户值得信赖且安全可靠。
+许多应用程序仅需用户名和密码即可创建和保护账户。理论上，您的用户名让其他人知道该账户属于您。而您的密码理论上只允许您访问它。
 
-But with just a username and password, accounts can be hacked, phished, and otherwise compromised. They’re not totally trustworthy and secure. In best-case scenarios, you can use two-factor authentication for more security but it’s still not perfect.
+但仅凭用户名和密码，账户可能会被黑客入侵、网络钓鱼或以其他方式被盗用。它们并非完全可信和安全。在最好的情况下，您可以使用双因素认证 (2FA) 来增加安全性，但这仍然并不完美。
 
-Your Keybase account is trustworthy and secure because—instead of being protected by just a password—it’s cryptographically linked to your [devices](account#devices). Your account can only be accessed through your devices. So long as only you have access to your devices, only you can access your Keybase account.
+您的 Keybase 账户之所以可信且安全，是因为它不仅仅受密码保护，而是通过密码学方式与您的 [设备](account#设备) 关联。您的账户只能通过您的设备访问。只要只有您能访问您的设备，就只有您能访问您的 Keybase 账户。
 
-You do create a username to help let others know that an account belongs to you. But you further confirm who you are with [proofs](account#proofs), which link your Keybase account to your other online accounts.
+您确实创建了一个用户名来帮助其他人知道该账户属于您。但您通过 [验证](account#验证-proofs) 进一步确认您的身份，这将您的 Keybase 账户与您的其他在线账户关联起来。
 
-[Following](account#following) provides a public record that also confirms that you are who you say you are. Adding proofs and following are both public actions. And, as the name “proof” implies, these actions are also provable. Your contacts don’t have to trust that you’re you on Keybase just because you say you are; they can see for themselves.
+[关注](account#关注-following) 提供了一份公开记录，也能确认您的身份。添加验证和关注都是公开行为。而且，正如“验证 (Proof)”这个名字所暗示的，这些行为也是可验证的。您的联系人不必仅仅因为您这么说就相信您在 Keybase 上就是您；他们可以亲自查看。
 
-Anyone can check your proofs; Keybase regularly does as well. If there are any changes to your devices or proofs—indicating that your account has possibly been hacked—your followers are notified before they interact with you.
+任何人都可以检查您的验证；Keybase 也会定期检查。如果您的设备或验证有任何变更——表明您的账户可能已被黑客入侵——您的关注者在与您互动之前会收到通知。
 
-## Usernames
-<div class="compose-highlight" data-text="tip">Before you create your account, give your username some thought. Everyone on the internet can see it.</div>
+## 用户名
+<div class="compose-highlight" data-text="提示">在创建账户之前，请仔细考虑您的用户名。互联网上的每个人都能看到它。</div>
 
-#### Your username is public and can’t be changed.
-Choosing your username is the first action of many that you take to help establish your account on Keybase. These actions are part of a public record that helps secure your account and confirm that you are who you say you are. Changing your username has the potential to undo this.
+#### 您的用户名是公开的，且无法更改。
+选择用户名是您在 Keybase 上建立账户所采取的众多行动中的第一步。这些行动构成了公开记录的一部分，有助于保护您的账户并确认您的身份。更改用户名可能会破坏这一点。
 
-We know there are lots of reasons why people may need to change their usernames. And there are solutions we could implement to help people do so. But they’re complicated and, unfortunately, not something we can work on right now. In the meantime, you can learn more about this issue [on GitHub](https://github.com/keybase/keybase-issues/issues/2842#issuecomment-283706335).
+我们要知道人们可能需要更改用户名的原因有很多。我们也可以实施一些解决方案来帮助人们这样做。但它们很复杂，不幸的是，这不是我们目前可以着手解决的问题。在此期间，您可以 [在 GitHub 上](https://github.com/keybase/keybase-issues/issues/2842#issuecomment-283706335) 了解更多关于此问题的信息。
 
-#### Usernames must be lowercase letters, numbers and underscores only, with no spaces.
-This format helps keep Keybase accounts secure because it makes it harder for tricksters to use visually similar names to impersonate people.
+#### 用户名必须仅包含小写字母、数字和下划线，不能包含空格。
+这种格式有助于保持 Keybase 账户的安全，因为它使骗子更难利用视觉上相似的名称来冒充他人。
 
-For example, if uppercase letters were allowed someone could create the account Isteele (with a capital “i”) and pretend to be lsteele (with a lowercase “L”). Spaces are not allowed for the same reason. The difference between “karen m” and “karen&nbsp;&nbsp;m” is too subtle for people to notice the difference.
+例如，如果允许大写字母，有人可能会创建账户 Isteele（首字母大写“I”），并假装是 lsteele（小写“l”）。同样的原因也不允许使用空格。“karen m”和“karen&nbsp;&nbsp;m”之间的区别太微小，人们很难注意到。
 
-#### Deleting a username and account is permanent.
-If you’ve gone to the trouble of deleting your account, we don’t want to give that username to anyone who asks for it. If undeleting were allowed, it would be hard to be sure that the person undeleting is the same person who deleted the account. 
+#### 删除用户名和账户是永久性的。
+如果您费心删除了您的账户，我们不想把那个用户名给任何索要它的人。如果允许恢复删除，将很难确定恢复删除的人与删除账户的人是同一个人。
 
-## Devices
-<div class="compose-highlight" data-text="tl;dr">You can think of your devices and paper keys as keys to your account. You can only access your account through your devices. Paper keys provide backup access to your account in case you lose your devices.</div>
+## 设备
+<div class="compose-highlight" data-text="摘要">您可以将您的设备和纸质密钥视为账户的钥匙。您只能通过您的设备访问您的账户。纸质密钥在您丢失设备的情况下提供账户的备用访问权限。</div>
 
-<div class="compose-highlight" data-text="tip">Add multiple devices and paper keys to your account to ensure its security.</div>
+<div class="compose-highlight" data-text="提示">向您的账户添加多个设备和纸质密钥以确保其安全。</div>
 
-When you create your Keybase account, Keybase creates a key pair for your account and the device—your phone or computer—that you sign up with.
+当您创建 Keybase 账户时，Keybase 会为您的账户以及您注册时使用的设备（您的手机或电脑）创建一对密钥。
 
-![ !Your Keybase account is linked to the device you sign up on.](/img/kb-one-device.png)
+![ !您的 Keybase 账户与您注册的设备相关联。](/static/img/kb-one-device.png)
 
-The public key is uploaded to Keybase’s servers and is publicly available. The private key lives only on your device. This means that no one else can access your account—or anything shared through it—without having your device (not even Keybase).
+公钥上传到 Keybase 的服务器并公开可用。私钥仅存在于您的设备上。这意味着没有其他人可以在没有您设备的情况下访问您的账户——或通过它分享的任何内容（甚至 Keybase 也不行）。
 
-You can and should add more devices and paper keys to your account so you don’t lose access to it if you lose a device. A **paper key** is a long string of randomly-generated words that’s linked to your account the same way a device is.
+您可以而且应该向您的账户添加更多设备和纸质密钥，这样如果您丢失了设备，就不会失去对账户的访问权限。**纸质密钥 (Paper Key)** 是一长串随机生成的单词，它像设备一样与您的账户相关联。
 
-![ !Adding more devices and paper keys helps make your account more secure.](/img/kb-three-devices.png)
+![ !添加更多设备和纸质密钥有助于让您的账户更安全。](/static/img/kb-three-devices.png)
 
-When you add a new device or paper key, your existing device vouches for the new one. All your devices and paper keys are cryptographically linked. And each additional device or paper key you add to your account also gets a key pair.  
+当您添加新设备或纸质密钥时，您现有的设备会为其担保。您所有的设备和纸质密钥都在密码学上相关联。您添加到账户的每个额外设备或纸质密钥也会获得一对密钥。
 
-So, no one can compromise your account without having all of your devices and paper keys. This guarantees that only you have access to your account.
+所以，如果没有您所有的设备和纸质密钥，没人能攻破您的账户。这保证了只有您可以访问您的账户。
 
-### Adding devices
-Install Keybase on your other devices so that you don’t lose access to your account if you lose access to a device.
+### 添加设备
+在您的其他设备上安装 Keybase，这样如果您无法使用某个设备，也不会失去对账户的访问权限。
 
-#### To install Keybase on additional devices, you need:
-*  your Keybase username
-*  the device you signed up with (you’ll use a QR code to vouch for the new device)
-*  a name for the new device
+#### 要在其他设备上安装 Keybase，您需要：
+*  您的 Keybase 用户名
+*  您注册时使用的设备（您将使用二维码为新设备担保）
+*  新设备的名称
 
-Download the Keybase app on any device using [iOS](https://apps.apple.com/us/app/keybase-crypto-for-everyone/id1044461770), [MacOS](https://keybase.io/docs/the_app/install_macos), [Android](https://play.google.com/store/apps/details?id=io.keybase.ossifrage), [Windows](https://keybase.io/docs/the_app/install_windows), or [Linux](https://keybase.io/docs/the_app/install_linux). 
+在任何使用 [iOS](https://apps.apple.com/us/app/keybase-crypto-for-everyone/id1044461770)、[MacOS](https://keybase.io/docs/the_app/install_macos)、[Android](https://play.google.com/store/apps/details?id=io.keybase.ossifrage)、[Windows](https://keybase.io/docs/the_app/install_windows) 或 [Linux](https://keybase.io/docs/the_app/install_linux) 的设备上下载 Keybase 应用。
 
-#### Device names are public and can’t be changed.
-When you add a device, you’ll have to name it. Device names are visible to everyone on the internet and can’t be changed. Choose carefully.
+#### 设备名称是公开的，且无法更改。
+当您添加设备时，您必须为其命名。设备名称对互联网上的每个人都是可见的，且无法更改。请谨慎选择。
 
-Like your username, devices names are part of a public record that helps secure your account and confirm that you are who you say you are. Changing device names has the potential to undo this.
+像您的用户名一样，设备名称也是公开记录的一部分，有助于保护您的账户并确认您的身份。更改设备名称可能会破坏这一点。
 
-### Revoking devices
-If you lose or replace a device, you should revoke it. Revoking removes the device from your account.
+### 吊销设备
+如果您丢失或更换了设备，您应该吊销它。吊销会将设备从您的账户中移除。
 
-Revoking lost or old devices helps ensure that only you can access your account. Your account cannot be accessed through revoked devices.
+吊销丢失或旧的设备有助于确保只有您可以访问您的账户。您的账户无法通过已吊销的设备访问。
 
-Revoked devices still publicly appear on your account but are marked as revoked.
+已吊销的设备仍会公开显示在您的账户上，但会被标记为已吊销。
 
-### Adding paper keys
-Add paper keys so that you can access your account even if (worst-case scenario) you lose all of your devices.
+### 添加纸质密钥
+添加纸质密钥，以便即使（在最坏的情况下）您丢失了所有设备，也能访问您的账户。
 
-When you create a paper key, write it down on—you guessed it—paper. It’ll be too long to memorize. We recommend storing paper keys somewhere like a locked drawer at home.
+当您创建纸质密钥时，把它写在——你猜对了——纸上。它太长了，无法记住。我们建议将纸质密钥存放在像家里的锁好的抽屉这样的地方。
 
-## Proofs  
-<div class="compose-highlight" data-text="tip">Add as many proofs as you can to provide the most assurance that you are you on Keybase.</div>
+## 验证 (Proofs)
+<div class="compose-highlight" data-text="提示">添加尽可能多的验证，以便最大程度地确信您在 Keybase 上就是您。</div>
 
-The best way to let others know that your Keybase account belongs to you is to tell them in person. The next best way is through proofs.
+让别人知道您的 Keybase 账户属于您的最好方法是当面告诉他们。其次是通过验证。
 
-Proofs link your Keybase account to your other online accounts. Proofs help people trust that you are really you on Keybase.
+验证将您的 Keybase 账户与您的其他在线账户关联起来。验证帮助人们相信您在 Keybase 上真的是您。
 
-![ !You can link your Twitter and GitHub accounts and personal website to your Keybase account as proofs.](/img/kb-three-accounts.png)
+![ !您可以将您的 Twitter 和 GitHub 账户以及个人网站作为验证关联到您的 Keybase 账户。](/static/img/kb-three-accounts.png)
 
-Some people may already know you as you through your other accounts. But proofs are public, so Keybase can (and does) check them, and importantly, anyone can. Publicly proving that you are who you say you are is an important part of what makes Keybase accounts so secure and trustworthy.
+有些人可能已经通过您的其他账户认识您了。但验证是公开的，所以 Keybase 可以（并且确实会）检查它们，重要的是，任何人都可以检查。公开证明您的身份是 Keybase 账户如此安全且值得信赖的重要原因。
 
-If a proof changes, indicating that your Keybase or other social accounts may have been compromised, Keybase automatically warns the people you interact with.
+如果验证发生变化，表明您的 Keybase 或其他社交账户可能已被入侵，Keybase 会自动警告与您互动的人。
 
-### Adding proofs
-You can add proofs for your personal website and social accounts on Twitter, GitHub, Reddit, and Hacker News. Your accounts must be public for them to work as proofs.
+### 添加验证
+您可以为您在 Twitter、GitHub、Reddit 和 Hacker News 上的个人网站和社交账户添加验证。您的账户必须是公开的，验证才能生效。
 
-For example, if you use your Twitter account as a proof, Keybase will give you a specific phrase to tweet that includes your Keybase username.
+例如，如果您使用 Twitter 账户作为验证，Keybase 会给您一个特定的短语，让您发布包含该短语和您的 Keybase 用户名的推文。
 
-![ !Proofs must be public so anyone can check them.](/img/kb-proof-twitter.png)
+![ !验证必须是公开的，以便任何人都可以检查。](/static/img/kb-proof-twitter.png)
 
-For the proof to work, you must tweet the phrase exactly as Keybase gives it to you. The tweet must be public and you can’t delete it.
+为了使验证生效，您必须完全按照 Keybase 给您的内容发布推文。推文必须是公开的，且您不能删除它。
 
-Keeping proofs public lets Keybase—and anyone else—check them. Everyone can be sure that you are you.
+保持验证公开让 Keybase——以及其他任何人——都能检查它们。每个人都可以确定您就是您。
 
-## Following
-<div class="compose-highlight" data-text="tl;dr">Following helps keep Keybase accounts secure. It allows you and those you interact with to be notified quickly if something on an account changes, indicating that it may be compromised and isn’t trustworthy.</div>
+## 关注 (Following)
+<div class="compose-highlight" data-text="摘要">关注有助于保持 Keybase 账户的安全。如果账户发生变更，表明它可能已被入侵且不再值得信赖，关注允许您和与您互动的人迅速收到通知。</div>
 
-<div class="compose-highlight" data-text="tip">Follow people on Keybase to help make your account and theirs more trustworthy.</div>
+<div class="compose-highlight" data-text="提示">在 Keybase 上关注他人，有助于让您的账户和他们的账户更加值得信赖。</div>
 
-Following helps confirm that people are who they say they are on Keybase. But it doesn’t necessarily indicate a relationship. More importantly, following helps provide reassurance that accounts are trustworthy and secure.
+关注有助于确认人们在 Keybase 上是他们自称的那个人。但这并不一定表示某种关系。更重要的是，关注有助于提供账户值得信赖且安全的保证。
 
-#### Follow people you interact with.
-You can and definitely should follow people you know and interact with on Keybase. But following helps keep accounts secure and trustworthy even if you don’t know someone you follow or someone who follows you.
+#### 关注与您互动的人。
+您可以而且绝对应该关注您在 Keybase 上认识并互动的人。但即使您不认识您关注的人或关注您的人，关注也有助于保持账户的安全和值得信赖。
 
-For example, let’s say you follow Mary Poppins on Keybase. You probably don’t know her and she probably doesn’t know you (if that’s not true, lucky you). By following her, you’re essentially documenting her Keybase account, including all her proofs and devices. 
+例如，假设您在 Keybase 上关注了 Mary Poppins。您可能不认识她，她可能也不认识您（如果那是真的，您真幸运）。通过关注她，您实际上是在记录她的 Keybase 账户，包括她所有的验证和设备。
 
-This documentation is a time-stamped public record that can be checked by anyone else on Keybase. It’s also automatically checked by your computer or device every time you share messages or files with Ms. Poppins. If anything about her account changes, you—and everyone else who follows her—will be notified when you attempt to interact with her on Keybase again.
+这份记录是一份带有时间戳的公开记录，Keybase 上的其他人都可以查看。每当您与 Poppins 女士分享消息或文件时，您的电脑或设备也会自动检查它。如果关于她账户的任何信息发生变化，当您再次尝试在 Keybase 上与她互动时，您——以及所有关注她的人——都会收到通知。
 
-#### More followers provide more security.
-But if you don’t know Ms. Poppins, you might not interact with her and get notified that her account has changed. This is where safety in numbers kicks in.
+#### 关注者越多，安全性越高。
+但是，如果您不认识 Poppins 女士，您可能不会与她互动并收到她账户已更改的通知。这就是人多力量大的地方。
 
-The more followers Mary Poppins has, the more likely that *someone* who follows her will attempt to interact with her on Keybase, be notified about the change, and reach out to her over other channels. Then she can confirm that she made the change or recover her account if it’s been hacked. This helps gives both you and Ms. Poppins more confidence about the safety and trustworthiness of her account.
+Mary Poppins 的关注者越多，就越有可能有关注她的 *某人* 会尝试在 Keybase 上与她互动，收到变更通知，并通过其他渠道联系她。然后她可以确认是她做了更改，或者在账户被黑客入侵后恢复账户。这有助于让您和 Poppins 女士都对她账户的安全性和可信度更有信心。
 
-And even if no one’s interacting with Ms. Poppins on Keybase, you get some confidence knowing that for every follower she has, a public record of who she is (according to her devices and proofs) has been added to a giant, public Keybase database.
-Someone might be able to fake one or even two of these records so they look the same, but it’d be virtually impossible to fake dozens or more.
+即使没有人与 Poppins 女士在 Keybase 上互动，您也会获得一些信心，因为知道对于她的每一个关注者，一份关于她是谁（根据她的设备和验证）的公开记录已被添加到一个巨大的公共 Keybase 数据库中。
+有人或许能伪造一两个这样的记录使它们看起来一样，但几乎不可能伪造几十个或更多。
 
-#### Older followers provide more security than newer ones.
-Along the same lines, the older a follower is, the more security it provides. Remember that following someone creates a time-stamped public record of who they are on Keybase (according to their proofs and devices). So, if you followed Ms. Poppins way back in February 2014, your record helps confirm that her account hasn’t been hacked over the years between now and then. If someone had hacked her account, they’d have to maintain control of her computer, other device(s), and proofs over that whole period of time.
+#### 老关注者比新关注者提供更多的安全性。
+同样地，关注者越久远，提供的安全性就越高。记住，关注某人会创建一份关于他们在 Keybase 上是谁（根据他们的验证和设备）的时间戳公开记录。所以，如果您早在 2014 年 2 月就关注了 Poppins 女士，您的记录有助于确认她的账户从那时到现在没有被黑客入侵。如果有人入侵了她的账户，他们必须在整个时间段内保持对她的电脑、其他设备和验证的控制。
 
-As long as someone’s account hasn’t been hacked the day you follow them (which would be kinda wild), you can be pretty confident they are who they say they are on Keybase. Likewise, your own followers help guarantee to your contacts—and better, to future contacts—that your Keybase account is controlled by you.
+只要某人的账户在您关注的那天没有被黑客入侵（那将是相当疯狂的），您就可以非常自信他们在 Keybase 上就是他们自称的那个人。同样，您自己的关注者有助于向您的联系人——以及更好的，未来的联系人——保证您的 Keybase 账户由您控制。
 
-#### Follow soon and follow often.
-If you keep (ahem) *following* this logic, it’s easy to see that an older Keybase account is more secure and trustworthy than a newer Keybase account. And, older followers are more valuable than new followers. So, if you haven’t already, set up your account and start following your contacts.
+#### 尽早关注，经常关注。
+如果您继续（咳咳）*关注* 这个逻辑，很容易看出，一个较老的 Keybase 账户比一个新的 Keybase 账户更安全、更值得信赖。而且，老关注者比新关注者更有价值。所以，如果您还没有，请设置您的账户并开始关注您的联系人。
 
-This is a pretty simplified version of how following works. You can dig into more details in our [docs](https://keybase.io/docs/server_security/following) and on [Github](https://github.com/keybase/keybase-issues/issues/100). (Note: following was previously called tracking.)
+这是关注机制的一个相当简化的版本。您可以在我们的 [文档](https://keybase.io/docs/server_security/following) 和 [Github](https://github.com/keybase/keybase-issues/issues/100) 上深入了解更多细节。（注：关注以前称为追踪 tracking。）
 
-### Blocking followers
-While even followers you don’t know help keep your account trustworthy, you can block them.
+### 屏蔽关注者
+虽然即使是您不认识的关注者也有助于保持您的账户值得信赖，但您可以屏蔽他们。
 
-When you block someone, you can remove them from your public list of followers. You won’t see them and their account will not be publicly associated with yours. They also won’t be able to chat with you or add you to a team.
+当您屏蔽某人时，您可以将他们从您的公开关注者列表中移除。您将看不到他们，他们的账户也不会公开与您的账户关联。他们也无法与您聊天或将您添加到团队中。
 
-But please note, they will still, technically, be following you. The public record that was created when they followed you will still exist. And they may know that you blocked them if they attempt to chat with you or add you to a team. You can learn more about blocking in [Chat](/chat).
+但请注意，从技术上讲，他们仍然会关注您。他们关注您时创建的公开记录仍然存在。如果他们尝试与您聊天或将您添加到团队，他们可能会知道您屏蔽了他们。您可以在 [聊天](/chat) 中了解更多关于屏蔽的信息。

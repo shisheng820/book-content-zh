@@ -1,33 +1,39 @@
+# 级联惰性密钥轮换 (CLKR)
 
-# Cascading Lazy Key Rotations (CLKR)
+团队密钥必须轮换的 4 种重要情况：
 
-There are 4 important cases in which a Team's keys must be rotated:
+1. 团队成员撤销设备
+1. 团队成员离开团队
+1. 团队成员被移出团队
+1. 团队成员重置其账户
 
-1. A team member revokes a device
-1. A team member leaves the team
-1. A team member is removed from the team
-1. A team member resets his/her account
+轮换后，团队的剩余成员可以在其所有设备上访问新的团队密钥，
+但被移除的用户（或撤销的设备）不应访问新的团队密钥。
+上述情况可以进一步分为两种一般情况：由执行操作的用户在关键路径上进行的密钥轮换，
+以及由完全不同的管理员在非关键路径上进行的密钥轮换。我们将在下面讨论这两种情况：
 
-After the rotation, the remaining members of the team get access to the new team keys on all of their
-devices, but the removed user (or revoked device) should not have access to the new team keys.
-The above cases can be further split up into two general cases: a key rotation on the critical
-path by the user performing the action, and a key rotation off the critical path by
-a totally different admin. We'll hit both cases below:
+## 关键路径上的密钥轮换
 
-## Key Rotation on the Critical Path
+当管理员从群组中移除用户时，他可以在同一笔交易中同时轮换团队的密钥。
 
-When an admin removes a user from a group, he can rotate the team's keys at the same time,
-in the same transaction.
+## 非关键路径上的密钥轮换 (CLKR)
 
-## Key Rotation off the Critical Path (CLKRs)
+在其他三种情况下，由执行操作的用户轮换团队密钥是没有意义的，
+因为该用户要么不再在团队中，要么没有受信任的设备来执行此操作。
 
-In the other three cases, it doesn't make sense for the user performing the operation
-to rotate the team's key, because the user is either no longer in the team, or doesn't
-have a trusted device with which to do so.
+在这种情况下，Keybase 的服务器会编排密钥轮换。Keybase
+枚举所有有能力重新生成团队密钥的管理员，并一次委托一个管理员
+负责重新生成密钥，直到操作完成。
+目前在非移动设备上在线的管理员会被优先选择执行密钥轮换。
 
-In these circumstances, Keybase's servers orchestrate a key rotation. Keybase
-enumerates all admins who are capable of rekeying the team, and delegates the
-rekeying responsibility to one at a time until the action completes.
-Admins who are currently online on a non-mobile device are favored to
-perform the key rotation.
+当服务器请求其中一位管理员轮换密钥时，他们会在后台执行此操作，
+无需用户交互。管理员的客户端会将新的每团队密钥 (Per-Team Key) 添加到链中，
+并为所有当前团队成员（不包括已移除的成员）加密。
+
+因为这个过程是惰性的，所以在用户被移除和密钥被轮换之间存在一个时间窗口。
+在这个窗口期内，如果被移除的用户与服务器串通隐瞒撤销信息，
+技术上他们仍然可以读取新消息。然而，一旦轮换发生，他们将被永久锁定。
+
+这种权衡允许在不阻塞加密操作的情况下立即撤销，
+同时确保团队安全属性的最终一致性。
 

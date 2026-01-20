@@ -1,57 +1,38 @@
-## Keybase is now writing to the Bitcoin blockchain
+## Keybase 现在将数据写入比特币区块链
 
-**Deprecation Notice**: We are now writing to the [stellar blockchain](/docs/server/stellar).
+**弃用通知**：我们现在将数据写入 [stellar 区块链](/docs/server/stellar)。
 
-Every public announcement you make on Keybase is now verifiably signed by Keybase and hashed into the Bitcoin blockchain. To be specific, all of these:
+你在 Keybase 上所做的每一个公开声明现在都由 Keybase 进行验证签名并哈希到比特币区块链中。具体来说，包括所有这些：
 
-* announcing your Keybase username
-* adding a public key
-* identity proofs (twitter, github, your website, etc.)
-* public bitcoin address announcements
-* public follower statements
-* revocations!
+* 宣布你的 Keybase 用户名
+* 添加公钥
+* 身份证明 (twitter, github, 你的网站等)
+* 公开比特币地址声明
+* 公开关注声明
+* 撤销操作！
 
-### Quick background
+### 快速背景
 
-Earlier, in [the server security overview](/docs/server) we described Keybase's approach
-to server security: (1) each user has his or her own signature chain that grows
-monotonically with each announcement; (2) the server maintains a global Merkle Tree that
-covers all signature chains; and (3) the server signs and publishes the root of the Merkle
-Tree with every new user signature.  This configuration strongly discourages the server
-from *lying by omission*, since clients have the tools to catch the server in the act.
+早些时候，在 [服务器安全概述](/docs/server) 中，我们描述了 Keybase 的服务器安全方法：(1) 每个用户都有自己的签名链，随着每次声明单调增长；(2) 服务器维护一个覆盖所有签名链的全局 Merkle 树；(3) 服务器对每个新的用户签名都会签名并发布 Merkle 树的根。这种配置强烈阻止了服务器 *通过遗漏来撒谎*，因为客户端有工具可以当场抓住服务器的行为。
 
-There was one point we glossed over.  A sophisticated adversary Eve could
-commandeer our server and *fork* it, showing Alice and Bob different versions
-of server state. Eve could get away with her attack as long as she never
-tries to merge Alice and Bob's views back together, and as long as they don't
-communicate out-of-band. (See [Mazières and Shasha](http://cs.brown.edu/courses/cs296-2/papers/sundr.pdf)
-for a formal treatment of fork-consistency).
+有一点我们略过了。一个老练的对手 Eve 可以劫持我们的服务器并将其 *分叉 (fork)*，向 Alice 和 Bob 展示不同版本的服务器状态。只要 Eve 从不尝试将 Alice 和 Bob 的视图合并回去，并且只要他们不进行带外通信，Eve 就可以侥幸成功。(关于分叉一致性的正式处理，请参阅 [Mazières 和 Shasha](http://cs.brown.edu/courses/cs296-2/papers/sundr.pdf))。
 
-### Enter the Bitcoin Blockchain
+### 进入比特币区块链
 
-Thanks to Bitcoin, we are now unforkable.
+感谢比特币，我们现在是不可分叉的。
 
-Since 16 June 2014, Keybase has been regularly pushing its Merkle Root into the
-Bitcoin blockchain, signed by the key [1HUCBSJeHnkhzrVKVjaVmWg2QtZS1mdfaz](https://blockchain.info/address/1HUCBSJeHnkhzrVKVjaVmWg2QtZS1mdfaz).  Now, Alice and Bob can consult the blockchain
-to find a recent root of the Keybase Merkle tree.  Unless Eve can fork the Bitcoin blockchain, Alice and Bob will see the same value, and can catch
-Eve if she tries to fork Keybase.
+自 2014 年 6 月 16 日起，Keybase 定期将其 Merkle 根推送到比特币区块链，并由密钥 [1HUCBSJeHnkhzrVKVjaVmWg2QtZS1mdfaz](https://blockchain.info/address/1HUCBSJeHnkhzrVKVjaVmWg2QtZS1mdfaz) 签名。现在，Alice 和 Bob 可以查询区块链以找到 Keybase Merkle 树的最近根。除非 Eve 能分叉比特币区块链，否则 Alice 和 Bob 将看到相同的值，并且如果 Eve 试图分叉 Keybase，他们就能抓住她。
 
-Another way to think of this property is to turn it on its head.  Whenever Alice uploads
-a signed announcement to the Keybase servers, she influences Keybase's Merkle Tree, which in turn influences
-the Bitcoin blockchain, which in turn Bob can observe.  When Bob observes changes in the Bitcoin
-blockchain, he can work backwards to see Alice's change.  There's little Eve can do to
-get in the way without being detected.
+另一种思考这个属性的方式是将其倒过来。每当 Alice 上传一个签名的声明到 Keybase 服务器时，她就会影响 Keybase 的 Merkle 树，这反过来又会影响比特币区块链，而 Bob 可以观察到这一点。当 Bob 观察到比特币区块链的变化时，他可以反向推导看到 Alice 的更改。Eve 几乎无法在不被发现的情况下阻碍这一过程。
 
 
-### You Mean My Signatures affect the Bitcoin Blockchain?
+### 你的意思是我的签名会影响比特币区块链？
 
-Yes.  Here's how to verify it. We're providing sample code for both Python and [IcedCoffeeScript](http://maxtaco.github.io/coffee-script/) - these should work right in your REPL, so go ahead, fire up python or iced,
-and start playing.
+是的。这是验证它的方法。我们提供了 Python 和 [IcedCoffeeScript](http://maxtaco.github.io/coffee-script/) 的示例代码 - 这些应该可以直接在你的 REPL 中运行，所以请继续，启动 python 或 iced，并开始尝试。
 
-First, find the most recent Keybase insertion into the Bitcoin blockchain; it is always the most recent
-expenditure by [1HUCBSJeHnkhzrVKVjaVmWg2QtZS1mdfaz](https://blockchain.info/address/1HUCBSJeHnkhzrVKVjaVmWg2QtZS1mdfaz):
+首先，找到 Keybase 在比特币区块链中的最新插入；它始终是 [1HUCBSJeHnkhzrVKVjaVmWg2QtZS1mdfaz](https://blockchain.info/address/1HUCBSJeHnkhzrVKVjaVmWg2QtZS1mdfaz) 的最新支出：
 
-in Python:
+Python:
 ```python
 from   urllib2 import urlopen
 import json
@@ -60,25 +41,22 @@ uri       = "https://blockchain.info/address/%s?format=json" % (from_addr)
 to_addr   = json.load(urlopen(uri))['txs'][0]['out'][0]['addr']
 ```
 
-or in IcedCoffeeScript: 
+或者 IcedCoffeeScript: 
 ```coffeescript
 request = require 'request'
 addr    = "1HUCBSJeHnkhzrVKVjaVmWg2QtZS1mdfaz"
-uri     = "https://blockchain.info/address/#{P}{addr}?format=json"
+uri     = "https://blockchain.info/address/#{addr}?format=json"
 await request {uri : uri, json : true }, defer err, res, json
 to_addr = json.txs[0].out[0].addr
 ```
 
-You'll get something new, but on Monday 14 Jul 2014 at 11:33 EST, the output was:
+你会得到一些新的东西，但在 2014 年 7 月 14 日星期一 11:33 EST，输出是：
 
 ```
 168bJepnpoZkoW5AWE7TxNhvuNPmsNmyvS
 ```
 
-The Keybase servers sent a small amount of bitcoin to that address, intending
-never to recover it, and instead, to use 160 bits of the address to capture
-the hash value of its Merkle root.   Use standard Bitcoin math to convert
-this address into a hex-encoded hash value:
+Keybase 服务器向该地址发送了少量的比特币，打算永远不收回它，而是使用该地址的 160 位来捕获其 Merkle 根的哈希值。使用标准的比特币数学将此地址转换为十六进制编码的哈希值：
 
 ```python
 from pycoin.encoding import bitcoin_address_to_hash160_sec, hash160
@@ -88,14 +66,14 @@ print to_addr_hash
 ```
 
 ```coffeescript
-btcjs = require 'keybase-bitcoinjs-lib' # regular 'bitcoinjs-lib' works too
+btcjs = require 'keybase-bitcoinjs-lib' # 普通的 'bitcoinjs-lib' 也可以
 to_addr_hash = btcjs.Address.fromBase58Check(to_addr).hash.toString('hex')
 console.log to_addr_hash
 ```
 
-Which outputs: `38482d2daf98ee6c04b2e2fd32981de6e78a3b60`
+输出：`38482d2daf98ee6c04b2e2fd32981de6e78a3b60`
 
-Now do a lookup on Keybase to find the matching root block for that hash:
+现在在 Keybase 上进行查找以找到与该哈希匹配的根块：
 
 ```python
 kb        = "https://keybase.io/_/api/1.0"
@@ -106,54 +84,44 @@ print root_desc
 
 ```coffeescript
 kb  = "https://keybase.io/_/api/1.0"
-uri = "#{P}{kb}/merkle/root.json?hash160=#{P}{to_addr_hash}"
+uri = "#{kb}/merkle/root.json?hash160=#{to_addr_hash}"
 await request { uri : uri, json : true }, defer err, res, root_desc
 console.log root_desc
 ```
 
-You can examine this JSON output to find a lot of goodies, but really what we
-care about is the `sig` field, which contains a signature of the hash of the
-root block, and the hash of this signature should match the value we found in
-the Bitcoin blockchain:
+你可以检查这个 JSON 输出以发现很多好东西，但实际上我们关心的是 `sig` 字段，它包含根块哈希的签名，并且此签名的哈希应与我们在比特币区块链中找到的值匹配：
 
 
 ```
 import re
 from base64 import b64decode
 keybase_kid = '010159baae6c7d43c66adf8fb7bb2b8b4cbe408c062cfc369e693ccb18f85631dbcd0a'
-sig = b64decode(re.compile(r"\\n\\n((\\S|\\n)*?)\\n=").search(root_desc['sigs'][keybase_kid]['sig']).group(1))
+sig = b64decode(re.compile(r"\n\n((\S|\n)*?)\n=").search(root_desc['sigs'][keybase_kid]['sig']).group(1))
 assert (to_addr_hash == hexlify(hash160(sig)))
 ```
 
 ```coffeescript
 assert = require 'assert'
 keybase_kid = '010159baae6c7d43c66adf8fb7bb2b8b4cbe408c062cfc369e693ccb18f85631dbcd0a'
-sig = Buffer.from root_desc.sigs[keybase_kid].sig.match(/\\n\\n([\\na-zA-Z0-9\\/\\+=]*?)\\n=/)[1], 'base64'
+sig = Buffer.from root_desc.sigs[keybase_kid].sig.match(/\n\n([\na-zA-Z0-9\/\+=]*?)\n=/)[1], 'base64'
 assert.equal hash, btcjs.crypto.hash160(sig).toString('hex')
 ```
   
-Aha, a match!  What was all that regex goo, you might
-ask.  The signature field itself is a standard PGP signature, with the familiar `---- BEGIN PGP ----`
-framing, comment fields, and checksum.  The regex strips away the skin and leaves just the meat.
+哈，匹配了！你可能会问，那些正则代码是干什么的。签名字段本身是一个标准的 PGP 签名，带有熟悉的 `---- BEGIN PGP ----` 框架、注释字段和校验和。正则表达式剥去表皮，只留下肉。
 
-We are currently using the [PGP Key](/docs/api/1.0/kid) [010159baae6c7d...](/docs/server_security/our_merkle_key)
-to sign our commitments, but plan to transition to an EdDSA key in the future. We will publish those
-signatures under a different key of the `sigs` object, corresponding to that new key's KID.
+我们目前使用 [PGP 密钥](/docs/api/1.0/kid) [010159baae6c7d...](/docs/server_security/our_merkle_key) 来签署我们的承诺，但计划在未来过渡到 EdDSA 密钥。我们将把这些签名发布在 `sigs` 对象的不同键下，对应于该新密钥的 KID。
 
-Now that we've verified the hash of this signature was written to the blockchain, we can either verify
-the signature via `gpg`, or try something quick and dirty to strip out the signature's payload data.  For
-this demonstration, the latter suffices. Pull out the hash of the root block as follows:
+现在我们已经验证了此签名的哈希已写入区块链，我们可以通过 `gpg` 验证签名，或者尝试一些快速而粗略的方法来剥离签名的有效载荷数据。对于此演示，后者就足够了。如下提取根块的哈希：
 
 ```python
-root_hash = re.compile(r"\\"root\\":\\"([a-f0-9]{128})\\"").search(sig).group(1)
+root_hash = re.compile(r"\"root\":\"([a-f0-9]{128})\"").search(sig).group(1)
 ```
 
 ```coffeescript
 root_hash = sig.toString("utf8").match(/"root":"([a-f0-9]{128})"/)[1]
 ```
 
-Now we have the root, we can descend the Merkle tree to get the corresponding user data.  Let's look
-up my data, but feel free to try your own:
+现在我们有了根，我们可以下降 Merkle 树以获取相应的用户数据。让我们查找我的数据，但请随意尝试你自己的：
 
 ```python
 username = "max"
@@ -164,13 +132,12 @@ print uid
 
 ```coffeescript
 username = "max"
-uri      = "#{P}{kb}/user/lookup.json?username=#{P}{username}"
+uri      = "#{kb}/user/lookup.json?username=#{username}"
 await request { uri : uri, json : true }, defer err, res, json
 uid      = json.them.id
 ```
 
-Descending the Merkle tree works as follows.  First, lookup the actual
-root block that corresponds to the root hash:
+下降 Merkle 树的工作原理如下。首先，查找对应于根哈希的实际根块：
 
 ```python
 uri = "%s/merkle/block.json?hash=%s" % (kb, root_hash)
@@ -178,11 +145,11 @@ value_string = json.load(urlopen(uri))['value_string']
 ```
 
 ```coffeescript
-uri = "#{P}{kb}/merkle/block.json?hash=#{P}{root_hash}"
+uri = "#{kb}/merkle/block.json?hash=#{root_hash}"
 await request { uri : uri, json : true }, defer err, res, json
 ```
 
-Next, check that the server wasn't lying about the contents of the block:
+接下来，检查服务器关于块内容是否撒谎：
 ```python
 from hashlib import sha512, sha256
 computed_hash = hexlify(sha512(value_string).digest())
@@ -195,10 +162,10 @@ computed_hash = createHash('sha512').update(json.value_string).digest('hex')
 assert.equal computed_hash, root_hash
 ```
 
-Then go down the path from the tree root to my leaf.
-The first node is indexed with the first hex character of my UID;
-the next node down is indexed with the first two hex characters of my UID;
-and so on, until we hit a leaf node:
+然后沿着从树根到我叶子的路径向下走。
+第一个节点用我 UID 的第一个十六进制字符索引；
+下一个节点用我 UID 的前两个十六进制字符索引；
+依此类推，直到我们到达一个叶子节点：
 
 ```python
 for i in range(1,len(uid)):
@@ -218,14 +185,12 @@ for i in [1...uid.length]
     prefix = uid[0...i]
     nxt = tab[prefix]
     break unless nxt?
-    uri  = "#{P}{kb}/merkle/block.json?hash=#{P}{nxt}"
+    uri  = "#{kb}/merkle/block.json?hash=#{nxt}"
     await request { uri : uri, json : true }, defer err, res, json
 my_triple = tab[uid][1]
 ```
 
-At this point, we can again check the server isn't lying to us about this block in the Merkle
-tree using the same technique as above. After we do, we are down at the leaf of the tree, and can
-jump to my record:
+此时，我们可以再次使用与上述相同的技术检查服务器是否在 Merkle 树中的这个块上对我们撒谎。在我们这样做之后，我们就到了树的叶子，可以跳转到我的记录：
 
 ```python
 link_hash = my_triple[1]
@@ -235,11 +200,9 @@ link_hash = my_triple[1]
 link_hash = my_triple[1]
 ```
 
-The triple contains: (0) the length of my signature chain; (1) the hash of the last thing I signed;
-and (2) the hash of the signature of the last thing I signed.
+三元组包含：(0) 我签名链的长度；(1) 我签名的最后一个事物的哈希；(2) 我签名的最后一个事物的签名的哈希。
 
-We're almost there! Now let's fetch my whole signature chain, zoom to the last link, check that it
-matches the hash we got above, and dump it out (pretty-printed)
+我们快到了！现在让我们获取我的整个签名链，跳转到最后一个链接，检查它是否与我们上面得到的哈希匹配，并将其转储出来（漂亮打印）
 
 ```python
 uri           = "%s/sig/get.json?uid=%s" % (kb, uid)
@@ -250,7 +213,7 @@ print json.dumps(json.loads(payload), indent=4)
 ```
 
 ```coffeescript
-uri = "#{P}{kb}/sig/get.json?uid=#{P}{uid}"
+uri = "#{kb}/sig/get.json?uid=#{uid}"
 await request { uri : uri, json : true }, defer err, res, json
 payload_json = json.sigs[-1...][0].payload_json
 computed_hash = createHash('sha256').update(payload_json).digest('hex')
@@ -258,7 +221,5 @@ assert.equal computed_hash, link_hash
 console.log JSON.stringify(JSON.parse(payload_json), null, 4)
 ```
 
-In my case, the last thing I signed was a statement of my Facebook proof.
-In sum, this statement was hashed into my signature chain, which was hashed into Keybase's Merkle
-tree, which eventually was injected into the Bitcoin blockchain, for all eternity. That's a strong
-guarantee.
+在我的例子中，我签名的最后一件事是我的 Facebook 证明的声明。
+总之，该声明被哈希到我的签名链中，签名链被哈希到 Keybase 的 Merkle 树中，最终被注入比特币区块链，直到永远。这是一个强有力的保证。

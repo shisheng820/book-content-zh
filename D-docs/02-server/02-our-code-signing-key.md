@@ -1,12 +1,12 @@
-<h2>Our public code-signing key</h2>
+<h2>我们的代码签名公钥</h2>
 
-<h3>Fingerprint</h3>
+<h3>指纹</h3>
 
 <p>
   <code>222B 85B0 F90B E2D2  4CFE  B93F 4748 4E50 656D 16C7</code>
 </p>
 
-<h3>Contents</h3>
+<h3>内容</h3>
 
 <p><a href="https://keybase.io/docs/server_security/code_signing_key.asc">curl/raw</a></p>
 
@@ -64,7 +64,7 @@ k/iWuVDzdG9ONSP0JaOwVmFySzC0tx8aXQ==
 -----END PGP PUBLIC KEY BLOCK-----
 ```
 
-<h3>Windows Codesigning Certificate Thumbprint</h3>
+<h3>Windows 代码签名证书指纹</h3>
 
 <p>
   <code>eb187c8cbf63d8ca0dfb3cba97e8e310fc3fde52</code>

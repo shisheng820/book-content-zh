@@ -1,40 +1,40 @@
-{% set section_title = "Docs" %}
-{% set section_subtitle = "Browse technical documentation." %}
-{% set nav_title = "Docs" %}
-{% set page_title = "Keybase Docs" %}
-{% set page_description = "Browse technical documentation on the public-key cryptography that powers Keybase. Learn how Keybase Chats, Files, Teams, and Git are secured." %}
+{% set section_title = "文档" %}
+{% set section_subtitle = "浏览技术文档。" %}
+{% set nav_title = "文档" %}
+{% set page_title = "Keybase 文档" %}
+{% set page_description = "浏览支持 Keybase 的公钥加密技术的文档。了解 Keybase 聊天、文件、团队和 Git 是如何受到保护的。" %}
 
-# Docs
+# 文档
 
-**[Command Line](/docs/cli) (CLI)**  
-Keybase is more than a website. If you’re comfortable working in a terminal (and also if you’re not), you should download the keybase app. You can do so much with it: sign, verify, encrypt, generate messages, sign code, move keys around, etc., all using GPG for the crypto.
+**[命令行](/docs/cli) (CLI)**  
+Keybase 不仅仅是一个网站。如果你习惯在终端工作（即使你不习惯），你也应该下载 Keybase 应用。你可以用它做很多事情：签名、验证、加密、生成消息、签署代码、移动密钥等，所有这些都使用 GPG 进行加密。
 
-**[Trust, Following, Signature Chains, & Our Public Keys](/docs/server)**  
-Every account on Keybase has a public history. "Sigchains" let Keybase clients reconstruct the present without trusting Keybase's servers. And when you "follow" someone on Keybase, you sign a snapshot of your view of the claims in their sigchain.
+**[信任、关注、签名链和我们的公钥](/docs/server)**  
+Keybase 上的每个账户都有一个公开的历史记录。“签名链” (Sigchains) 让 Keybase 客户端无需信任 Keybase 的服务器即可重建当前状态。当你“关注” Keybase 上的某人时，你就签署了他们签名链中你所看到的声明的快照。
 
-**[Teams](/docs/teams)**  
-Design, implementation and specification of Teams.
+**[团队](/docs/teams)**  
+团队的设计、实现和规范。
 
-**[Chat](/docs/chat)**  
-Information about Keybase's encrypted chat product.
+**[聊天](/docs/chat)**  
+关于 Keybase 加密聊天产品的信息。
 
-**[The Keybase Filesystem](/docs/crypto/kbfs)**  
-Our cloud-backed file system is live for all.
+**[Keybase 文件系统](/docs/crypto/kbfs)**  
+我们的云支持文件系统面向所有人开放。
 
-**[Stellar Wallet](/docs/server/stellar)**  
-A description of Keybase's Stellar wallet implementation.
+**[Stellar 钱包](/docs/server/stellar)**  
+Keybase 的 Stellar 钱包实现描述。
 
 **[Git](/git)**  
-Description of the design, implementation, and use of Keybase Git.
+Keybase Git 的设计、实现和使用的描述。
 
-**[Crypto](/docs/crypto)**  
-Documents describing Keybase's use of cryptography.
+**[加密](/docs/crypto)**  
+描述 Keybase 加密技术使用的文档。
 
-**[Bot Development](/docs/bots)**  
-Information about Keybase bots and building your own.
+**[Bot 开发](/docs/bots)**  
+关于 Keybase 机器人以及构建你自己的机器人的信息。
 
-**[Linux User Guide](/docs/linux)**  
-Linux-specific information about installing, using, and customizing Keybase.
+**[Linux 用户指南](/docs/linux)**  
+关于安装、使用和自定义 Keybase 的 Linux 特定信息。
 
-**[Lockdown Mode](/docs/lockdown)**  
-A description of Lockdown Mode, recommended for users who want extra protection for their Keybase account.
+**[锁定模式](/docs/lockdown)**  
+锁定模式的描述，推荐给希望为其 Keybase 账户提供额外保护的用户。

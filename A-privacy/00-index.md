@@ -1,42 +1,49 @@
-{% set section_title = "Privacy" %}
-{% set section_subtitle = "Your data is your data. Learn more." %}
-{% set page_title = "Learn about Privacy on Keybase" %}
-{% set page_description = "Your data is safe, secure, and yours alone. No one else can access your data—not even Keybase, which means we can’t and won’t ever sell it. Learn more." %}
+{% set section_title = "隐私" %}
+{% set section_subtitle = "你的数据就是你的数据。了解更多。" %}
+{% set page_title = "了解 Keybase 上的隐私" %}
+{% set page_description = "你的数据是安全、可靠且只属于你自己的。没有其他人可以访问你的数据——即使是 Keybase 也不行，这意味着我们不能也不会出售它。了解更多。" %}
 
-# Privacy on Keybase
-Only your intended recipients can access what you share and store on Keybase. No one else can access your data—not even Keybase, which also means we can’t and won’t ever sell it.
+# Keybase 隐私
 
-[Public-key cryptography](/security) ensures your privacy and security on Keybase. But public-key cryptography means that some information is, well, public. For example, everyone on the internet can see your username. And, some public info can’t be totally deleted. To help avoid any confusion or embarrassing moments, we’ll lay it all out.
+只有你的预期接收者才能访问你在 Keybase 上分享和存储的内容。没有其他人可以访问你的数据——即使是 Keybase 也不行，这也意味着我们不能也不会出售它。
 
-## Data privacy
-#### Your data is your data. 
-You can and should read our whole [privacy policy](https://keybase.io/docs/privacypolicy). It’s not too long and you can skip around to find the info that’s most important to you. 
+[公钥加密](/security) 确保了你在 Keybase 上的隐私和安全。但是公钥加密意味着某些信息是，嗯，公开的。例如，互联网上的每个人都可以看到你的用户名。而且，一些公开信息无法完全删除。为了避免任何混淆或尴尬时刻，我们将全部列出。
 
-The gist is that Keybase won’t sell or rent your data or content for any reason. Again, we can’t even access it. And, we’ll never rely on ads for revenue. Eventually, we may charge for special features for larger corporations. But individual and existing accounts will always be free.
- 
-#### Your data is secure.
-Keybase can’t access your data and no one else can either. It may seem strange, but you don’t create a password when you set up your account. The cryptography Keybase uses is significantly more secure than passwords. 
+## 数据隐私
 
-Learn more in [Your account](/account) and [Security](/security).
+#### 你的数据就是你的数据。
 
-## Public info
-Using public-key cryptography means that some of your info is public by default. 
+你可以也应该阅读我们完整的 [隐私政策](https://keybase.io/docs/privacypolicy)。它不太长，你可以跳读以找到对你最重要的信息。
 
-Anyone on the internet can search, find, and see your Keybase account and some details associated with it, including:
-* your username 
-* device names 
-* your public key
-* your followers and who you follow
-* social accounts that you use as proofs (e.g. Twitter, GitHub, Reddit)
-* anything else you choose to share on your profile—maybe a photo, short biography, or your location 
+要点是，Keybase 不会出于任何原因出售或出租你的数据或内容。再说一次，我们甚至无法访问它。而且，我们永远不会依靠广告获得收入。最终，我们可能会对大型企业的特殊功能收费。但个人和现有账户将永远免费。
 
-Learn more in [Your account](/account) and [Security](/security).
+#### 你的数据是安全的。
 
-## Blocking and reporting
-You can control who can interact with you on Keybase. You can block and report people on an individual basis. You can also proactively restrict who can chat with you or add you to a team. Learn more in [Chat](chat#privacy).
+Keybase 无法访问你的数据，其他人也无法访问。这可能看起来很奇怪，但在设置账户时你不需要创建密码。Keybase 使用的加密技术比密码安全得多。
 
-When you block someone, they’ll no longer be able to chat, share files, or otherwise interact with you on Keybase. If you’re on a team together, you may still be able to see messages they share with that team. But you can also choose to block entire conversations and/or teams. Blocking is implemented by hiding the messages the blockee sends. If they are unblocked, all hidden messages will be available.
+在 [你的账户](/account) 和 [安全](/security) 中了解更多信息。
 
-You can also remove people you block from your public list of followers. You won’t see them and their account will not be publicly associated with yours. But they can still follow you. 
+## 公开信息
 
-When you report someone, we review their account as quickly as humanly possible. We remove people that have violated our [terms](https://keybase.io/docs/terms). Please provide additional information so we can remove spammers, abusers, and harassers even more quickly.
+使用公钥加密意味着你的某些信息默认是公开的。
+
+互联网上的任何人都可以搜索、查找并查看你的 Keybase 账户以及与之相关的一些详细信息，包括：
+
+* 你的用户名
+* 设备名称
+* 你的公钥
+* 你的关注者和你正在关注的人
+* 你用作证明的社交账户（例如 Twitter, GitHub, Reddit）
+* 你选择在个人资料中分享的任何其他内容——也许是一张照片、简短的个人简介或你的位置
+
+在 [你的账户](/account) 和 [安全](/security) 中了解更多信息。
+
+## 屏蔽和举报
+
+你可以控制谁可以在 Keybase 上与你互动。你可以单独屏蔽和举报他人。你还可以主动限制谁可以与你聊天或将你添加到团队。在 [聊天](chat#privacy) 中了解更多信息。
+
+当你屏蔽某人时，他们将不再能在 Keybase 上与你聊天、分享文件或以其他方式互动。如果你们在同一个团队，你可能仍然能看到他们与该团队分享的消息。但你也可以选择屏蔽整个对话和/或团队。屏蔽是通过隐藏被屏蔽者发送的消息来实现的。如果他们被解封，所有隐藏的消息将变得可用。
+
+你还可以从你的公开关注者列表中移除你屏蔽的人。你不会看到他们，他们的账户也不会公开与你的账户关联。但他们仍然可以关注你。
+
+当你举报某人时，我们会尽可能快地人工审查他们的账户。我们会移除违反我们 [条款](https://keybase.io/docs/terms) 的人。请提供更多信息，以便我们可以更快地移除垃圾邮件发送者、滥用者和骚扰者。

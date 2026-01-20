@@ -1,119 +1,119 @@
-{% set section_title = "Chat" %}
-{% set section_subtitle = "Share messages and files with anyone." %}
-{% set page_title = "Learn about using Keybase for Chat" %}
-{% set page_description = "Use Keybase Chat for end-to-end encrypted messaging with anyone. Keep your private messages safe and secure. Learn more." %}
+{% set section_title = "聊天" %}
+{% set section_subtitle = "与任何人分享消息和文件。" %}
+{% set page_title = "了解如何使用 Keybase 聊天" %}
+{% set page_description = "使用 Keybase 聊天与任何人进行端到端加密消息传递。确保您的私密消息安全无虞。了解更多。" %}
 
-# Keybase for Chat
-Message friends, share important info with colleagues, or organize entire projects. All of your chats on Keybase happen in one secure inbox.
+# Keybase 聊天
+给朋友发消息，与同事分享重要信息，或组织整个项目。您在 Keybase 上的所有聊天都发生在一个安全的收件箱中。
 
-![ !One-on-one chats are organized at the top of your inbox; team chats are below.](/img/chat-profileteams.png)
+![ !一对一聊天组织在收件箱顶部；团队聊天在下方。](/static/img/chat-profileteams.png)
 
-Anything you share—all of your messages and files—is end-to-end encrypted. Your messages can only be read by your intended recipient(s). Private messages stay private.
+您分享的任何内容——所有的消息和文件——都是端到端加密的。您的消息只能被您的预期接收者阅读。私密消息始终保持私密。
 
-You can chat with individuals or groups, [block people](/chat#blocking) you don’t want to chat with, and get even more done with [special features](/chat#special-features) like location sharing, exploding messages, coin flips, and bots.
+您可以与个人或群组聊天，[屏蔽](/chat#屏蔽) 您不想聊天的人，并使用 [特色功能](/chat#特色功能) 如位置共享、阅后即焚、抛硬币和机器人来完成更多工作。
 
-## Starting a chat
-To start new chats quickly, you can find your contacts by name, email, or phone number; or by username from other platforms like Twitter, Facebook, and GitHub.
+## 开始聊天
+要快速开始新聊天，您可以按姓名、电子邮件或电话号码查找联系人；或者按 Twitter、Facebook 和 GitHub 等其他平台上的用户名查找。
 
-If you start a chat with someone who doesn’t have a Keybase account, they’ll have to create one before they can receive your message. This helps ensure that only your intended recipients can read your messages. Additionally, one of your devices will need to be online for them to receive your message.
+如果您与没有 Keybase 账户的人开始聊天，他们必须先创建一个账户才能接收您的消息。这有助于确保只有您的预期接收者可以阅读您的消息。此外，您的设备之一需要在线以便他们接收您的消息。
 
-You can use Keybase Chat just like you would for one-on-one or group messages on your phone. Except, of course, it’s super, super secure. You can do a lot more if you turn a group into a team.
+您可以像在手机上发送一对一或群组消息一样使用 Keybase 聊天。当然，它是超级、超级安全的。如果您将群组转变为团队，您可以做更多事情。
 
-## Team chats
-If you turn a group chat into a team, you can add or remove people from it. [Teams](/teams) also allow you to organize chats by adding channels. If you add channels, your team becomes what we call a big team.
+## 团队聊天
+如果您将群聊转变为团队，您可以添加或移除人员。[团队](/teams) 还允许您通过添加频道来组织聊天。如果您添加频道，您的团队就会成为我们要说的大团队。
 
-### Channels
-You can create channels to organize chats—on say, a specific project or lunch ideas—but they’re not private. Everyone in a team can search and read all messages and files shared in any and every channel.
+### 频道
+您可以创建频道来组织聊天——比如，针对特定项目或午餐想法——但它们不是私密的。团队中的每个人都可以搜索和阅读在任何和每个频道中分享的所有消息和文件。
 
-### Subteams
-To create group chats or to share files that are private to specific team members, you need to [make a subteam](/teams#subteams). Subteams are cryptographically distinct from the parent team, so you can add people to a subteam who are not in the parent team.
+### 子团队
+要创建群聊或分享对特定团队成员私密的文件，您需要 [创建子团队](/teams#子团队)。子团队在密码学上与父团队不同，因此您可以将不在父团队中的人添加到子团队中。
 
-### Private messages
-You can reply privately to messages within team chats. Those chats move outside of the team chat and always remain private between you and that other person. Team owners and admins can’t snoop.
+### 私密消息
+您可以在团队聊天中私下回复消息。这些聊天会移出团队聊天，并始终保持在您和另一个人之间的私密状态。团队所有者和管理员无法窥探。
 
-### Chat history
-Your entire chat history of messages and files is searchable and readable by everyone in a team, including new team members.
+### 聊天记录
+您的所有消息和文件的聊天记录对团队中的每个人都是可搜索和可读的，包括新团队成员。
 
-In team chats, owners can determine how long messages are saved. Messages can be auto-deleted never or at set intervals from 30 seconds to 365 days. Individual messages can also be set to [explode](chat#exploding-messages) after a certain time period.
+37→在团队聊天中，所有者可以决定消息保存多长时间。消息可以设置为永不自动删除，或在 30 秒到 365 天的设定间隔后自动删除。单条消息也可以设置为在特定时间段后 [自毁](/chat#阅后即焚-exploding-messages)。
 
-So long as you choose to keep your chat history, you’ll always be able to search and read all of it.
+只要您选择保留聊天记录，您就永远可以搜索和阅读所有记录。
 
-## Privacy
-Keybase accounts are public, but you can control who can chat or otherwise interact with you by blocking, reporting, and/or restricting contacts.
+## 隐私
+Keybase 账户是公开的，但您可以通过屏蔽、举报和/或限制联系人来控制谁可以与您聊天或以其他方式互动。
 
-If someone you don’t follow and haven’t chatted with before contacts you on Keybase, you’ll automatically get a heads up. You can choose to wave hello, view their account profile, or block them. If you want to chat, just start typing and the notification will automatically disappear.
+如果未关注且之前未与之聊天的人在 Keybase 上联系您，您会自动收到提示。您可以选择打招呼、查看他们的账户资料或屏蔽他们。如果您想聊天，只需开始输入，通知就会自动消失。
 
-### Blocking
-When you block someone, they won’t be able to chat with you or add you to a team. You can also remove them from your public list of followers. You won’t see them, and their account will not be publicly associated with yours.
+### 屏蔽
+当您屏蔽某人时，他们将无法与您聊天或将您添加到团队。您还可以将他们从您的公开关注者列表中移除。您将看不到他们，他们的账户也不会公开与您的账户关联。
 
-But they can still follow you. They may also know that you blocked them because they won’t be able to chat with you or add you to a team.
+但他们仍然可以关注您。他们也可能知道您屏蔽了他们，因为他们无法与您聊天或将您添加到团队。
 
-### Reporting
-When you report someone, we review their account as quickly as humanly possible. We will remove people that have violated our [terms](https://keybase.io/docs/terms). Please provide additional information so we can remove spammers, abusers, and harassers even faster.
+### 举报
+当您举报某人时，我们会尽可能快地人工审查他们的账户。我们将移除违反我们 [条款](https://keybase.io/docs/terms) 的人。请提供更多信息，以便我们可以更快地移除垃圾邮件发送者、滥用者和骚扰者。
 
-### Restricting contacts
-You can further restrict who can chat with you or add you to a team, under Settings > Chat.
+### 限制联系人
+您可以在 设置 > 聊天 下进一步限制谁可以与您聊天或将您添加到团队。
 
-You can select a box that gives you options to only let someone message you or add you to a team if:
-* you follow them,
-* you follow someone who follows them, or
-* they’re in a particular team with you.
+您可以勾选一个框，仅允许满足以下条件的人给您发消息或将您添加到团队：
+* 您关注了他们，
+* 您关注的人关注了他们，或
+* 他们与您在同一个特定的团队中。
 
-If you select the team option, you can further specify which teams.
+如果您选择团队选项，您可以进一步指定哪些团队。
 
-## Special features
- The cryptography that powers Keybase Chat also lets you do a lot of things you can’t do in other chat apps, like share your live [location](chat#location-sharing), make extra-sensitive messages [explode](chat#exploding-messages), flip a [coin](chat#coin-flips), or use a [bot](chat#bots).
+## 特色功能
+支持 Keybase 聊天的密码学技术还允许您做很多其他聊天应用无法做到的事情，比如分享您的实时 [位置](/chat#位置共享)，让极其敏感的消息 [自毁](/chat#阅后即焚-exploding-messages)，抛 [硬币](/chat#抛硬币)，或使用 [机器人](/chat#机器人)。
 
-You can also send or request funds over chat, in Lumens or any other currency you choose. Learn more in [Wallet](/wallet).
+您还可以通过聊天发送或请求资金，使用 Lumens 或您选择的任何其他货币。在 [钱包](/wallet) 中了解更多。
 
-### Location sharing
-On mobile devices, you can safely and securely share your location with any individual, group, or team on Keybase Chat. You can even share your live location for a set period of time and it will automatically update as you move.
+### 位置共享
+在移动设备上，您可以安全地与 Keybase 聊天中的任何个人、群组或团队分享您的位置。您甚至可以在设定的时间段内分享您的实时位置，它会随着您的移动自动更新。
 
-When you do so, only the person or people you intend to share your location with will receive it. Not even Keybase or Google Maps will know where you are.
+当您这样做时，只有您打算与之分享位置的人会收到它。甚至 Keybase 或 Google Maps 都不会知道您在哪里。
 
-![ !Safely and securely show your contacts where you are.](/img/chat-location.png)
+![ !安全地向您的联系人展示您在哪里。](/static/img/chat-location.png)
 
-### Exploding messages
-Exploding messages are great for your most sensitive information, like passwords or credit card numbers.
+### 阅后即焚 (Exploding messages)
+阅后即焚非常适合处理您最敏感的信息，如密码或信用卡号。
 
-An exploding message is completely and permanently erased after your chosen period of time. It won’t be searchable. No one will ever be able to find or read it, not even if they have access to your device or the device of a person you shared the message with. It will disappear into thin air. Poof!
+阅后即焚消息会在您选择的时间段后完全且永久地删除。它是不可搜索的。没有人能再次找到或阅读它，即使他们可以访问您的设备或您与之分享消息的人的设备。它会消失得无影无踪。噗！
 
-![ !Permanently erase super sensitive information in an exploding message.](/img/chat-explodingmessage.gif)
+![ !在阅后即焚消息中永久删除超级敏感的信息。](/static/img/chat-explodingmessage.gif)
 
-#### Teams
-If you share an exploding message with a team, it will only be  readable for existing members of the team. This means:
+#### 团队
+如果您与团队分享阅后即焚消息，只有现有的团队成员可以阅读。这意味着：
 
-* Everyone in the team—at the time the message is sent—will be able to read it before it explodes, even if they leave and rejoin the team within that time period.
-* Anyone added to the team after an exploding message is sent will not be able to read it, even if it hasn’t yet exploded.
+* 团队中的每个人——在消息发送时——都可以在它自毁之前阅读它，即使他们在那段时间内离开并重新加入团队。
+* 在阅后即焚消息发送后添加到团队的任何人都无法阅读它，即使它还没有自毁。
 
-### Coin flips
-Coin flips can help you make decisions, like where to go to lunch.
+### 抛硬币
+抛硬币可以帮助您做决定，比如去哪里吃午饭。
 
-Type `/flip` into a chat and you’ll get a totally randomized heads-or-tails coin flip.
+在聊天中输入 `/flip`，您将获得一个完全随机的正面或反面抛硬币结果。
 
-You can also roll a die, pick a random number in a range, shuffle a list of items, and more.
+您还可以掷骰子，在范围内选择一个随机数，打乱列表项等等。
 
-![ !Make very important decisions with a randomized coin flip.](/img/chat-coinflip.gif)
+![ !用随机抛硬币做出非常重要的决定。](/static/img/chat-coinflip.gif)
 
-You can safely use `/flip` for important things, too. It’s cryptographically designed to make cheating and colluding all but impossible.
+您也可以安全地将 `/flip` 用于重要的事情。它的密码学设计使得作弊和串通几乎不可能。
 
-Learn more about cryptographic coin flipping on [the Keybase blog](https://keybase.io/blog/cryptographic-coin-flipping).
+在 [Keybase 博客](https://keybase.io/blog/cryptographic-coin-flipping) 上了解更多关于密码学抛硬币的信息。
 
-### Bots
-You can add bots to do things like send reminders, start a Google Meet, integrate your GitHub or Jira workflow, and so much more in Chat.
+### 机器人
+您可以添加机器人来做一些事情，比如发送提醒，开始 Google Meet，整合您的 GitHub 或 Jira 工作流，以及在聊天中做更多事情。
 
-All Keybase bots are open source. Keybase builds some but anyone can. You can see documentation on [GitHub](https://github.com/keybase/managed-bots).
+所有 Keybase 机器人都是开源的。Keybase 构建了一些，但任何人都可以构建。您可以在 [GitHub](https://github.com/keybase/managed-bots) 上查看文档。
 
-#### Permissions
-In individual or group chats, anyone can add a bot.
+#### 权限
+在个人或群组聊天中，任何人都可以添加机器人。
 
-In a team, owners and admins can add bots. Readers and writers can not add bots.
+在团队中，所有者和管理员可以添加机器人。读者和作者不能添加机器人。
 
-Importantly, other bots cannot add other bots (we’re doing our part to slow the inevitable robot takeover).
+重要的是，其他机器人不能添加其他机器人（我们在尽力减缓不可避免的机器人接管）。
 
-#### Bot privacy
-When you add a bot to a chat or team, you decide what it can read.
+#### 机器人隐私
+当您向聊天或团队添加机器人时，您决定它可以阅读什么。
 
-If you choose “unrestricted,” the bot will be able to read all the messages and files in the chat.
+如果您选择“不受限 (unrestricted)”，机器人将能够阅读聊天中的所有消息和文件。
 
-If you choose “restricted,” the bot will only be able to read the messages it’s mentioned in or otherwise summoned.
+如果您选择“受限 (restricted)”，机器人将只能阅读提到它或以其他方式召唤它的消息。

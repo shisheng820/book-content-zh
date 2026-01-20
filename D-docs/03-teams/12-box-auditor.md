@@ -1,182 +1,89 @@
-# Team Box Auditor
+# 团队 Box 审计器 (Team Box Auditor)
 
-### Background
-Auditable and cryptographically provable team membership, provided by
-team sigchains, is an [important security
-requirement](/blog/chat-apps-softer-than-tofu#what-about-big-group-chats-) that
-guards against the server being able to inject &ldquo;[ghost
-users](https://blog.cryptographyengineering.com/2018/12/17/on-ghost-users-and-messaging-backdoors/)&rdquo;
-into Keybase teams.
+### 背景
 
-Whenever a team admin adds or removes users, this statement is signed into the
-sigchain and all the teams&rsquo; members can see it and their clients make sure the
-statement is signed by a team admin. Additionally, when a team member is
-removed, the admin rotates the team&rsquo;s secret key so the removed team member
-doesn&rsquo;t have access to the secret keys used to decrypt and sign new messages
-and files.
+由团队签名链提供的可审计且可加密证明的团队成员资格，是[一项重要的安全要求](/blog/chat-apps-softer-than-tofu#what-about-big-group-chats-)，可以防止服务器将“[幽灵用户](https://blog.cryptographyengineering.com/2018/12/17/on-ghost-users-and-messaging-backdoors/)”注入 Keybase 团队。
 
-However, there are cases where we want to rotate the team&rsquo;s keys due to an
-action, but the user doing that action is unable to rotate the team themselves.
+每当团队管理员添加 or 移除用户时，此声明都会被签名到签名链中，所有团队成员都可以看到它，并且他们的客户端会确保该声明是由团队管理员签名的。此外，当团队成员被移除时，管理员会轮换团队的密钥，这样被移除的团队成员就无法访问用于解密和签名新消息和文件的密钥。
 
-- A team member leaves the team
-- An implicit admin leaves the only parent team they&rsquo;re a member of
-- A team member (or implicit admin) revokes a device (which rotates the user&rsquo;s [per-user key](/docs/teams/puk))
-- A team member (or implicit admin) resets their account
-- A team member (or implicit admin) deletes their account
+然而，在某些情况下，我们要根据某种行为来轮换团队的密钥，但执行该行为的用户无法自己轮换团队。
 
-For example, if a reader decides to leave a team, an admin has to come back
-later and rotate the team&rsquo;s keys after the fact. Similarly, a user who is
-resetting their account will likely not have the keys needed to rotate the team
-before they reset, so the team needs to be rotated by an admin later.
+- 团队成员离开团队
+- 隐式管理员离开他们作为成员的唯一父团队
+- 团队成员（或隐式管理员）撤销设备（这会轮换用户的[每用户密钥 (PUK)](/docs/teams/puk)）
+- 团队成员（或隐式管理员）重置其账户
+- 团队成员（或隐式管理员）撤销设备（这会轮换用户的[每用户密钥 (PUK)](/docs/teams/puk)）
 
-In these cases, the [CLKR](/docs/teams/clkr) mechanism has the server signal
-the team&rsquo;s admins that someone left or has new keys, and so the admin can
-rotate the team&rsquo;s keys properly, and encrypt them for the right users and
-their current keys.
+例如，如果读者决定离开团队，管理员必须稍后回来并在事后轮换团队的密钥。同样，正在重置账户的用户可能没有轮换团队所需的密钥，因此团队稍后需要由管理员轮换。
 
-### Problem
+在这些情况下，[级联惰性密钥轮换 (CLKR)](/docs/teams/clkr) 机制让服务器向团队管理员发出信号，告知有人离开或有了新密钥，因此管理员可以正确地轮换团队的密钥，并为正确的用户及其当前密钥加密它们。
 
-However, CLKR is entirely driven by the server. While it is cryptographically
-impossible for the server to trick clients into adding arbitrary members, the
-server can, for example, omit to tell the team admins about a team member&rsquo;s
-device revocation.
+### 问题
 
-Imagine a Keybase user whose laptop was stolen by an attacker. Even if the user
-revokes their that laptop&rsquo;s keys from another device, all the teams the user is
-in still have their per-team keys encrypted for the old per-user key. If a
-malicious server fails to issue CLKRs, and also cooperates with the attacker to
-provide encrypted team data, the attacker could read new team messages and
-files.
+然而，CLKR 完全由服务器驱动。虽然服务器在加密学上不可能欺骗客户端添加任意成员，但服务器可以（例如）忽略告诉团队管理员有关团队成员设备撤销的信息。
 
-### Solution
-Thus, we introduce the client **Box Auditor**, which audits [the team
-boxes](/docs/teams/crypto) of every team a user is in. Note that 1-on-1 and
-group chats are also driven by the teams mechanism behind the scenes, so these
-chats are audited as well.
+想象一下，一位 Keybase 用户的笔记本电脑被攻击者窃取了。即使用户从另一台设备上撤销了那台笔记本电脑的密钥，用户所在的所有团队仍然拥有为旧用户密钥加密的团队密钥。如果恶意服务器未能发布 CLKR，并且还与攻击者合作提供加密的团队数据，攻击者就可以读取新的团队消息和文件。
 
-The box auditor is a background process that randomly selects teams the user is
-in, loads the sigchains of all of its members, and verifies that the team&rsquo;s
-boxes are currently keyed for the right user keys. If not, the auditor rotates
-the team&rsquo;s keys. By the security of the [Keybase Merkle
-tree](/docs/server_security), the server cannot lie, rollback, or equivocate
-about a user&rsquo;s per-user key (or a team&rsquo;s membership), since it&rsquo;s signed into
-their sigchain.
+### 解决方案
 
-Note that the box auditor is designed in such a way that it is impossible for
-it to be &ldquo;tricked&rdquo; by a malicious server attempting to stop these
-audits. Any possible error coming back from the server during the audit,
-including network errors and authentication errors, are untrusted by the
-client, which schedules another audit to happen again in the near future. If a
-single team fails to audit successfully enough times, the team is jailed and
-the user is notified whenever that team is accessed until it passes an audit.
-This way, a malicious server cannot stop audits by pretending that the
-client&rsquo;s requests were not well-formed, or pretending to be down.
+因此，我们引入了客户端 **Box 审计器**，它会审计用户所在的每个团队的[团队加密 (Teams Crypto)](/docs/teams/crypto)。请注意，一对一和群组聊天在幕后也由团队机制驱动，因此这些聊天也会被审计。
 
-### Try it out
-You don&rsquo;t need to do anything in particular for the auditor to protect your
-teams: the background process does everything automatically.
+Box 审计器是一个后台进程，它随机选择用户所在的团队，加载其所有成员的签名链，并验证团队的 box 当前是否为正确的用户密钥加密。如果不是，审计器会轮换团队的密钥。通过 [Keybase Merkle 树](/docs/server)的安全性，服务器无法撒谎、回滚或模棱两可地陈述用户的用户密钥（或团队的成员资格），因为它已签名到他们的签名链中。
 
-But if you wanted to manually run an audit, Keybase client 4.0.0 ships with a
-command line interface to the box auditor.
+请注意，Box 审计器的设计使得它不可能被试图阻止这些审计的恶意服务器“欺骗”。审计期间来自服务器的任何可能的错误，包括网络错误和身份验证错误，都不受客户端信任，客户端会安排在不久的将来再次进行审计。如果单个团队审计失败的次数足够多，该团队将被监禁（jailed），并且只要访问该团队，用户就会收到通知，直到它通过审计。这样，恶意服务器就无法通过假装客户端的请求格式不正确或假装宕机来停止审计。
 
-To audit the `keybase` team,
+### 试用一下
+
+您不需要做任何特别的事情来让审计器保护您的团队：后台进程会自动完成所有工作。
+
+但是，如果您想手动运行审计，Keybase 客户端 4.0.0 附带了 Box 审计器的命令行界面。
+
+审计 `keybase` 团队：
 
 ```bash
 keybase audit box --audit --team keybase
 ```
 
-To audit all known teams in the local cache, including 1-on-1 chats and group
-chats,
+审计本地缓存中的所有已知团队，包括一对一聊天和群组聊天：
 
 ```bash
 keybase audit box --audit-all-known-teams
 ```
 
-Note that if you are in a subteam but not in a parent team of that subteam,
-this command will list an audit of that parent team as failing. This is
-intentional; see the next section for details.
+请注意，如果您在子团队中但不在该子团队的父团队中，此命令将列出该父团队的审计为失败。这是有意为之的；有关详细信息，请参阅下一节。
 
-### Implementation details
-The critical functionality we need is to get the per-user keys of all of a
-team&rsquo;s members at a given Merkle root (call this a *box summary*).
+### 实现细节
 
-The function
-[`calculateSummaryAtMerkleSeqno`](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/box_audit.go#L853)
-works like this:
-1. Load the team&rsquo;s sigchain
-2. Construct a map of Merkle checkpoints.
-   If we&rsquo;re getting a historical summary, for each active member, the
-   checkpoint is the Merkle root when they were last given a box: at the last
-   team rotation, or when they were added to the team (if a rotation has not
-   happened since then).
-   If we&rsquo;re getting a current summary, for each active member, the
-   checkpoint is the latest Merkle root available.
-3. Traverse the global Merkle tree at the Merkle checkpoints to find the last
-   link of the user&rsquo;s sigchain at the time the team&rsquo;s per-team-key
-   was keyed for them
-4. For each user, infer the per-user key generation from the user&rsquo;s
-   sigchain and the information above.
-5. Construct a box summary, which is a map from a user ID and an eldest seqno
-   (i.e., 1 or the sigchain link number of the last time they reset their
-   account) to their per-user key generation.
+我们需要的一项关键功能是在给定的 Merkle 根（称之为 *box 摘要*）处获取所有团队成员的用户密钥。
 
-Once we have this primitive, we can get the summary at the Merkle root of the
-last rotation and compare it with the summary at the current Merkle root. If
-these differ, [rotate and try again later](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/box_audit.go#L267). Do the same if there was any other
-error from the server.
+函数 [`calculateSummaryAtMerkleSeqno`](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/box_audit.go#L853) 的工作原理如下：
 
-If the team failed to audit more than 6 times, the [team goes into the box audit jail](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/box_audit.go#L228-L229).
+1. 加载团队的签名链
+2. 构建 Merkle 检查点映射。
+   如果我们正在获取历史摘要，对于每个活跃成员，检查点是他们上次被给予 box 时的 Merkle 根：在上次团队轮换时，或者当他们被添加到团队时（如果自那时以来未发生轮换）。
+   如果我们正在获取当前摘要，对于每个活跃成员，检查点是可用的最新 Merkle 根。
+3. 在 Merkle 检查点遍历全局 Merkle 树，以查找团队密钥为用户加密时用户签名链的最后一个链接
+4. 对于每个用户，根据用户的签名链和上述信息推断用户密钥生成（generation）。
+5. 构建一个 box 摘要，这是一个从用户 ID 和最老 seqno（即 1 或他们上次重置账户时的签名链链接号）到他们的用户密钥生成的映射。
 
-When jailed, any attempt to load the team via the [regular team
-loader](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/loader.go#L316)
-or the [fast team
-loader](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/ftl.go#L113)
-results in a re-audit. If that re-audit fails, the client repeatedly warns the
-user that the audit has failed. Once we are sure that the auditor is working as
-intended, we may update the client to start refusing to load the team entirely
-instead.
+一旦我们有了这个原语，我们就可以获取上次轮换的 Merkle 根处的摘要，并将其与当前 Merkle 根处的摘要进行比较。如果这些不同，则[轮换并稍后重试](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/box_audit.go#L267)。如果服务器出现任何其他错误，也执行相同的操作。
 
-[Auditing](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/engine/box_audit_scheduler_background.go#L74) and [retrying](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/engine/box_audit_retry_background.go#L74) are handled as automated background tasks while the Keybase
-service is running.
+如果团队审计失败超过 6 次，[该团队将进入 box 审计监狱](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/box_audit.go#L228-L229)。
 
-Note that the box auditor is currently under by a [server-controlled feature
-flag](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/box_audit.go#L19)
-while it is in testing and we make sure everything works properly. In the next
-release, this flag will be removed so the server is unable to turn off the
-auditor unilaterally.
+被监禁时，任何通过[常规团队加载器](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/loader.go#L316)或[快速团队加载器](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/ftl.go#L113)加载团队的尝试都会导致重新审计。如果该重新审计失败，客户端会反复警告用户审计已失败。一旦我们要确信审计器按预期工作，我们可能会更新客户端以开始完全拒绝加载团队。
 
-There are some details that the client has to be careful about.
-- Implicit admins, who are not in the team but admins of parent teams, are also
-  keyed for the team&rsquo;s per-team key, so the auditor needs to [check their
-  per-user keys](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/box_audit.go#L863) as well.
-- Open teams are not sent CLKRs since the admins auto-accept any request,
-  so [these are not audited](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/box_audit.go#L742). Similarly, readers aren&rsquo;t allowed to rotate teams, so they don&rsquo;t
-  [audit teams](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/box_audit.go#L750) either.
-- Clients sign the last seen Merkle root into team sigchain links. However,
-  they must be careful to pick this Merkle root *before* they do a team
-  rotation, or otherwise, a user could revoke a device in between the time of
-  the key boxing and picking the Merkle root. If this race happens, an auditor
-  looking back would infer that the admin rotated for the new per-user key, but
-  in reality, the admin keyed for the old per-user key.
-- The auditor needs to know which teams the user is in in order to decide to
-  audit them. We can&rsquo;t trust the server with giving us this information, which
-  may maliciously hide teams that it doesn&rsquo;t want the user to audit. So we simply
-  [use the local
-  cache](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/box_audit.go#L1086)
-  of all loaded teams in order to select which teams to audit.
-- An audit *can permanently fail for legitimate reasons*. Imagine that you&rsquo;ve
-  joined a team, so it&rsquo;s in your local team cache, but then later you are
-  removed from the team. Now when we try to do an audit, it fails because we
-  are not in the team, and so don&rsquo;t have permissions to see the team sigchain.
-  At the same time, the server can&rsquo;t *prove* we aren&rsquo;t in the team, since it
-  won&rsquo;t show us the team&rsquo;s sigchain. Because of this, we can&rsquo;t trust the
-  server&rsquo;s word that we aren&rsquo;t really in the team, so the client just schedules
-  a reaudit. Eventually, the team audit will fail 6 times for the same
-  (legitimate) reason and enter the jail. However, this is OK because the user
-  never needs to load the team, since they aren&rsquo;t in the team anyway. If they
-  are readded to the team later, the reaudit during team load will then pass.
+[审计](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/engine/box_audit_scheduler_background.go#L74)和[重试](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/engine/box_audit_retry_background.go#L74)在 Keybase 服务运行时作为自动后台任务处理。
 
-### Conclusion
-The team box auditor provides strong guarantees that a team&rsquo;s secret keys
-are rekeyed after team member device revocations even in the event of a
-malicious server attempting to surreptitiously avoid being audited.
+请注意，Box 审计器目前处于[服务器控制的功能标志](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/box_audit.go#L19)之下，因为它正在测试中，我们要确保一切正常工作。在下一个版本中，此标志将被移除，以便服务器无法单方面关闭审计器。
+
+客户端必须注意一些细节。
+
+- 隐式管理员不在团队中，但是是父团队的管理员，他们也拥有团队密钥的加密副本，因此审计器也需要[检查他们的用户密钥](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/box_audit.go#L863)。
+- 开放团队不会收到 CLKR，因为管理员会自动接受任何请求，因此[这些团队不会被审计](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/box_audit.go#L742)。同样，读者不允许轮换团队，因此他们也不[审计团队](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/box_audit.go#L750)。
+- 客户端将最后看到的 Merkle 根签名到团队签名链链接中。然而，他们必须小心在执行团队轮换*之前*选择此 Merkle 根，否则，用户可能会在 key boxing 和选择 Merkle 根之间的时间内撤销设备。如果发生这种竞争，回顾过去的审计器会推断管理员为新的用户密钥进行了轮换，但实际上，管理员是为旧的用户密钥进行了加密。
+- 审计器需要知道用户在哪些团队中，以便决定审计它们。我们不能信任服务器给我们的这些信息，它可能会恶意隐藏它不想让用户审计的团队。所以我们只需[使用本地缓存](https://github.com/keybase/client/blob/18347ca641ead8332c87afcfffcf5ddf0776e40c/go/teams/box_audit.go#L1086)中所有已加载的团队来选择要审计的团队。
+- 审计*可能因为正当理由而永久失败*。想象一下，您加入了一个团队，所以它在您的本地团队缓存中，但后来您被从团队中移除了。现在当我们尝试进行审计时，它会失败，因为我们不在团队中，因此没有权限查看团队签名链。同时，服务器无法*证明*我们不在团队中，因为它不会向我们展示团队的签名链。由于这个原因，我们不能相信服务器说我们确实不在团队中的话，所以客户端只是安排重新审计。最终，团队审计将因为相同（正当）的原因失败 6 次并进入监狱。然而，这是可以的，因为用户永远不需要加载团队，因为他们反正不在团队中。如果他们后来被重新添加到团队中，团队加载期间的重新审计将会通过。
+
+### 结论
+
+团队 Box 审计器提供了强有力的保证，即即使在恶意服务器试图暗中避免被审计的情况下，团队成员设备撤销后团队的密钥也会被重新加密。
