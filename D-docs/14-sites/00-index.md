@@ -1,29 +1,30 @@
+
   ## Keybase.pub
 
-  [Keybase.pub](https://keybase.pub) serves anything it can find in `/keybase/public`. Poetry. Cat pics. Midi files. Hot, hot recipes.
+  [Keybase.pub](https://keybase.pub) 提供它在 `/keybase/public` 中能找到的任何内容。诗歌。猫图。Midi 文件。热门食谱。
 
-  For example, here we see `/keybase/public/chris/photos/` served at https://keybase.pub/chris/photos :
+  例如，这里我们看到 `/keybase/public/chris/photos/` 在 https://keybase.pub/chris/photos 上提供服务：
 
   <img src="/images/getting-started/kpub-screenshot.jpg" class="img img-responsive">
 
-  #### Raw vs. wrapped
+  #### 原始 vs 包装 (Raw vs. wrapped)
 
-  - https://keybase.pub/#{yername} serves a *wrapped* site that lets people poke through your files.
-  - https://#{yername}.keybase.pub serves *raw* files
-  - https://#{yername}.keybase.pub will also serve an index.html or render an index.md if you request a directory.
+  - https://keybase.pub/#{yername} 提供一个*包装*的站点，允许人们浏览你的文件。
+  - https://#{yername}.keybase.pub 提供*原始*文件
+  - 如果你请求一个目录，https://#{yername}.keybase.pub 也将提供 index.html 或渲染 index.md。
 
-  ## Security
+  ## 安全性
 
-  If you download something off of Keybase.pub, you're trusting (a) Keybase over https, and (b) that someone hasn't hacked into Keybase.pub. So it's a great site to explore, but if you're downloading something crucial such as a copy of the latest `libssl` or `bitcoind` or `GPG Tools Suite.dmg` from a friend, you should really just look in `/keybase/public` on your own computer. That will verify all the crypto and guarantee you're seeing the same signed bits they are. And it's easier.
+  如果你从 Keybase.pub 下载东西，你是信任 (a) 通过 https 的 Keybase，以及 (b) 没有人入侵 Keybase.pub。所以这是一个探索的好网站，但如果你正在下载一些关键的东西，比如最新的 `libssl` 或 `bitcoind` 或来自朋友的 `GPG Tools Suite.dmg` 副本，你应该真的只看你自计算机上的 `/keybase/public`。这将验证所有的加密，并保证你看到的是他们签名的相同位。而且这更容易。
 
-  ### Inspiration
+  ### 灵感
 
-  The Keybase.pub website is made by the Keybase team, but it's really a proof of concept. The site isn't privileged. It's kind of dumb - just nginx rewriting some URL's and a basic Node.js website that serves static assets and prints user info.  Keybase.pub demonstrates how easy it is to build things on top of the Keybase filesystem. Other ideas we've heard...feel free to implement:
+  Keybase.pub 网站由 Keybase 团队制作，但它实际上是一个概念验证。该网站没有特权。它有点笨——只是 nginx 重写一些 URL，以及一个基本的 Node.js 网站，提供静态资源并打印用户信息。Keybase.pub 展示了在 Keybase 文件系统之上构建东西是多么容易。我们听到的其他想法……请随意实现：
 
-  - a service, **"somehost"** that spins up *real websites* per user, based on code in /keybase/private/user,somehost/
-  - a bitcoin wallet that shares coins inside of private folders
-  - an "in the event of my death" app that splits a secret among a bunch of friends.
-  - a signed blogging platform
-  - your idea here
-  - your other idea here
-  - your third and final idea
+  - 一个服务，**"somehost"**，基于 /keybase/private/user,somehost/ 中的代码为每个用户启动*真正的网站*
+  - 一个比特币钱包，在私有文件夹内共享硬币
+  - 一个“如果我死了”的应用程序，在一群朋友之间拆分秘密。
+  - 一个签名的博客平台
+  - 你的想法在这里
+  - 你的其他想法在这里
+  - 你的第三个也是最后一个想法

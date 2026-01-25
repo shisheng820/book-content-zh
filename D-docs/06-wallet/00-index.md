@@ -1,137 +1,90 @@
+# Stellar 钱包密钥管理
 
-# Stellar Wallet Key Management
+Keybase Stellar 钱包在您的设备上既安全又方便地保存您的 Stellar 账户密钥。
 
-The Keybase Stellar wallet keeps your Stellar account keys secure yet conveniently available
-on your devices.
+### 摘要
 
-### Summary
+当您将 Stellar 账户添加到您的 Keybase 钱包时，您的客户端会对私钥和账户名称进行加密。所有 Stellar 账户信息的捆绑包都存储在 Keybase 数据库中。会为您的主账户创建一个签名链 (sigchain) 链接，以便其他用户可以找到 Stellar 地址向您发送付款。
 
-When you add a Stellar account to your Keybase wallet, the private key and the name of the
-account are encrypted by your client.  A bundle of all your Stellar account information
-is stored in the Keybase database.  A sigchain link is created for your primary account so
-other users can find a Stellar address to send you payments.
+当您需要 Stellar 私钥进行付款时，客户端会从 Keybase 服务器下载账户密钥包，对其进行解密以获取密钥，并签署交易。密钥一旦不再需要，就会立即从内存中擦除。
 
-When you need a Stellar private key to make a payment, the client downloads the account
-key bundle from the Keybase servers, decrypts it to get the key, and signs the transaction.
-The key is then erased from memory as soon as it is no longer needed.
+虽然密钥存储在 Keybase 服务器上，但私钥是使用 Keybase 服务器无法访问的客户端密钥加密的。将加密密钥存储在 Keybase 服务器上允许您在所有设备上拥有所有 Stellar 账户。
 
-Although the keys are stored on the Keybase servers, the private keys are encrypted with
-a client-side key that the Keybase servers do not have access to.  Having the encrypted
-keys on the Keybase servers allows you to have all your Stellar accounts on all your devices.
+### 基础
 
-### Basics
+用户的 Stellar 数据包括：
 
-Stellar data for a user consists of:
+1.  您的主 Stellar 账户 ID 在签名链中的链接。最新的是您当前的主账户。
+2.  明文数据包，对用户和服务器可见，包含有关用户 Keybase 钱包中 Stellar 账户的信息。名称：**server visible**（服务器可见）。
+3.  加密数据的全局包，包含有关用户 Keybase 钱包中所有 Stellar 账户的秘密元数据（即账户名称）。名称：**user private**（用户私有）。
+4.  每个账户的加密数据，包含签署交易所需的私有 Stellar 账户密钥。名称：**account private**（账户私有）。
 
-1. Links in the sigchain for your primary Stellar account ID.  The most recent one is your
-   current primary account.
-1. A bundle of plaintext data, visible to user and server with information about the stellar accounts in the user's keybase wallet.  Name: **server visible**.
-1. A global bundle of encrypted data containing secret metadata (i.e. the account name) about all the stellar accounts in the user's keybase wallet.  Name: **user private**.
-1. Per-account encrypted data containing the private stellar account key necessary for signing a transaction.  Name: **account private**.
+所有 Stellar 数据都存储在 Keybase 数据库中。服务器在必要时读取 **server visible**。它无法解密 **user private** 或 **account private**，因为它没有必要的加密密钥。客户端将从服务器获取 **server visible** 和 **user private**，以显示钱包账户、其余额、最近的交易。为了签署交易，客户端将获取 **account private** 包并在使用后将其丢弃。
 
-All Stellar data are stored in the Keybase database.  The server reads
-**server visible** when necessary.  It cannot decrypt **user private** or **account private**
-as it does not have the encryption keys necessary.  The client will fetch **server visible** and **user private**
-from the server in order to display the wallet accounts, their balances, recent transactions.  To
-sign a transaction, the client will fetch the **account private** bundle and discard it after use.
+为了加密这些数据，客户端使用每用户密钥 (PUK)。我们有关于 PUK 的 [完整文档](/docs/teams/puk)，但简单来说，它是一个为用户的所有 [设备密钥](/blog/keybase-new-key-model) 加密的种子。
 
-To encrypt this data, the client uses Per-User Keys.  We have an [entire document](/docs/teams/puk)
-on PUKs, but a simplistic view of it is a seed that is encrypted for all [device keys](/blog/keybase-new-key-model)
-for a user.
+用于加密的密钥是从用户的 PUK 种子和这些包特定的常量字符串派生的对称 NaCl 密钥。
 
-The keys used for encryption are symmetric NaCL keys derived from the user's PUK seed and
-a constant string specific for these bundles.
-
-For **user private** bundles, it is:
+对于 **user private** 包，它是：
 
     key = hmac(key=[puk seed], data="Derived-User-NaCl-SecretBox-StellarBundle-1")
 
-For **account private**, it is:
+对于 **account private**，它是：
 
     key = hmac(key=[puk seed], data="Derived-User-NaCl-SecretBox-StellarAcctBundle-1")
 
-The **user private** data is packed into binary data via msgpack.  This is then sealed with a random nonce
-and the derived symmetric key.  The encrypted data, nonce, version of encrypted data, and generation of the
-PUK are put into a structure.  That structure is packed into binary data via msgpack.  The msgpack data is
-then encoded into a string via base64.
+**user private** 数据通过 msgpack 打包成二进制数据。然后用随机 nonce 和派生的对称密钥对其进行密封。加密数据、nonce、加密数据的版本和 PUK 的生成代数被放入一个结构中。该结构通过 msgpack 打包成二进制数据。msgpack 数据随后通过 base64 编码为字符串。
 
-The **account private** data is packed into binary data via msgpack.  This is then sealed with a
-random nonce and the derived symmetric key.  The encrypted data, nonce, version of encrypted
-data, and generation of the PUK are put into a structure.  That structure is packed into binary
-data via msgpack. The msgpack data is then encoded into a string via base64.
+**account private** 数据通过 msgpack 打包成二进制数据。然后用随机 nonce 和派生的对称密钥对其进行密封。加密数据、nonce、加密数据的版本和 PUK 的生成代数被放入一个结构中。该结构通过 msgpack 打包成二进制数据。msgpack 数据随后通过 base64 编码为字符串。
 
-The **server visible** bundle structure is packed into binary data via msgpack.  It is then encoded 
-into a string via base64.
+**server visible** 包结构通过 msgpack 打包成二进制数据。然后通过 base64 编码为字符串。
 
-When you change which Stellar account is your primary account, a link is inserted in your [sigchain](/docs/sigchain).
-This is so that other users can find which account belongs to you so they can send you Stellar lumens or assets.
+当您更改哪个 Stellar 账户是您的主账户时，会在您的 [签名链](/docs/sigchain) 中插入一个链接。这是为了让其他用户可以找到属于您的账户，以便他们可以向您发送 Stellar Lumens 或资产。
 
-### Mobile-only mode
+### 仅限移动设备模式
 
-As an extra security measure, you can mark any of your Stellar accounts as "mobile-only".  Since mobile
-device applications have better sandboxing, there is less likelihood of a rogue application interacting
-with the keybase app to retrieve your secret keys.
+作为额外的安全措施，您可以将您的任何 Stellar 账户标记为“仅限移动设备”。由于移动设备应用程序具有更好的沙盒机制，流氓应用程序与 Keybase 应用程序交互以检索您的密钥的可能性较小。
 
-Once you set an account to be mobile-only, the server will only return the encrypted **account private** bundle
-to mobile devices.
+一旦您将账户设置为仅限移动设备，服务器将仅向移动设备返回加密的 **account private** 包。
 
-To protect against someone with access to one of your desktop devices from provisioning a new mobile device
-and using that to gain access to a mobile-only account, the server will not return the encrypted **account private**
-bundle to any mobile devices that are less than 7 days old.  In addition to this, you will receive plenty of
-notifications that a new device was added to your account so that you can take appropriate action if necessary.
+为了防止可以访问您的一台桌面设备的人配置新的移动设备并使用它来访问仅限移动设备的账户，服务器不会向任何少于 7 天的移动设备返回加密的 **account private** 包。除此之外，您还将收到大量关于新设备已添加到您的账户的通知，以便您可以在必要时采取适当的措施。
 
-Only a (sufficiently old) mobile device can turn off the mobile-only setting on an account.
+只有（足够旧的）移动设备才能关闭账户上的仅限移动设备设置。
 
-### Sending to future Keybase users or users without wallets
+### 发送给未来的 Keybase 用户或没有钱包的用户
 
-Once you have a Keybase wallet, you can send XLM to any Keybase user even if he or she hasn't established
-any Stellar accounts, or any future Keybase user.
+一旦您拥有 Keybase 钱包，您可以向任何 Keybase 用户发送 XLM，即使他或她尚未建立任何 Stellar 账户，或者向任何未来的 Keybase 用户发送。
 
 ```bash
 keybase wallet send serenawilliams@twitter 5 USD
 ```
 
-(Currently, no user on Keybase has proven ownership of the serenawilliams@twitter account, but you can
-still send her lumens!)
+（目前，Keybase 上还没有用户证明拥有 serenawilliams@twitter 账户，但您仍然可以给她发送 Lumens！）
 
-We do this using what we call a "relay" payment.
+我们使用所谓的“中继” (relay) 支付来做到这一点。
 
-If we detect that the person you are sending to either doesn't have a Stellar account associated with
-their Keybase account or isn't even on Keybase yet, then we create a temporary holding account where
-we send the payment.  The private key for the account is encrypted for the "team" consisting of the sender
-and the recipient.
+如果我们检测到您要发送的人要么没有与他们的 Keybase 账户关联的 Stellar 账户，要么甚至还不在 Keybase 上，那么我们会创建一个临时持有账户，我们将付款发送到那里。该账户的私钥针对由发送者和接收者组成的“团队”进行加密。
 
-In the example above of sending to Serena Williams, the Keybase app would create a new random account,
-say `GCYMBZE2RB5ZMSGB5KVOFR5XOGT6ZKVQ426QUU7RHKI7XWLT5CUIO3YS`.  It would encrypt the private key for that
-account using a similar method as encrypting chat or KBFS files shared between the sender and `serenawilliams@twitter`.
-The encrypted data for the relay account is stored in the Keybase database.
+在上面发送给 Serena Williams 的例子中，Keybase 应用程序将创建一个新的随机账户，比如 `GCYMBZE2RB5ZMSGB5KVOFR5XOGT6ZKVQ426QUU7RHKI7XWLT5CUIO3YS`。它将使用与加密发送者和 `serenawilliams@twitter` 之间共享的聊天或 KBFS 文件类似的方法来加密该账户的私钥。中继账户的加密数据存储在 Keybase 数据库中。
 
-Once the recipient creates an account on Keybase and proves `serenawilliams@twitter`, her new client will create
-a Stellar account key pair.  It will then notice that there is a relay payment waiting for her, so it
-will create an account merge transaction to send all the funds from `GCYMBZ...` into her 
-new account.
+一旦接收者在 Keybase 上创建一个账户并证明 `serenawilliams@twitter`，她的新客户端将创建一个 Stellar 账户密钥对。然后它会注意到有一笔中继付款在等她，所以它会创建一个账户合并交易，将所有资金从 `GCYMBZ...` 发送到她的新账户。
 
-Until the recipient does this, the sender can cancel the relay payment at any time.  When that happens,
-an account merge transaction sends all the funds from `GCYMBZ...` back into the sender's account.
+在接收者这样做之前，发送者可以随时取消中继付款。当这种情况发生时，账户合并交易将把所有资金从 `GCYMBZ...` 发送回发送者的账户。
 
-### Data cleanup
+### 数据清理
 
-When possible, we expunge any Stellar data from the database.
+如果可能，我们会从数据库中清除任何 Stellar 数据。
 
-For example, if you revoke a device, transparently to you, your client will make a new PUK for you and 
-reencrypt your Stellar **user private** and **account private** bundles.  Once they are posted to the 
-servers, the prior bundle versions (encrypted for your old keys) will be permanently deleted.
+例如，如果您吊销设备，对您透明的是，您的客户端将为您生成一个新的 PUK 并重新加密您的 Stellar **user private** 和 **account private** 包。一旦它们发布到服务器，以前的包版本（为您旧密钥加密的）将被永久删除。
 
-When you delete a Stellar account from your wallet, the data is permanently deleted.
+当您从钱包中删除 Stellar 账户时，数据将被永久删除。
 
-### Backups
+### 备份
 
-We recommend users store secure backups of their Stellar private keys.  By design, we cannot recover
-the private keys.  If you lose all your Keybase installs and paper keys, the encrypted keys will not
-be decryptable.
+我们建议用户存储其 Stellar 私钥的安全备份。根据设计，我们无法恢复私钥。如果您丢失了所有 Keybase 安装和纸质密钥，加密的密钥将无法解密。
 
-### Links
+### 链接
 
-* [download it!](/download)
-* [all other documentation](/docs)
-* [reporting issues via GitHub](https://github.com/keybase/client/issues)
+*   [下载它！](/download)
+*   [所有其他文档](/docs)
+*   [通过 GitHub 报告问题](https://github.com/keybase/client/issues)

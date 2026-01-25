@@ -117,7 +117,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/chat" class="chapter-nav__link chapter-nav__link--active">Chat</a>
+                        <a href="/docs/chat" class="chapter-nav__link chapter-nav__link--active">聊天</a>
                         
                             
                             
@@ -224,31 +224,31 @@
                                 <ol class="chapter-nav__nested-list">
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/crypto" class="chapter-nav__nested-link">High Level Overview</a>
+                                        <a href="/docs/chat/crypto" class="chapter-nav__nested-link">聊天加密</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/ephemeral" class="chapter-nav__nested-link">Hierarchical Ephemeral Keys for Exploding Messages</a>
+                                        <a href="/docs/chat/ephemeral" class="chapter-nav__nested-link">用于阅后即焚消息的分层临时密钥</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/link-previews" class="chapter-nav__nested-link">Link Previews</a>
+                                        <a href="/docs/chat/link-previews" class="chapter-nav__nested-link">链接预览</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/location" class="chapter-nav__nested-link">Location Sharing</a>
+                                        <a href="/docs/chat/location" class="chapter-nav__nested-link">位置共享</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/coin-flip" class="chapter-nav__nested-link">Coin Flip</a>
+                                        <a href="/docs/chat/coin-flip" class="chapter-nav__nested-link">抛硬币</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/phones-and-emails" class="chapter-nav__nested-link">Phone Numbers and Emails</a>
+                                        <a href="/docs/chat/phones-and-emails" class="chapter-nav__nested-link">手机号码与电子邮件</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/restricted-bots" class="chapter-nav__nested-link">Restricted Bots in Chat</a>
+                                        <a href="/docs/chat/restricted-bots" class="chapter-nav__nested-link">聊天中的受限机器人</a>
                                     </li>
                                     
                                 </ol>
@@ -274,7 +274,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/files" class="chapter-nav__link">Introducing the Keybase Filesystem</a>
+                        <a href="/docs/files" class="chapter-nav__link">Keybase 文件系统介绍</a>
                         
                     </li>
                     
@@ -284,7 +284,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/wallet" class="chapter-nav__link">Stellar Wallet Key Management</a>
+                        <a href="/docs/wallet" class="chapter-nav__link">Stellar 钱包密钥管理</a>
                         
                     </li>
                     
@@ -292,7 +292,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/crypto" class="chapter-nav__link">Keybase Crypto Documents</a>
+                        <a href="/docs/crypto" class="chapter-nav__link">Keybase 加密文档</a>
                         
                     </li>
                     
@@ -308,7 +308,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/bots" class="chapter-nav__link">Bots</a>
+                        <a href="/docs/bots" class="chapter-nav__link">机器人 (Bots)</a>
                         
                     </li>
                     
@@ -316,7 +316,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/linux" class="chapter-nav__link">Linux User Guide</a>
+                        <a href="/docs/linux" class="chapter-nav__link">Linux 用户指南</a>
                         
                     </li>
                     
@@ -324,7 +324,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/lockdown" class="chapter-nav__link">Lockdown Mode</a>
+                        <a href="/docs/lockdown" class="chapter-nav__link">锁定模式 (Lockdown Mode)</a>
                         
                     </li>
                     
@@ -332,7 +332,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/client" class="chapter-nav__link">Keybase client-side architecture</a>
+                        <a href="/docs/client" class="chapter-nav__link">Keybase 客户端架构</a>
                         
                     </li>
                     
@@ -358,91 +358,46 @@
         
         <div class="content__inner">
             <section id="overview" class="content__section">
-                <h1 id="phone-numbers-and-emails">Phone Numbers and Emails</h1>
-<p>When you want to communicate with people you know on the Internet, Keybase is
-great because you can address them by their social identities (Twitter, Reddit,
-Mastodon, etc.).</p>
-<p>But identity proofs aren&rsquo;t that useful for many people you know <em>in real
-life</em>. They might not be on the same social media you&rsquo;re on, or you
-might have just met this person at a coffee shop.</p>
-<p>In Keybase 4.3.0, users can now add and verify their phone numbers and
-emails, as well as send messages to phone numbers and emails. Like with
-social identities, you can send messages <a href="/blog/keybase-chat">even if the recipient isn&rsquo;t on
-Keybase yet</a>.</p>
-<h2 id="show-me-how">Show me how!</h2>
-<p>First, ensure you&rsquo;ve updated to the latest Keybase version.</p>
-<p>To add a phone number or email address, go to the Settings tab (or on mobile,
-hamburger menu&rarr;Your account).</p>
+                <h1 id="手机号码与电子邮件">手机号码与电子邮件</h1>
+<p>当您希望与互联网上相识的人通信时，Keybase 是极佳的选择，因为您可以通过其社交身份（Twitter、Reddit、Mastodon 等）与其联系。</p>
+<p>但对于您在_现实生活中_认识的许多人而言，身份证明并不那么有用。他们可能并未与您使用相同的社交媒体，或者您可能刚刚在咖啡店结识此人。</p>
+<p>在 Keybase 4.3.0 版本中，用户现可添加并验证其手机号码与电子邮件，并向手机号码与电子邮件发送消息。与社交身份一样，<a href="/blog/keybase-chat">即使接收者尚未加入 Keybase</a>，您也可以向其发送消息。</p>
+<h2 id="使用指南">使用指南</h2>
+<p>首先，请确保您已更新至最新的 Keybase 版本。</p>
+<p>要添加手机号码或电子邮件地址，请前往“设置”选项卡（或在移动端，点击汉堡菜单 -&gt; 您的账户）。</p>
 <center style="margin:40px 0;"><img src="/docs-assets/contacts/settings.png" class="img img-responsive" width="500"
     alt="Keybase Settings tab on desktop"></center>
 
-<p>To start a conversation with a phone number or email, go to the Chat tab, click
-the new conversation button at the top left (Ctrl-N or ⌘N on Mac).</p>
+<p>要发起与手机号码或电子邮件的对话，请前往“聊天”选项卡，点击左上角的新建对话按钮（Ctrl-N 或 Mac 上的 ⌘N）。</p>
 <center style="margin:40px 0;"><img src="/docs-assets/contacts/chat.png" class="img img-responsive" width="500"
     alt="Keybase Chat tab on desktop"></center>
 
-<p>Type in a phone number or email address. If a user on Keybase has verified it
-and made it searchable, they&rsquo;ll appear; otherwise, you&rsquo;ll still be
-able to start a conversation, and the recipient will get the messages when they
-join Keybase, verify their contact, and make it searchable.</p>
+<p>输入手机号码或电子邮件地址。若 Keybase 用户已验证该联系方式并将其设为可搜索，其账户将会显示；否则，您仍可发起对话，接收者将在加入 Keybase、验证其联系方式并将其设为可搜索后收到消息。</p>
 <center style="margin:40px 0;"><img src="/docs-assets/contacts/new-chat.png" class="img img-responsive" width="300"
     alt="Keybase New Chat modal on mobile"></center>
 
-<p>On mobile, you can import your address book to quickly find which of your
-contacts are already on Keybase. You can toggle this setting in hamburger
-menu&rarr;Phone contacts.</p>
-<h2 id="security-considerations">Security considerations</h2>
-<p>Unlike identity proofs, which are public and checkable by all Keybase devices,
-phone number and email verifications are only verified by the Keybase server.
-That means that when you start a conversation with a phone number or email, you
-trust the Keybase server to give you the right user the first time&mdash;this
-is called trust on first use (TOFU).</p>
-<p>After the initial conversation is started, the Keybase server can&rsquo;t play
-any more tricks, since both users&rsquo; devices now verify each other. Then
-when users chat, their devices encrypt messages only for the devices they've
-already verified.</p>
-<p>On apps like Signal, Wire, and Riot, you can optionally verify a <a href="https://support.signal.org/hc/en-us/articles/360007060632-What-is-a-safety-number-and-why-do-I-see-that-it-changed-">key
-fingerprint or safety
-number</a>
-to be sure you&rsquo;re talking to the right person.</p>
-<p>Because of the <a href="/docs/server_security">global Merkle tree</a>, to achieve the same
-level of security on Keybase when starting conversations with phone numbers and
-emails, you only need to exchange Keybase usernames outside of Keybase (in
-person, over a phone call, etc.).</p>
-<h2 id="privacy-considerations">Privacy considerations</h2>
-<p>Some users may not want the Keybase servers to know their phone numbers or
-email addresses. Users will never be required to add a phone number on
-Keybase, and although email addresses are currently required to signup for
-Keybase, in a future Keybase version, we will remove this requirement as well.</p>
-<p>Some users may want to have phones and emails registered for notifications from
-Keybase, but not want other users to find them by those phone numbers or email
-addresses. This can be accomplished by deselecting &ldquo;Allow friends to find
-you by this number/email address&rdquo; option when adding them. You can toggle
-this option in the Settings tab by making it &ldquo;unsearchable.&rdquo;</p>
+<p>在移动端，您可以导入通讯录以快速查找哪些联系人已加入 Keybase。您可以在汉堡菜单 -&gt; 手机联系人中切换此设置。</p>
+<h2 id="安全考量">安全考量</h2>
+<p>与所有 Keybase 设备均可公开查验的身份证明不同，手机号码与电子邮件验证仅由 Keybase 服务器进行验证。这意味着当您发起与手机号码或电子邮件的对话时，您信任 Keybase 服务器会在首次提供正确的用户——这被称为首次使用信任（TOFU）。</p>
+<p>初始对话开启后，Keybase 服务器便无法再进行欺诈，因为双方用户的设备此时会相互验证。此后，当用户聊天时，其设备仅针对已验证的设备加密消息。</p>
+<p>在 Signal、Wire 和 Riot 等应用中，您可以选择验证<a href="https://support.signal.org/hc/en-us/articles/360007060632-What-is-a-safety-number-and-why-do-I-see-that-it-changed-">密钥指纹或安全码</a>，以确保您正在与正确的人交谈。</p>
+<p>得益于<a href="/docs/server_security">全局 Merkle 树</a>，在 Keybase 上与手机号码及电子邮件发起对话时，若要达到同等安全级别，您仅需在 Keybase 之外（当面、通过电话等）交换 Keybase 用户名。</p>
+<h2 id="隐私考量">隐私考量</h2>
+<p>部分用户可能不希望 Keybase 服务器知晓其手机号码或电子邮件地址。Keybase 绝不会强制用户添加手机号码，尽管目前注册 Keybase 仍需电子邮件地址，但在未来的 Keybase 版本中，我们将移除此项要求。</p>
+<p>部分用户可能希望注册手机和电子邮件以接收 Keybase 通知，但不希望其他用户通过这些手机号码或电子邮件地址找到他们。这可以通过在添加时取消选中“允许好友通过此号码/电子邮件地址找到您”选项来实现。您可以在“设置”选项卡中通过将其设为“不可搜索”来切换此选项。</p>
 <center style="margin:40px 0;"><img src="/docs-assets/contacts/unsearchable.png" class="img img-responsive" width="500"
     alt="Make unsearchable menu in the Keybase settings tab on desktop"></center>
 
-<p>All users who signed up before the rollout of this feature have their emails set as
-unsearchable by default.</p>
-<p>Some users may not want the Keybase servers to know their address book. Contact
-syncing is an optional feature intended to help you find friends who may
-already be on Keybase. When contact syncing, devices send the server the phone
-numbers and emails of the contacts in their address book, but not names, labels
-or other metadata. The server will reply with any Keybase users with accounts
-which match those phone numbers and emails, and then immediately discards the
-data: user address books are not stored permanently on the server.</p>
-<p>We do not currently prove this via a system like private set intersection or
-Signal&rsquo;s <a href="https://signal.org/blog/private-contact-discovery/">private contact discovery via
-SGX</a>. In the future, we
-hope to increase the privacy of contact syncing so users do not have to trust
-the Keybase server to discard address book data.</p>
+<p>在此功能推出之前注册的所有用户，其电子邮件默认设为不可搜索。</p>
+<p>部分用户可能不希望 Keybase 服务器知晓其通讯录。联系人同步是一项可选功能，旨在帮助您查找可能已加入 Keybase 的好友。进行联系人同步时，设备会向服务器发送通讯录中联系人的手机号码和电子邮件，但不会发送姓名、标签或其他元数据。服务器将回复拥有匹配这些手机号码和电子邮件账户的 Keybase 用户，随即丢弃该数据：用户通讯录不会永久存储在服务器上。</p>
+<p>目前，我们尚未通过私有集合交集或 Signal 的 <a href="https://signal.org/blog/private-contact-discovery/">基于 SGX 的私有联系人发现</a> 等系统来证明这一点。未来，我们希望提高联系人同步的隐私性，使用户无需信任 Keybase 服务器会丢弃通讯录数据。</p>
             </section>
         </div>
     </div>
         <footer class="footer" data-footer-label="下一章">
         <a class="footer__link" href="/docs/chat/restricted-bots">
             <div class="footer__inner">
-            <p class="footer__title" data-chapter-count="D">Restricted Bots in Chat</p>
+            <p class="footer__title" data-chapter-count="D">聊天中的受限机器人</p>
                 
             </div>
             <img alt="" class="footer__image" src="/static/img/illos/docs.jpg" loading="lazy" width="870"/>

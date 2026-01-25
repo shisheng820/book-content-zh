@@ -117,7 +117,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/chat" class="chapter-nav__link">Chat</a>
+                        <a href="/docs/chat" class="chapter-nav__link">聊天</a>
                         
                     </li>
                     
@@ -139,7 +139,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/files" class="chapter-nav__link">Introducing the Keybase Filesystem</a>
+                        <a href="/docs/files" class="chapter-nav__link">Keybase 文件系统介绍</a>
                         
                     </li>
                     
@@ -149,7 +149,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/wallet" class="chapter-nav__link">Stellar Wallet Key Management</a>
+                        <a href="/docs/wallet" class="chapter-nav__link">Stellar 钱包密钥管理</a>
                         
                     </li>
                     
@@ -157,7 +157,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/crypto" class="chapter-nav__link chapter-nav__link--active">Keybase Crypto Documents</a>
+                        <a href="/docs/crypto" class="chapter-nav__link chapter-nav__link--active">Keybase 加密文档</a>
                         
                             
                             
@@ -258,19 +258,19 @@
                                 <ol class="chapter-nav__nested-list">
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/crypto/key-exchange" class="chapter-nav__nested-link">Keybase Key Exchange (KEX) Protocol</a>
+                                        <a href="/docs/crypto/key-exchange" class="chapter-nav__nested-link">Keybase 密钥交换 (KEX) 协议</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/crypto/local-key-security" class="chapter-nav__nested-link">Local Key Security</a>
+                                        <a href="/docs/crypto/local-key-security" class="chapter-nav__nested-link">本地密钥安全</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/crypto/kbfs" class="chapter-nav__nested-link">Crypto spec: the Keybase filesystem (KBFS)</a>
+                                        <a href="/docs/crypto/kbfs" class="chapter-nav__nested-link">加密规范：Keybase 文件系统 (KBFS)</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/crypto/_account-corner-cases" class="chapter-nav__nested-link">Keybase Account Corner Cases (Plan)</a>
+                                        <a href="/docs/crypto/_account-corner-cases" class="chapter-nav__nested-link">Keybase 账户边缘情况（计划）</a>
                                     </li>
                                     
                                 </ol>
@@ -290,7 +290,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/bots" class="chapter-nav__link">Bots</a>
+                        <a href="/docs/bots" class="chapter-nav__link">机器人 (Bots)</a>
                         
                     </li>
                     
@@ -298,7 +298,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/linux" class="chapter-nav__link">Linux User Guide</a>
+                        <a href="/docs/linux" class="chapter-nav__link">Linux 用户指南</a>
                         
                     </li>
                     
@@ -306,7 +306,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/lockdown" class="chapter-nav__link">Lockdown Mode</a>
+                        <a href="/docs/lockdown" class="chapter-nav__link">锁定模式 (Lockdown Mode)</a>
                         
                     </li>
                     
@@ -314,7 +314,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/client" class="chapter-nav__link">Keybase client-side architecture</a>
+                        <a href="/docs/client" class="chapter-nav__link">Keybase 客户端架构</a>
                         
                     </li>
                     
@@ -340,37 +340,31 @@
         
         <div class="content__inner">
             <section id="overview" class="content__section">
-                <h1 id="keybase-crypto-documents">Keybase Crypto Documents</h1>
-<p>Here is a collection of documents describing the crypto at play throughout the
-Keybase system.</p>
-<h2 id="core-security">Core Security</h2>
-<p><a href="/docs/server">This document</a> describes our high-level approach to system security: namely, that Keybase clients take hints and raw data from our server, but mistrust it, and check all of its work.</p>
-<p>We posted a <a href="/docs/server/merkle-root-in-bitcoin-blockchain">follow-on public document</a> describing how we use the bitcoin blockchain to enhance security guarantees.</p>
-<p>As we launched per-device secret keys, we posted another <a href="/docs/server#meet-your-sigchain-and-everyone-elses">document</a> describing the specifics of user signature chains, and how users go about delegating authority to new keys and revoking old keys.</p>
-<h2 id="key-exchange">Key Exchange</h2>
-<p>When users provision new devices, they exchange keys so that the existing device signs the new device into operation, and the new device gets access to some secret data that otherwise would only be available if the user entered her passphrase (which we try to avoid on mobile devices).  This <a href="/docs/crypto/key-exchange">document</a> describes the protocol, but will eventually be public once the protocol is reviewed.</p>
-<h2 id="local-key-storage-lks">Local Key Storage (LKS)</h2>
-<p>A usability requirement of Keybase is that the user only should have to remember one passphrase, and if that passphrase changes on one device, all other devices to immediately reflect that change.  In general, we are trying to make light use of passphrases, but for certain operations like locking local secret keys, passphrases can be unavoidable. This <a href="/docs/crypto/local-key-security">document</a> describes the local-key security system.</p>
-<h2 id="file-system">File System</h2>
-<p>The Keybase File system (KBFS) is now in active development and will be our first product launch. This <a href="/docs/crypto/kbfs">document</a> describes the cryptographic decisions in the design.  This document also touches on our plan for organizations, which isn't yet in development.</p>
+                <h1 id="keybase-加密文档">Keybase 加密文档</h1>
+<p>这是描述整个 Keybase 系统中起作用的加密技术的文档集合。</p>
+<h2 id="核心安全">核心安全</h2>
+<p><a href="/docs/server">此文档</a> 描述了我们系统安全的高级方法：即，Keybase 客户端从我们的服务器获取提示和原始数据，但不信任它，并检查其所有工作。</p>
+<p>我们发布了 <a href="/docs/server/merkle-root-in-bitcoin-blockchain">后续公开文档</a>，描述了我们如何使用比特币区块链来增强安全保证。</p>
+<p>随着我们推出每设备密钥，我们发布了另一份 <a href="/docs/server#meet-your-sigchain-and-everyone-elses">文档</a>，描述了用户签名链的具体细节，以及用户如何将权限委派给新密钥并吊销旧密钥。</p>
+<h2 id="密钥交换">密钥交换</h2>
+<p>当用户配置新设备时，他们会交换密钥，以便现有设备签署新设备使其投入运行，并且新设备可以访问一些秘密数据，否则这些数据只有在用户输入密码短语时才可用（我们在移动设备上尽量避免这种情况）。此 <a href="/docs/crypto/key-exchange">文档</a> 描述了该协议，一旦协议经过审查，最终将公开。</p>
+<h2 id="本地密钥存储-lks">本地密钥存储 (LKS)</h2>
+<p>Keybase 的一个可用性要求是用户应该只需要记住一个密码短语，并且如果该密码短语在一台设备上更改，所有其他设备应立即反映该更改。通常，我们试图尽量少用密码短语，但对于像锁定本地密钥这样的某些操作，密码短语可能是不可避免的。此 <a href="/docs/crypto/local-key-security">文档</a> 描述了本地密钥安全系统。</p>
+<h2 id="文件系统">文件系统</h2>
+<p>Keybase 文件系统 (KBFS) 现在正在积极开发中，将是我们发布的第一个产品。此 <a href="/docs/crypto/kbfs">文档</a> 描述了设计中的加密决策。本文档还涉及我们的组织计划，该计划尚未开发。</p>
 <p>{##</p>
-<h2 id="account-corner-cases">Account Corner Cases</h2>
-<p>How do users change passwords, deal with lost devices, change e-mail addresses, etc?  These issues are all related, and covered in this <a href="/docs/crypto/account-corner-cases">document</a> on "account corner cases."</p>
+<h2 id="账户边缘情况">账户边缘情况</h2>
+<p>用户如何更改密码、处理丢失的设备、更改电子邮件地址等？这些问题都是相关的，并在关于“账户边缘情况”的此 <a href="/docs/crypto/account-corner-cases">文档</a> 中涵盖。</p>
 <h2 id="_1">}</h2>
-<h2 id="saltpack-message-format">SaltPack Message Format</h2>
-<p>We want something like PGP messages but simpler, more modern, and easier to
-implement. The two important cases we cover now are <a href="https://saltpack.org/encryption-format-v2">authenticated-encrypted
-messages</a> and <a href="https://saltpack.org/signing-format-v2">publicly signed
-statements</a>. We call this system
-"SaltPack", since it's half <a href="http://nacl.cr.yp.to/">NaCl</a> and half <a href="http://msgpack.org">message
-pack</a>. More details at <a href="https://saltpack.org">saltpack.org</a>.</p>
+<h2 id="saltpack-消息格式">SaltPack 消息格式</h2>
+<p>我们需要像 PGP 消息那样但更简单、更现代且更易于实现的东西。我们现在涵盖的两个重要案例是 <a href="https://saltpack.org/encryption-format-v2">认证加密消息</a> 和 <a href="https://saltpack.org/signing-format-v2">公开签名声明</a>。我们称这个系统为 "SaltPack"，因为它一半是 <a href="http://nacl.cr.yp.to/">NaCl</a>，一半是 <a href="http://msgpack.org">message pack</a>。更多详细信息请访问 <a href="https://saltpack.org">saltpack.org</a>。</p>
             </section>
         </div>
     </div>
         <footer class="footer" data-footer-label="下一章">
         <a class="footer__link" href="/docs/crypto/key-exchange">
             <div class="footer__inner">
-            <p class="footer__title" data-chapter-count="D">Keybase Key Exchange (KEX) Protocol</p>
+            <p class="footer__title" data-chapter-count="D">Keybase 密钥交换 (KEX) 协议</p>
                 
             </div>
             <img alt="" class="footer__image" src="/static/img/illos/docs.jpg" loading="lazy" width="870"/>

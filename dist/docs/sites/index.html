@@ -117,7 +117,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/chat" class="chapter-nav__link">Chat</a>
+                        <a href="/docs/chat" class="chapter-nav__link">聊天</a>
                         
                     </li>
                     
@@ -139,7 +139,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/files" class="chapter-nav__link">Introducing the Keybase Filesystem</a>
+                        <a href="/docs/files" class="chapter-nav__link">Keybase 文件系统介绍</a>
                         
                     </li>
                     
@@ -149,7 +149,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/wallet" class="chapter-nav__link">Stellar Wallet Key Management</a>
+                        <a href="/docs/wallet" class="chapter-nav__link">Stellar 钱包密钥管理</a>
                         
                     </li>
                     
@@ -157,7 +157,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/crypto" class="chapter-nav__link">Keybase Crypto Documents</a>
+                        <a href="/docs/crypto" class="chapter-nav__link">Keybase 加密文档</a>
                         
                     </li>
                     
@@ -173,7 +173,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/bots" class="chapter-nav__link">Bots</a>
+                        <a href="/docs/bots" class="chapter-nav__link">机器人 (Bots)</a>
                         
                     </li>
                     
@@ -181,7 +181,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/linux" class="chapter-nav__link">Linux User Guide</a>
+                        <a href="/docs/linux" class="chapter-nav__link">Linux 用户指南</a>
                         
                     </li>
                     
@@ -189,7 +189,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/lockdown" class="chapter-nav__link">Lockdown Mode</a>
+                        <a href="/docs/lockdown" class="chapter-nav__link">锁定模式 (Lockdown Mode)</a>
                         
                     </li>
                     
@@ -197,7 +197,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/client" class="chapter-nav__link">Keybase client-side architecture</a>
+                        <a href="/docs/client" class="chapter-nav__link">Keybase 客户端架构</a>
                         
                     </li>
                     
@@ -304,11 +304,11 @@
                                 <ol class="chapter-nav__nested-list">
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/sites/access-control" class="chapter-nav__nested-link">Access Control with .kbp_config</a>
+                                        <a href="/docs/sites/access-control" class="chapter-nav__nested-link">使用 .kbp_config 进行访问控制</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/sites/custom" class="chapter-nav__nested-link">Getting Started with Keybase Pages</a>
+                                        <a href="/docs/sites/custom" class="chapter-nav__nested-link">Keybase Pages 入门</a>
                                     </li>
                                     
                                 </ol>
@@ -329,27 +329,27 @@
         <div class="content__inner">
             <section id="overview" class="content__section">
                 <p>## Keybase.pub</p>
-<p><a href="https://keybase.pub">Keybase.pub</a> serves anything it can find in <code>/keybase/public</code>. Poetry. Cat pics. Midi files. Hot, hot recipes.</p>
-<p>For example, here we see <code>/keybase/public/chris/photos/</code> served at https://keybase.pub/chris/photos :</p>
+<p><a href="https://keybase.pub">Keybase.pub</a> 提供它在 <code>/keybase/public</code> 中能找到的任何内容。诗歌。猫图。Midi 文件。热门食谱。</p>
+<p>例如，这里我们看到 <code>/keybase/public/chris/photos/</code> 在 https://keybase.pub/chris/photos 上提供服务：</p>
 <p><img src="/images/getting-started/kpub-screenshot.jpg" class="img img-responsive"></p>
-<p>#### Raw vs. wrapped</p>
+<p>#### 原始 vs 包装 (Raw vs. wrapped)</p>
 <ul>
-<li>https://keybase.pub/#{yername} serves a <em>wrapped</em> site that lets people poke through your files.</li>
-<li>https://#{yername}.keybase.pub serves <em>raw</em> files</li>
-<li>https://#{yername}.keybase.pub will also serve an index.html or render an index.md if you request a directory.</li>
+<li>https://keybase.pub/#{yername} 提供一个<em>包装</em>的站点，允许人们浏览你的文件。</li>
+<li>https://#{yername}.keybase.pub 提供<em>原始</em>文件</li>
+<li>如果你请求一个目录，https://#{yername}.keybase.pub 也将提供 index.html 或渲染 index.md。</li>
 </ul>
-<p>## Security</p>
-<p>If you download something off of Keybase.pub, you're trusting (a) Keybase over https, and (b) that someone hasn't hacked into Keybase.pub. So it's a great site to explore, but if you're downloading something crucial such as a copy of the latest <code>libssl</code> or <code>bitcoind</code> or <code>GPG Tools Suite.dmg</code> from a friend, you should really just look in <code>/keybase/public</code> on your own computer. That will verify all the crypto and guarantee you're seeing the same signed bits they are. And it's easier.</p>
-<p>### Inspiration</p>
-<p>The Keybase.pub website is made by the Keybase team, but it's really a proof of concept. The site isn't privileged. It's kind of dumb - just nginx rewriting some URL's and a basic Node.js website that serves static assets and prints user info.  Keybase.pub demonstrates how easy it is to build things on top of the Keybase filesystem. Other ideas we've heard...feel free to implement:</p>
+<p>## 安全性</p>
+<p>如果你从 Keybase.pub 下载东西，你是信任 (a) 通过 https 的 Keybase，以及 (b) 没有人入侵 Keybase.pub。所以这是一个探索的好网站，但如果你正在下载一些关键的东西，比如最新的 <code>libssl</code> 或 <code>bitcoind</code> 或来自朋友的 <code>GPG Tools Suite.dmg</code> 副本，你应该真的只看你自计算机上的 <code>/keybase/public</code>。这将验证所有的加密，并保证你看到的是他们签名的相同位。而且这更容易。</p>
+<p>### 灵感</p>
+<p>Keybase.pub 网站由 Keybase 团队制作，但它实际上是一个概念验证。该网站没有特权。它有点笨——只是 nginx 重写一些 URL，以及一个基本的 Node.js 网站，提供静态资源并打印用户信息。Keybase.pub 展示了在 Keybase 文件系统之上构建东西是多么容易。我们听到的其他想法……请随意实现：</p>
 <ul>
-<li>a service, <strong>"somehost"</strong> that spins up <em>real websites</em> per user, based on code in /keybase/private/user,somehost/</li>
-<li>a bitcoin wallet that shares coins inside of private folders</li>
-<li>an "in the event of my death" app that splits a secret among a bunch of friends.</li>
-<li>a signed blogging platform</li>
-<li>your idea here</li>
-<li>your other idea here</li>
-<li>your third and final idea</li>
+<li>一个服务，<strong>"somehost"</strong>，基于 /keybase/private/user,somehost/ 中的代码为每个用户启动<em>真正的网站</em></li>
+<li>一个比特币钱包，在私有文件夹内共享硬币</li>
+<li>一个“如果我死了”的应用程序，在一群朋友之间拆分秘密。</li>
+<li>一个签名的博客平台</li>
+<li>你的想法在这里</li>
+<li>你的其他想法在这里</li>
+<li>你的第三个也是最后一个想法</li>
 </ul>
             </section>
         </div>
@@ -357,7 +357,7 @@
         <footer class="footer" data-footer-label="下一章">
         <a class="footer__link" href="/docs/sites/access-control">
             <div class="footer__inner">
-            <p class="footer__title" data-chapter-count="D">Access Control with .kbp_config</p>
+            <p class="footer__title" data-chapter-count="D">使用 .kbp_config 进行访问控制</p>
                 
             </div>
             <img alt="" class="footer__image" src="/static/img/illos/docs.jpg" loading="lazy" width="870"/>

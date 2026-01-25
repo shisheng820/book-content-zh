@@ -117,7 +117,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/chat" class="chapter-nav__link">Chat</a>
+                        <a href="/docs/chat" class="chapter-nav__link">聊天</a>
                         
                     </li>
                     
@@ -139,7 +139,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/files" class="chapter-nav__link">Introducing the Keybase Filesystem</a>
+                        <a href="/docs/files" class="chapter-nav__link">Keybase 文件系统介绍</a>
                         
                     </li>
                     
@@ -149,7 +149,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/wallet" class="chapter-nav__link">Stellar Wallet Key Management</a>
+                        <a href="/docs/wallet" class="chapter-nav__link">Stellar 钱包密钥管理</a>
                         
                     </li>
                     
@@ -157,7 +157,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/crypto" class="chapter-nav__link">Keybase Crypto Documents</a>
+                        <a href="/docs/crypto" class="chapter-nav__link">Keybase 加密文档</a>
                         
                     </li>
                     
@@ -173,7 +173,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/bots" class="chapter-nav__link">Bots</a>
+                        <a href="/docs/bots" class="chapter-nav__link">机器人 (Bots)</a>
                         
                     </li>
                     
@@ -181,7 +181,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/linux" class="chapter-nav__link">Linux User Guide</a>
+                        <a href="/docs/linux" class="chapter-nav__link">Linux 用户指南</a>
                         
                     </li>
                     
@@ -189,7 +189,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/lockdown" class="chapter-nav__link chapter-nav__link--active">Lockdown Mode</a>
+                        <a href="/docs/lockdown" class="chapter-nav__link chapter-nav__link--active">锁定模式 (Lockdown Mode)</a>
                         
                             
                             
@@ -286,7 +286,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/client" class="chapter-nav__link">Keybase client-side architecture</a>
+                        <a href="/docs/client" class="chapter-nav__link">Keybase 客户端架构</a>
                         
                     </li>
                     
@@ -312,45 +312,32 @@
         
         <div class="content__inner">
             <section id="overview" class="content__section">
-                <h1 id="lockdown-mode">Lockdown Mode</h1>
-<p>Keybase users can opt! into <em>lockdown mode</em> if they want extra protection for
-their account. Doing so will disable all Web site features that mutate or
-expose sensitive cloud-hosted data. Once in lockdown mode, all
-security-sensitive features must be performed on a valid Keybase device, with an active
-signing key...</p>
-<p>For example, the following features require a Keybase device when a user is in lockdown mode:</p>
+                <h1 id="锁定模式-lockdown-mode">锁定模式 (Lockdown Mode)</h1>
+<p>如果 Keybase 用户希望为其账户提供额外保护，可以选择开启_锁定模式_。这样做将禁用所有会修改或暴露敏感云托管数据的网站功能。一旦进入锁定模式，所有安全敏感功能必须在具有活跃签名密钥的有效 Keybase 设备上执行...</p>
+<p>例如，当用户处于锁定模式时，以下功能需要 Keybase 设备：</p>
 <ul>
-<li>changing password or recovering password</li>
-<li>changing email address</li>
-<li>changing your fullname, bio, or avatar</li>
-<li>following or unfollowing a user</li>
-<li>establishing or removing identity proofs (like Twitter, Reddit or Bitcoin)</li>
-<li>team management operations</li>
-<li>adding or revoking a device</li>
-<li>updating or removing a PGP key</li>
-<li>access to encrypted PGP secret key (for those who opt into this feature)</li>
-<li>resetting account</li>
-<li>deleting account</li>
+<li>修改密码或恢复密码</li>
+<li>修改电子邮件地址</li>
+<li>修改你的全名、简介或头像</li>
+<li>关注或取消关注用户</li>
+<li>建立或移除身份证明（如 Twitter、Reddit 或 Bitcoin）</li>
+<li>团队管理操作</li>
+<li>添加或吊销设备</li>
+<li>更新或移除 PGP 密钥</li>
+<li>访问加密的 PGP 私钥（针对选择开启此功能的用户）</li>
+<li>重置账户</li>
+<li>删除账户</li>
 </ul>
-<p>In other words, the user's view of the Keybase Web site when locked down is
-roughly equivalent to an anonymous, logged-out user.</p>
-<p>Lockdown mode affords protections similar to those provided by 2FA (Two Factor
-Auth) on a traditional server-trust-based service. If you are in lockdown, an
-attacker who gains control over your email inbox or your Keybase passphrase
-has no ability to make any changes to your account. The attacker would need,
-in addition, physical access to one of your <em>unlocked</em> devices, or remote
-backdoor access (i.e., to have "rooted" your device). Unlike 2FA, lockdown
-mode has no UX inconveniences and won't ask you to go fishing for your phone
-or key fob.</p>
-<h2 id="enabling-or-disabling-lockdown-mode">Enabling or Disabling Lockdown Mode</h2>
-<p>Users can only enable or disable lockdown mode with a valid Keybase device (and, of course,
-never from the Web site). This can be done:</p>
+<p>换句话说，锁定后的用户在 Keybase 网站上的视图大致相当于一个匿名、未登录的用户。</p>
+<p>锁定模式提供的保护类似于传统基于服务器信任的服务上的 2FA（双因素认证）。如果你处于锁定状态，获得你电子邮件收件箱或 Keybase 口令控制权的攻击者无法对你的账户进行任何更改。此外，攻击者还需要物理访问你的其中一台<em>已解锁</em>设备，或远程后门访问（即已经“root”了你的设备）。与 2FA 不同，锁定模式没有用户体验上的不便，也不会让你到处翻找手机或密钥卡。</p>
+<h2 id="启用或禁用锁定模式">启用或禁用锁定模式</h2>
+<p>用户只能使用有效的 Keybase 设备启用或禁用锁定模式（当然，绝不能从网站上进行）。这可以通过以下方式完成：</p>
 <ul>
-<li>via mobile apps (☰ → Advanced → "Forbid accounts changes from the Website")</li>
-<li>via desktop apps (☰ → Settings → Advanced → "Forbid accounts changes from the Website")</li>
-<li>via the CLI (<code>keybase account lockdown --enable</code>)</li>
+<li>通过移动应用 (☰ → 高级 (Advanced) → "禁止从网站更改账户 (Forbid accounts changes from the Website)")</li>
+<li>通过桌面应用 (☰ → 设置 (Settings) → 高级 (Advanced) → "禁止从网站更改账户 (Forbid accounts changes from the Website)")</li>
+<li>通过命令行 (<code>keybase account lockdown --enable</code>)</li>
 </ul>
-<p>You can see a history of all lockdown-related changes to your account via the CLI. For instance:</p>
+<p>你可以通过命令行查看账户所有与锁定相关的更改历史记录。例如：</p>
 <pre class="codehilite"><code class="language-sh">$ keybase account lockdown --history
 Learn more about lockdown mode: `keybase account lockdown -h`
 Lockdown mode is: enabled
@@ -362,20 +349,15 @@ disabled       2018-08-14 22:29:31 EDT    home mac mini - meuse (bb74a26dac2deeb
 enabled        2018-08-09 13:36:53 EDT    Work iMac 5k 2015-11 (d3cd754f30775a297c1ef61e5f3e3018)
 </code></pre>
 
-<h2 id="internals">Internals</h2>
-<p>The implementation of lockdown mode is simple. Any API request to the Keybase server
-can choose either <a href="/docs/api/1.0/call/login">traditional password authentication</a>
-or <a href="/docs/api/1.0/nist">non-interactive session token (NIST) authentication</a>.
-The latter is only possible with a valid Keybase device. Thus, when a user enables lockdown,
-any access to security-sensitive server-side endpoints can proceed only when accompanied
-with a valid NIST token.</p>
+<h2 id="内部机制">内部机制</h2>
+<p>锁定模式的实现很简单。对 Keybase 服务器的任何 API 请求都可以选择<a href="/docs/api/1.0/call/login">传统的密码认证</a>或<a href="/docs/api/1.0/nist">非交互式会话令牌 (NIST) 认证</a>。后者只有使用有效的 Keybase 设备才可能实现。因此，当用户启用锁定时，任何对安全敏感的服务器端端点的访问只有在附带有效的 NIST 令牌时才能继续。</p>
             </section>
         </div>
     </div>
         <footer class="footer" data-footer-label="下一章">
         <a class="footer__link" href="/docs/client">
             <div class="footer__inner">
-            <p class="footer__title" data-chapter-count="D">Keybase client-side architecture</p>
+            <p class="footer__title" data-chapter-count="D">Keybase 客户端架构</p>
                 
             </div>
             <img alt="" class="footer__image" src="/static/img/illos/docs.jpg" loading="lazy" width="870"/>

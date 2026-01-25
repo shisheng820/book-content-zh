@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Keybase Book: Chat Crypto</title>
+    <title>Keybase Book: 聊天加密</title>
     <meta name="description" content="" />
     <meta name="robots" content="index,follow" />
     <link rel="stylesheet" href="/static/css/style.css" />
@@ -117,7 +117,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/chat" class="chapter-nav__link chapter-nav__link--active">Chat</a>
+                        <a href="/docs/chat" class="chapter-nav__link chapter-nav__link--active">聊天</a>
                         
                             
                             
@@ -224,31 +224,31 @@
                                 <ol class="chapter-nav__nested-list">
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/crypto" class="chapter-nav__nested-link">High Level Overview</a>
+                                        <a href="/docs/chat/crypto" class="chapter-nav__nested-link">聊天加密</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/ephemeral" class="chapter-nav__nested-link">Hierarchical Ephemeral Keys for Exploding Messages</a>
+                                        <a href="/docs/chat/ephemeral" class="chapter-nav__nested-link">用于阅后即焚消息的分层临时密钥</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/link-previews" class="chapter-nav__nested-link">Link Previews</a>
+                                        <a href="/docs/chat/link-previews" class="chapter-nav__nested-link">链接预览</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/location" class="chapter-nav__nested-link">Location Sharing</a>
+                                        <a href="/docs/chat/location" class="chapter-nav__nested-link">位置共享</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/coin-flip" class="chapter-nav__nested-link">Coin Flip</a>
+                                        <a href="/docs/chat/coin-flip" class="chapter-nav__nested-link">抛硬币</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/phones-and-emails" class="chapter-nav__nested-link">Phone Numbers and Emails</a>
+                                        <a href="/docs/chat/phones-and-emails" class="chapter-nav__nested-link">手机号码与电子邮件</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/restricted-bots" class="chapter-nav__nested-link">Restricted Bots in Chat</a>
+                                        <a href="/docs/chat/restricted-bots" class="chapter-nav__nested-link">聊天中的受限机器人</a>
                                     </li>
                                     
                                 </ol>
@@ -274,7 +274,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/files" class="chapter-nav__link">Introducing the Keybase Filesystem</a>
+                        <a href="/docs/files" class="chapter-nav__link">Keybase 文件系统介绍</a>
                         
                     </li>
                     
@@ -284,7 +284,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/wallet" class="chapter-nav__link">Stellar Wallet Key Management</a>
+                        <a href="/docs/wallet" class="chapter-nav__link">Stellar 钱包密钥管理</a>
                         
                     </li>
                     
@@ -292,7 +292,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/crypto" class="chapter-nav__link">Keybase Crypto Documents</a>
+                        <a href="/docs/crypto" class="chapter-nav__link">Keybase 加密文档</a>
                         
                     </li>
                     
@@ -308,7 +308,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/bots" class="chapter-nav__link">Bots</a>
+                        <a href="/docs/bots" class="chapter-nav__link">机器人 (Bots)</a>
                         
                     </li>
                     
@@ -316,7 +316,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/linux" class="chapter-nav__link">Linux User Guide</a>
+                        <a href="/docs/linux" class="chapter-nav__link">Linux 用户指南</a>
                         
                     </li>
                     
@@ -324,7 +324,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/lockdown" class="chapter-nav__link">Lockdown Mode</a>
+                        <a href="/docs/lockdown" class="chapter-nav__link">锁定模式 (Lockdown Mode)</a>
                         
                     </li>
                     
@@ -332,7 +332,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/client" class="chapter-nav__link">Keybase client-side architecture</a>
+                        <a href="/docs/client" class="chapter-nav__link">Keybase 客户端架构</a>
                         
                     </li>
                     
@@ -358,137 +358,51 @@
         
         <div class="content__inner">
             <section id="overview" class="content__section">
-                <h2 id="high-level-overview">High Level Overview</h2>
-<p>When Alice sends a message to Bob, she uses the same keys that she would use to
-save a file in <code>/keybase/private/alice,bob</code>. (See the <a href="/docs/crypto/kbfs">KBFS crypto
-doc</a>.) That makes a lot of nice things work right off the
-bat:</p>
+                <h1 id="聊天加密">聊天加密</h1>
+<h2 id="高层概述">高层概述</h2>
+<p>当 Alice 给 Bob 发送消息时，她使用的是与她在 <code>/keybase/private/alice,bob</code> 中保存文件时相同的密钥。（参见 <a href="/docs/crypto/kbfs">KBFS 加密文档</a>。）这使得很多好事情立刻就能实现：</p>
 <ul>
-<li>Alice and Bob share a symmetric encryption key, which they pass through the
-  server by encrypting it to each of their devices' public encryption keys.</li>
-<li>If either of them removes a device, their other devices will create and share
-  a new encryption key. That guarantees the removed device can't read new
-  messages, without relying on the server to enforce it.</li>
-<li>If either of them adds a new device, that device will get a copy of all the
-  keys it needs to read old messages.</li>
-<li>Alice can send a message to Bob even if he hasn't joined Keybase yet. If she
-  knows Bob is <code>@bobbymcferrin</code> on Twitter, she can message him now, and later
-  one of her devices will check <code>@bobbymcferrin</code>'s proof and share keys with
-  him automatically.</li>
+<li>Alice 和 Bob 共享一个对称加密密钥，他们通过将其加密到各自设备的公钥来通过服务器传递该密钥。</li>
+<li>如果他们中的任何一方移除设备，他们的其他设备将创建并共享一个新的加密密钥。这保证了被移除的设备无法读取新消息，而无需依赖服务器来强制执行。</li>
+<li>如果他们中的任何一方添加新设备，该设备将获得读取旧消息所需的所有密钥的副本。</li>
+<li>即使 Bob 尚未加入 Keybase，Alice 也可以向他发送消息。如果她知道 Bob 在 Twitter 上是 <code>@bobbymcferrin</code>，她现在就可以给他发消息，随后她的设备之一将检查 <code>@bobbymcferrin</code> 的证明并自动与他共享密钥。</li>
 </ul>
-<p>Even though the server can't forge new messages, there are tricks it might try
-to play. For performance reasons, it's the server's responsibility to assign a
-sequential ID to each message. An evil server could try to reorder some
-messages, for example, or leave some of them out. To limit tricks like that,
-every time Alice sends a message, she includes some references to other
-messages she's seen before. Bob's device will check that list, to make sure
-it's consistent with what he's seeing. That limits the mischief an evil server
-can do, while still letting Alice send messages quickly on a bad network.</p>
-<p>That shared context prevents the server from dropping Alice's messages without
-her permission, but it's still important that Alice can choose to delete them
-when she wants to. To make that work without losing the context, every message
-comes in two parts, a header and a body. The header holds the previous message
-references and never gets deleted. The body holds the text of a message, and
-when Alice sends a special "delete" message, the server will delete it. That
-way Bob can check that the deletion is allowed. Editing messages works in a
-similar way; Alice sends a special "edit" message that Bob can verify.</p>
-<p>Signing and encrypting attachments is almost the same as for regular messages,
-except that they could be very large. If Alice uploads a video, Bob might want
-to see part of it without downloading the whole thing. To make that work, Alice
-splits up her attachments into chunks and signs and encrypts them individually,
-so that Bob can verify just the chunks that he needs. This is all done
-carefully (more details below) to make sure no one can move the chunks around
-after the fact.</p>
-<p>Another issue that comes up with large files is that it's helpful to host them
-on third-party CDNs. One worry about CDNs though, even with encrypted files, is
-that we might not be able to delete files reliably when we want to. To help
-with that, Alice encrypts attachments with a new set of one-time-use keys, and
-she includes those keys in the attachment message body. That way deleting the
-attachment message body has the same effect as deleting the large file.</p>
-<h2 id="nitty-gritty-details">Nitty Gritty Details</h2>
-<h3 id="algorithms">Algorithms</h3>
-<p>There are two versions of our message boxing scheme. <code>MessageBoxedV2</code> is used now.
-<code>MessageBoxedV1</code> is not written by clients anymore, but messages still exist and clients
-need to understand it.</p>
-<p>Message encryption is done with NaCl's
-<a href="https://nacl.cr.yp.to/secretbox.html"><code>crypto_secretbox</code></a> (XSalsa20, Poly1305).
-In <code>MessageBoxedV1</code> header signing is done with NaCl's
-<a href="https://nacl.cr.yp.to/sign.html"><code>crypto_sign</code></a> (Ed25519, SHA512)
-and header encryption is done with <code>crypto_secretbox</code>.
-In <code>MessageBoxedV2</code> the header uses signencryption which is described below.
-The sender (or deleter or editor) of a message performs the following steps:</p>
+<p>即使服务器无法伪造新消息，它可能会尝试耍一些花招。出于性能原因，服务器负责为每条消息分配一个顺序 ID。恶意服务器可能会尝试重新排序某些消息，或者遗漏其中一些。为了限制此类花招，每当 Alice 发送消息时，她都会包含一些她之前看到的其他消息的引用。Bob 的设备将检查该列表，以确保它与他看到的一致。这限制了恶意服务器可以进行的恶作剧，同时仍允许 Alice 在糟糕的网络上快速发送消息。</p>
+<p>这种共享上下文可以防止服务器在未经 Alice 许可的情况下丢弃她的消息，但 Alice 仍然可以选择在她想要的时候删除它们，这一点很重要。为了在不丢失上下文的情况下实现这一点，每条消息分为两部分：头部和主体。头部包含前一条消息的引用，永远不会被删除。主体包含消息的文本，当 Alice 发送一条特殊的“删除”消息时，服务器将删除它。这样 Bob 就可以检查删除是否被允许。编辑消息的工作方式类似；Alice 发送一条 Bob 可以验证的特殊“编辑”消息。</p>
+<p>签名和加密附件与常规消息几乎相同，只是它们可能非常大。如果 Alice 上传视频，Bob 可能只想看一部分而不需要下载整个文件。为了实现这一点，Alice 将她的附件分成块，并分别对它们进行签名和加密，以便 Bob 可以只验证他需要的块。所有这些都经过仔细处理（详情见下文），以确保事后没有人可以移动这些块。</p>
+<p>大文件出现的另一个问题是，将其托管在第三方 CDN 上很有帮助。然而，即使是加密文件，对 CDN 的一个担忧是我们可能无法在想要删除文件时可靠地删除它们。为了解决这个问题，Alice 使用一组新的一次性密钥加密附件，并将这些密钥包含在附件消息主体中。这样，删除附件消息主体与删除大文件具有相同的效果。</p>
+<h2 id="具体细节">具体细节</h2>
+<h3 id="算法">算法</h3>
+<p>我们的消息装箱方案有两个版本。现在使用的是 <code>MessageBoxedV2</code>。<code>MessageBoxedV1</code> 不再由客户端写入，但消息仍然存在，客户端需要理解它。</p>
+<p>消息加密使用的是 NaCl 的 <a href="https://nacl.cr.yp.to/secretbox.html"><code>crypto_secretbox</code></a> (XSalsa20, Poly1305)。
+在 <code>MessageBoxedV1</code> 中，头部签名使用的是 NaCl 的 <a href="https://nacl.cr.yp.to/sign.html"><code>crypto_sign</code></a> (Ed25519, SHA512)，头部加密使用的是 <code>crypto_secretbox</code>。
+在 <code>MessageBoxedV2</code> 中，头部使用的是下文描述的签密 (signencryption)。
+消息的发送者（或删除者、编辑者）执行以下步骤：</p>
 <ul>
-<li>Encrypt the message body with a random 24-byte nonce. We don't need
-  sequential nonces to enforce ordering, because we have previous message
-  references below, so a random nonce is the simplest way to prevent reuse. In
-  our case the body is one of several different types of structures (text,
-  attachment, edit, delete, etc.) serialized with
-  <a href="http://msgpack.org/index.html">MessagePack</a>.</li>
-<li><code>MessageBoxedV1</code>: SHA-256 hash the ciphertext of the message body.</li>
-<li><code>MessageBoxedV2</code>: SHA-256 hash the encrypted message body's
-  <code>version || nonce || ciphertext</code>.</li>
-<li>Add that hash to the message header, along with other metadata like the list
-  of previous message references. This structure also gets serialized with
-  MessagePack.</li>
-<li><code>MessageBoxedV1</code>: Sign the serialized header bytes.
-  Encrypt the signed header with another random nonce.</li>
-<li><code>MessageBoxedV2</code>: Signencrypt the serialized header bytes with another random nonce.</li>
-<li>Send the header plaintext, the header ciphertext, the body ciphertext, and
-  both nonces to the server.</li>
+<li>使用随机的 24 字节 nonce 加密消息主体。我们需要不需要顺序 nonce 来强制排序，因为我们在下面有前一条消息的引用，所以随机 nonce 是防止重用的最简单方法。在我们的例子中，主体是几种不同类型的结构之一（文本、附件、编辑、删除等），使用 <a href="http://msgpack.org/index.html">MessagePack</a> 序列化。</li>
+<li><code>MessageBoxedV1</code>：对消息主体的密文进行 SHA-256 哈希。</li>
+<li><code>MessageBoxedV2</code>：对加密消息主体的 <code>version || nonce || ciphertext</code> 进行 SHA-256 哈希。</li>
+<li>将该哈希添加到消息头部，连同其他元数据（如前一条消息引用的列表）。此结构也使用 MessagePack 序列化。</li>
+<li><code>MessageBoxedV1</code>：对序列化的头部字节进行签名。
+  使用另一个随机 nonce 加密签名的头部。</li>
+<li><code>MessageBoxedV2</code>：使用另一个随机 nonce 对序列化的头部字节进行签密。</li>
+<li>将头部明文、头部密文、主体密文和两个 nonce 发送给服务器。</li>
 </ul>
-<p>The fields in the header aren't secret from the server, and it actually needs
-to know several of them, like the message type. The reason for sign-then-encrypting/signencrypting the
-header is instead to keep the <em>signature itself</em> private. Even though
-the server knows who's talking to whom, because it's delivering all the
-messages, it's better that it can't <em>prove</em> what it knows.</p>
-<p>The purpose of the signing step is to prevent participants in the chat from
-impersonating one another. Authenticated encryption is already enough to
-prevent people outside the chat from forging messages, but because all the
-participants share the encryption key, it wouldn't not enough to distinguish
-one participant from another without server trust.</p>
-<p>Attachments use signencryption as well.</p>
-<h4 id="signencryption">Signencryption</h4>
-<p>Signencryption is a construction for encrypting and signing a message, using a
-symmetric encryption key and a signing keypair, in a way that keeps the signature
-hidden and supports safe streaming decryption.</p>
-<p>Encryption is done in constant size chunks, with a single short or
-empty chunk to mark the end and detect truncation. Each chunk's nonce is 16
-random bytes (shared by all chunks) plus an 8-byte sequential counter (unique
-to each chunk). This prevents nonce reuse, chunk reordering, and chunk swapping
-between packets. Encryption is layered on top of signing to hide the
-signature, and the signature includes the encryption key as associated data to
-prevent the encryption layer from being swapped out.</p>
-<p>This scheme is documented in detail <a href="https://github.com/keybase/client/blob/dc664617ea326abdd5e5bca877aa0c25fb403efd/go/chat/signencrypt/codec.go">in the source
-code</a>.</p>
-<h3 id="key-handling">Key Handling</h3>
-<p>The details in this section are shared with KBFS and the rest of the Keybase
-app.</p>
-<p>All Keybase devices publish a <a href="https://nacl.cr.yp.to/box.html"><code>crypto_box</code></a>
-public key and a <a href="https://nacl.cr.yp.to/sign.html"><code>crypto_sign</code></a> public key
-when they're first provisioned. Those keys live in the user's signature chain,
-where they're connected to other devices' keys by mutual signatures. Each
-of a user's identity proofs is also signed by one of these device keys and
-recorded in the signature chain. (PGP keys can participate in the signature
-chain too, but not in chat or KBFS.)</p>
-<p>A chat symmetric encryption key is 32 random bytes. It's shared by everyone in
-the chat, and it's the same key that they use to encrypt files in the private
-KBFS folder that those same people share. When a new device needs this shared
-key, another device that has it will encrypt it with the new device's public
-<code>crypto_box</code> key and then upload it to the Keybase server. Chat signing keys
-are the device-specific <code>crypto_sign</code> keys described above.</p>
-<p>Secret keys are stored on disk, in a file encrypted with <code>crypto_secretbox</code>,
-with a key derived from the user's Keybase password. While the user is logged
-in to Keybase, that key is stored on disk in plain text (see tradeoffs below),
-or in the system keyring on macOS. When the user logs out of Keybase, that key
-is deleted, and their secret keys are unreadable until the next login.</p>
-<p>Cached chat messages on disk are encrypted with <code>crypto_secretbox</code>, with a
-symmetric key that's derived from the device's <code>crypto_box</code> secret key. This is
-done so that when the secret key is inaccessible, particularly when the user is
-logged out of Keybase, cached messages are also inaccessible.</p>
-<h3 id="header-layout">Header Layout</h3>
-<p>The chat header fields are specified in our
-<a href="https://github.com/keybase/client/blob/dc664617ea326abdd5e5bca877aa0c25fb403efd/protocol/avdl/chat1/local.avdl#L168-L180"><code>chat.1.local</code></a>
-protocol:</p>
+<p>头部中的字段对服务器不是保密的，实际上它需要知道其中的几个字段，比如消息类型。对头部进行先签名后加密/签密的原因是为了保持<em>签名本身</em>的私密性。即使服务器知道谁在和谁说话，因为它正在传递所有消息，但最好是它无法<em>证明</em>它所知道的。</p>
+<p>签名的目的是防止聊天参与者相互冒充。认证加密足以防止聊天外部的人伪造消息，但由于所有参与者共享加密密钥，如果没有服务器信任，这不足以区分一个参与者与另一个参与者。</p>
+<p>附件也使用签密。</p>
+<h4 id="签密-signencryption">签密 (Signencryption)</h4>
+<p>签密是一种使用对称加密密钥和签名密钥对来加密和签名消息的结构，这种方式可以隐藏签名并支持安全的流式解密。</p>
+<p>加密是以固定大小的块进行的，只有一个短块或空块来标记结束并检测截断。每个块的 nonce 是 16 个随机字节（所有块共享）加上一个 8 字节的顺序计数器（每个块唯一）。这防止了 nonce 重用、块重排序和包之间的块交换。加密层叠在签名之上以隐藏签名，签名包括加密密钥作为关联数据，以防止加密层被替换。</p>
+<p>此方案在 <a href="https://github.com/keybase/client/blob/dc664617ea326abdd5e5bca877aa0c25fb403efd/go/chat/signencrypt/codec.go">源代码</a> 中有详细文档。</p>
+<h3 id="密钥处理">密钥处理</h3>
+<p>本节中的细节与 KBFS 和 Keybase 应用程序的其余部分共享。</p>
+<p>所有 Keybase 设备在首次配置时都会发布一个 <a href="https://nacl.cr.yp.to/box.html"><code>crypto_box</code></a> 公钥和一个 <a href="https://nacl.cr.yp.to/sign.html"><code>crypto_sign</code></a> 公钥。这些密钥位于用户的签名链中，通过相互签名与其他设备的密钥连接。用户的每个身份证明也由这些设备密钥之一签名并记录在签名链中。（PGP 密钥也可以参与签名链，但在聊天或 KBFS 中不行。）</p>
+<p>聊天对称加密密钥是 32 个随机字节。它由聊天中的每个人共享，并且与他们在这些人共享的私有 KBFS 文件夹中用于加密文件的密钥相同。当新设备需要此共享密钥时，拥有该密钥的另一台设备将使用新设备的 <code>crypto_box</code> 公钥对其进行加密，然后将其上传到 Keybase 服务器。聊天签名密钥是上述特定于设备的 <code>crypto_sign</code> 密钥。</p>
+<p>私钥存储在磁盘上，位于使用 <code>crypto_secretbox</code> 加密的文件中，密钥派生自用户的 Keybase 密码。当用户登录 Keybase 时，该密钥以纯文本形式存储在磁盘上（参见下文的权衡），或在 macOS 上存储在系统密钥环中。当用户登出 Keybase 时，该密钥被删除，并且他们的私钥在下次登录之前不可读。</p>
+<p>磁盘上的缓存聊天消息使用 <code>crypto_secretbox</code> 加密，密钥派生自设备的 <code>crypto_box</code> 私钥。这样做是为了当私钥不可访问时（特别是当用户登出 Keybase 时），缓存的消息也不可访问。</p>
+<h3 id="头部布局">头部布局</h3>
+<p>聊天头部字段在我们的 <a href="https://github.com/keybase/client/blob/dc664617ea326abdd5e5bca877aa0c25fb403efd/protocol/avdl/chat1/local.avdl#L168-L180"><code>chat.1.local</code></a> 协议中指定：</p>
 <pre class="codehilite"><code>record HeaderPlaintextV1 {
     ConversationIDTriple conv;
     string tlfName;
@@ -505,142 +419,66 @@ protocol:</p>
 }
 </code></pre>
 
-<p>The fields are:</p>
+<p>这些字段是：</p>
 <ul>
 <li>
-<p><code>ConverationIDTriple conv</code> — A (TLFId, TopicType, TopicID) triple that
-     uniquely identifies this chat. The first field is a random 16-byte ID that
-     uniquely identifies the TLF ("top level folder", a KBFS share). Note that
-     the mapping from TLF name to ID isn't totally fixed, since the TLF might
-     predate when one of the members joined (via "sharing before signup"). The
-     <a href="https://github.com/keybase/client/blob/dc664617ea326abdd5e5bca877aa0c25fb403efd/protocol/avdl/chat1/common.avdl#L28-L33"><code>TopicType</code></a>
-     specifies what "type" of chat this is, since some future chats might be
-     automated communication channels rather than just human-to-human chats.
-     The <code>TopicID</code> is a 16-byte random identifier that uniquely identifies this
-     "topic", so that eventually multiple topics (with mutable names) can exist
-     for each TLF.</p>
+<p><code>ConversationIDTriple conv</code> — 一个 (TLFId, TopicType, TopicID) 三元组，唯一标识此聊天。第一个字段是一个随机的 16 字节 ID，唯一标识 TLF（“顶级文件夹”，一个 KBFS 共享）。请注意，从 TLF 名称到 ID 的映射并不完全固定，因为 TLF 可能早于其中一名成员加入的时间（通过“注册前共享”）。<a href="https://github.com/keybase/client/blob/dc664617ea326abdd5e5bca877aa0c25fb403efd/protocol/avdl/chat1/common.avdl#L28-L33"><code>TopicType</code></a> 指定此聊天的“类型”，因为未来的一些聊天可能是自动通信通道，而不仅仅是人与人之间的聊天。<code>TopicID</code> 是一个 16 字节的随机标识符，唯一标识此“主题”，以便最终每个 TLF 可以存在多个主题（具有可变名称）。</p>
 </li>
 <li>
-<p><code>string tlfName</code> — is the human readable name for this chat, like
-     <code>max,chris</code> or <code>max,BarackObama@twitter</code>. It is technically redundant
-     since it conveys the same information as the TLFId in the previous field.
-     However, including it in the header allows clients to cryptographically
-     associate the two and prevent the server from maliciously reassociating
-     them in the future.</p>
+<p><code>string tlfName</code> — 此聊天的人类可读名称，如 <code>max,chris</code> 或 <code>max,BarackObama@twitter</code>。这在技术上是多余的，因为它传达了与前一字段中的 TLFId 相同的信息。然而，将其包含在头部允许客户端以密码学方式关联两者，并防止服务器将来恶意地重新关联它们。</p>
 </li>
 <li>
-<p><code>boolean tlfPublic</code> — distinguishes between the public and private side of
-     the <code>tlfName</code> above.</p>
+<p><code>boolean tlfPublic</code> — 区分上述 <code>tlfName</code> 的公共和私有侧。</p>
 </li>
 <li>
-<p><code>MessageType messageType</code> — So far, the available types are given
-     <a href="https://github.com/keybase/client/blob/dc664617ea326abdd5e5bca877aa0c25fb403efd/protocol/avdl/chat1/common.avdl#L15-L26">here</a>.
-     Some are chat data, but some are metadata (e.g., "change the name of this
-     chat"), and edits to previously sent messages.</p>
+<p><code>MessageType messageType</code> — 到目前为止，可用的类型在 <a href="https://github.com/keybase/client/blob/dc664617ea326abdd5e5bca877aa0c25fb403efd/protocol/avdl/chat1/common.avdl#L15-L26">这里</a> 给出。有些是聊天数据，但有些是元数据（例如，“更改此聊天的名称”），以及对以前发送的消息的编辑。</p>
 </li>
 <li>
-<p><code>array&lt;MessagePreviousPointer&gt; prev</code> — Pointers to the previously received
-     chat messages to protect against the server reordering, deleting or
-     replaying previous chat messages. The prev pointer to a previous message
-     <em>m</em> consists of the hash of the encryption of <em>m</em>, and the sequential ID
-     that the server assigned to <em>m</em>. The server is tasked with maintaining a
-     total order among messages in a chat, and clients use previous pointers to
-     hold the server to previously advertised orderings.</p>
+<p><code>array&lt;MessagePreviousPointer&gt; prev</code> — 指向先前接收到的聊天消息的指针，以防止服务器重新排序、删除或重放先前的聊天消息。指向上条消息 <em>m</em> 的 prev 指针由 <em>m</em> 的加密哈希和服务器分配给 <em>m</em> 的顺序 ID 组成。服务器的任务是维护聊天中消息的总顺序，客户端使用先前的指针来要求服务器遵守先前公布的顺序。</p>
 </li>
 <li>
-<p><code>gregor1.UID sender</code> and <code>gregor1.DeviceID senderDevice</code> — sender UID and
-     device ID.</p>
+<p><code>gregor1.UID sender</code> 和 <code>gregor1.DeviceID senderDevice</code> — 发送者 UID 和设备 ID。</p>
 </li>
 <li>
-<p><code>Hash bodyHash</code> — In <code>MessageBoxedV1</code> a SHA-256 hash of the encrypted body ciphertext <code>(.e)</code>.
-     In <code>MessageBoxedV2</code> a SHA-256 hash of the encrypted body <code>(.v || .n || .e)</code>.</p>
+<p><code>Hash bodyHash</code> — 在 <code>MessageBoxedV1</code> 中是加密主体密文 <code>(.e)</code> 的 SHA-256 哈希。
+     在 <code>MessageBoxedV2</code> 中是加密主体 <code>(.v || .n || .e)</code> 的 SHA-256 哈希。</p>
 </li>
 <li>
-<p><code>outboxInfo</code> and <code>outboxID</code> — Extra sender bookkeeping data, not used for
-     security.</p>
+<p><code>outboxInfo</code> 和 <code>outboxID</code> — 额外的发送者簿记数据，不用于安全性。</p>
 </li>
 <li>
-<p><code>union {null, SignatureInfo} headerSignature</code> — In <code>MessageBoxedV1</code> a signature computed over
-     the whole header (including the body hash above).
-     In <code>MessageBoxedV2</code> this field is null, instead the whole header is signencrypted.</p>
+<p><code>union {null, SignatureInfo} headerSignature</code> — 在 <code>MessageBoxedV1</code> 中是对整个头部（包括上面的主体哈希）计算的签名。
+     在 <code>MessageBoxedV2</code> 中此字段为 null，改为对整个头部进行签密。</p>
 </li>
 <li>
-<p><code>union {null, MerkleRoot } merkleRoot</code> A recent merkle root observed by the sender.
-     Not present in <code>MessageBoxedV1</code>.</p>
+<p><code>union {null, MerkleRoot } merkleRoot</code> 发送者观察到的最近的 merkle 根。
+     在 <code>MessageBoxedV1</code> 中不存在。</p>
 </li>
 </ul>
-<h2 id="limitations-and-tradeoffs">Limitations and Tradeoffs</h2>
-<h3 id="forward-secrecy">Forward Secrecy</h3>
-<p><strong>Tradeoff:</strong> Messages on the server don't have forward secrecy. That is, the
-keys to read them still exist on your devices, and they never get deleted. That
-means that someone who steals your device might be able to read your old
-messages.</p>
-<p><strong>Reason:</strong> This is necessary for users to read their message history on new
-devices. Forward secrecy also gets into a gray area when you allow multiple
-devices on an account. (If you haven't turned on your other phone in 6 months,
-and you keep sending messages to it, the ephemeral keys on that phone aren't
-very ephemeral anymore.) Finally, deleting keys doesn't help you much if you
-keep decrypted message history on the same device. Note that we do generate new
-encryption keys when you remove a device, so a removed device can't decrypt
-messages that were sent after it got removed.</p>
-<h3 id="repudiability">Repudiability</h3>
-<p><strong>Tradeoff:</strong> Chat messages don't have repudiability. That is, if Alice sends a
-message to Bob, it's possible for Bob to prove to other people that Alice sent
-it.</p>
-<p><strong>Reason:</strong> This is a side effect of using signing keys to authenticate
-messages. Repudiable authentication works well in a chat between two people,
-and it's even cheaper than signing. But it doesn't scale well to group chats
-with tons of people, because the sender needs to authenticate each message
-separately for every other person in the group. It also makes it difficult to
-add new people to an existing group (which we might support in the future),
-because old messages can't be reauthenticated until all the senders come
-online.</p>
-<h3 id="history-integrity">History Integrity</h3>
-<p><strong>Tradeoff:</strong> The server is responsible for assigning sequential IDs to new
-messages, and it's possible for the server to change history in specific ways,
-like delaying messages or reordering senders who haven't seen each other's
-messages yet.</p>
-<p><strong>Reason:</strong> Good performance in a messenger app requires letting different
-people send messages at the same time, without forcing them to synchronize or
-to have perfectly up-to-date message history. That means that the server will
-always have a lot of leeway in deciding what actually happened. The previous
-message references guarantee that the server can't put a message before one it
-was replying to, or delete messages after other people have seen them.</p>
-<h3 id="metadata">Metadata</h3>
-<p><strong>Tradeoff:</strong> Keybase is a centralized service, and the server receives a lot
-of metadata. It knows who's talking to whom and how much data they're sending
-back and forth. It also knows the type of each message, like "text",
-"attachment", or "deletion".</p>
-<p><strong>Reason:</strong> Decentralized services make it difficult to add features over time,
-unless the developers can break backwards compatibility, which defeats most of
-the purpose of decentralizing. Moxie Marlinspike wrote <a href="https://whispersystems.org/blog/the-ecosystem-is-moving/">an article about many
-of these issues</a>.
-Decentralized services can also be <em>easier</em> to spy on, depending on who's doing
-the spying. It's much easier to run a malicious Tor exit node than to break
-into Facebook's servers, for example.</p>
-<h3 id="keys-on-disk">Keys on Disk</h3>
-<p><strong>Tradeoff:</strong> Keybase sometimes keeps secret keys accessible on disk, instead
-of encrypting them with your password all the time.</p>
-<p><strong>Reason:</strong> Modern operating systems make full-disk encryption convenient, so
-the use case for application-specific encrypted storage is much more limited
-than it used to be. It doesn't help much unless an attacker can read arbitrary
-files from your disk but can't run arbitrary code. That can happen, but it's a
-very specific scenario, and it leaks your decrypted files even if it doesn't
-leak your keys. By comparison, throwing extra password prompts at the user is a
-major downside for everyone all the time, especially non-experts who don't know
-how to pick good passwords or manage them.</p>
-<p>Keybase's centralized model also makes it easier to recover from leaked signing
-keys, compared to PGP. Everyone checks for revocations in your signature chain
-automatically. In the worst-case scenario where you lose control of your
-account entirely, and you can't publish revocations at all, you can still take
-down all the identity proofs associated with it.</p>
+<h2 id="局限性和权衡">局限性和权衡</h2>
+<h3 id="前向保密-forward-secrecy">前向保密 (Forward Secrecy)</h3>
+<p><strong>权衡：</strong> 服务器上的消息没有前向保密性。也就是说，读取它们的密钥仍然存在于您的设备上，并且永远不会被删除。这意味着如果有人窃取了您的设备，他们可能能够读取您的旧消息。</p>
+<p><strong>原因：</strong> 这对于用户在新设备上读取他们的消息历史记录是必要的。当您允许在一个账户上使用多个设备时，前向保密性也会进入一个灰色地带。（如果您已经 6 个月没有打开另一部手机，并且您一直在向它发送消息，那么该手机上的临时密钥就不再那么临时了。）最后，如果您在同一设备上保留解密的消息历史记录，删除密钥对您没有多大帮助。请注意，当您移除设备时，我们确实会生成新的加密密钥，因此被移除的设备无法解密在其被移除后发送的消息。</p>
+<h3 id="可否认性-repudiability">可否认性 (Repudiability)</h3>
+<p><strong>权衡：</strong> 聊天消息没有可否认性。也就是说，如果 Alice 给 Bob 发送一条消息，Bob 有可能向其他人证明 Alice 发送了它。</p>
+<p><strong>原因：</strong> 这是使用签名密钥验证消息的副作用。可否认认证在两个人之间的聊天中效果很好，而且比签名更便宜。但它不能很好地扩展到拥有大量人员的群聊，因为发送者需要为群组中的每个其他人单独验证每条消息。这也会使向现有群组添加新成员变得困难（我们将来可能会支持），因为在所有发送者上线之前，旧消息无法重新认证。</p>
+<h3 id="历史完整性-history-integrity">历史完整性 (History Integrity)</h3>
+<p><strong>权衡：</strong> 服务器负责为新消息分配顺序 ID，并且服务器有可能以特定方式更改历史记录，例如延迟消息或重新排序尚未看到彼此消息的发送者。</p>
+<p><strong>原因：</strong> 消息应用中的良好性能需要允许不同的人同时发送消息，而不强迫他们同步或拥有完全最新的消息历史记录。这意味着服务器在决定实际发生的事情方面总是有很大的回旋余地。先前的消息引用保证了服务器不能将一条消息放在它回复的消息之前，或者在其他人看到消息后删除它们。</p>
+<h3 id="元数据-metadata">元数据 (Metadata)</h3>
+<p><strong>权衡：</strong> Keybase 是一项中心化服务，服务器接收大量元数据。它知道谁在和谁说话，以及他们来回发送了多少数据。它还知道每条消息的类型，如“文本”、“附件”或“删除”。</p>
+<p><strong>原因：</strong> 去中心化服务使得随着时间的推移添加功能变得困难，除非开发人员可以破坏向后兼容性，这违背了去中心化的大部分目的。Moxie Marlinspike 写了一篇 <a href="https://whispersystems.org/blog/the-ecosystem-is-moving/">关于其中许多问题的文章</a>。去中心化服务也可能<em>更容易</em>被监视，这取决于谁在进行监视。例如，运行一个恶意的 Tor 出口节点比闯入 Facebook 的服务器要容易得多。</p>
+<h3 id="磁盘上的密钥-keys-on-disk">磁盘上的密钥 (Keys on Disk)</h3>
+<p><strong>权衡：</strong> Keybase 有时将私钥保存在磁盘上可访问的地方，而不是一直用您的密码加密它们。</p>
+<p><strong>原因：</strong> 现代操作系统使得全盘加密变得方便，因此应用程序特定加密存储的用例比以前有限得多。除非攻击者可以从您的磁盘读取任意文件但不能运行任意代码，否则这对您没有多大帮助。这可能发生，但这是一个非常特定的场景，即使它没有泄露您的密钥，它也会泄露您解密的文件。相比之下，向用户抛出额外的密码提示对每个人来说都是一个主要的缺点，特别是对于不知道如何选择好密码或管理它们的非专家来说。</p>
+<p>Keybase 的中心化模型也使得从泄露的签名密钥中恢复比 PGP 更容易。每个人都会自动检查您签名链中的撤销。在您完全失去对账户的控制权并且根本无法发布撤销的最坏情况下，您仍然可以撤下与之关联的所有身份证明。</p>
             </section>
         </div>
     </div>
         <footer class="footer" data-footer-label="下一章">
         <a class="footer__link" href="/docs/chat/ephemeral">
             <div class="footer__inner">
-            <p class="footer__title" data-chapter-count="D">Hierarchical Ephemeral Keys for Exploding Messages</p>
+            <p class="footer__title" data-chapter-count="D">用于阅后即焚消息的分层临时密钥</p>
                 
             </div>
             <img alt="" class="footer__image" src="/static/img/illos/docs.jpg" loading="lazy" width="870"/>

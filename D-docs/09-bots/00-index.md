@@ -1,38 +1,37 @@
-# Bots
+# 机器人 (Bots)
 
-Here is the technical documentation for bot development. This section is under development, check back soon for updates!
+这是机器人开发的技术文档。本部分正在开发中，请稍后回来查看更新！
 
-## Key-Value Storage
+## 键值存储 (Key-Value Storage)
 
-Keybase has added an encrypted key-value store intended to support security-conscious bot development with persistent state. It is a place to store small bits of data that are
+Keybase 添加了一个加密的键值存储，旨在支持具有持久化状态的安全意识机器人开发。这是一个存储少量数据的地方，这些数据：
 
-1. encrypted for yourself (or for anyone in a team you're in)
-1. persistent across logins
-1. fast and durable.
+1. 为你自己（或你所在的团队中的任何人）加密
+1. 跨登录持久化
+1. 快速且持久
 
-### Technical Details
+### 技术细节
 
-If you're a bot developer who has needed persistent state, you may already be using KBFS for your storage needs. We've implemented the key-value storage feature for more lightweight applications storing small blobs of data - maybe you just need to store a session key, or you're building a team password manager.
+如果你是一个需要持久化状态的机器人开发人员，你可能已经在将 KBFS 用于你的存储需求。我们为更轻量级的应用程序实现了键值存储功能，用于存储小块数据——也许你只需要存储一个会话密钥，或者你正在构建一个团队密码管理器。
 
-Key-value storage exposes a simple API to put, get, list, and delete entries.
+键值存储公开了一个简单的 API 来放置 (put)、获取 (get)、列出 (list) 和删除 (delete) 条目。
 
-Entry values are encrypted for yourself by default (this is probably what you want), but you can also specify a team:
+条目值默认情况下为你自己加密（这可能就是你想要的），但你也可以指定一个团队：
 
-1. you plus any list of other keybase users (e.g. `you,alice,bob`)
-1. a named team or subteam (e.g. `myawesometeam.passwords`)
+1. 你加上任何其他 Keybase 用户列表（例如 `you,alice,bob`）
+1. 一个命名的团队或子团队（例如 `myawesometeam.passwords`）
 
-A team has many namespaces, a namespace has many entryKeys, and an entryKey has one current entryValue. You cannot fetch old versions of your data if you've `put` a new revision or deleted it.
+一个团队有许多命名空间 (namespaces)，一个命名空间有许多条目键 (entryKeys)，一个条目键有一个当前的条目值 (entryValue)。如果你已经 `put`（放置）了一个新版本或删除了它，你将无法获取数据的旧版本。
 
-Namespaces and entryKeys are in cleartext, and the Keybase client service will encrypt and sign the entryValue on the way in (as well as decrypt and verify on the way out) so Keybase servers cannot see it or forge it.
+命名空间和条目键是明文的，Keybase 客户端服务将在进入时加密并签署条目值（以及在输出时解密和验证），因此 Keybase 服务器无法看到或伪造它。
 
-If you prepend a namespace or entryKey with double-underscores (e.g. `__whatever`), it will be undiscoverable from the corresponding `list` endpoint.
+如果你在命名空间或条目键前加上双下划线（例如 `__whatever`），它将无法从相应的 `list` 端点被发现。
 
+#### 版本号 (Revision Numbers)
 
-#### Revision Numbers
+Keybase 服务器跟踪每个条目的最新版本号，并且要求客户端在每次更新请求时指定正确的版本号。当你放置一个新条目或更新一个现有条目时（删除也是这样工作的），你的 Keybase 客户端将首先为该条目运行一个 `get`（获取），以便它确切地知道服务器期望的版本（例如，对于一个全新的条目为 1）。这种复杂性对 API 隐藏了，因为你可能不需要它。但是，如果你想管理自己的版本（例如，你有两个不同的机器人绝对需要并发地共享和更新相同的条目），你可以传入一个版本，你的 Keybase 客户端将使用它。
 
-The Keybase server keeps track of the latest revision number for each entry, and it requires the client to specify the correct revision number on every update request. When you put a new entry or update an existing one (deleting works this way too), your Keybase client will first run a `get` for that entry so it knows exactly what revision the server is expecting (e.g. 1 for a totally new entry). This complexity is hidden from the API because you probably don't need it. If, however, you would like to manage your own revisions (e.g. you have two different bots that absolutely need to share and update the same entries concurrently), you can pass in a revision and your Keybase client will use it.
-
-For example, assuming that this entry has not been inserted previously, the following command will insert an entry with revision 1:
+例如，假设此条目以前未插入过，以下命令将插入一个版本为 1 的条目：
 
 ```
 keybase kvstore api -m '{"method": "put", "params":
@@ -40,7 +39,7 @@ keybase kvstore api -m '{"method": "put", "params":
 "geocities", "entryValue": "all my secrets"}}}'
 ```
 
-If we `put` with an explicit revision number 2 at this point (as is done in the command below), the `put` will fail, because it is expecting revision 3:
+如果我们此时显式地使用版本号 2 进行 `put`（如下面的命令中所做的那样），`put` 将失败，因为它期望版本 3：
 
 ```
 keybase kvstore api -m '{"method": "put", "params": {"options":
@@ -48,26 +47,27 @@ keybase kvstore api -m '{"method": "put", "params": {"options":
 "entryKey": "geocities", "entryValue": "some update"}}}'
 ```
 
-### Security Details
+### 安全细节
 
-Much of the metadata, including namespaces, entryKeys, as well as database access patterns, is known to the Keybase server. EntryValues, however, are signed by the device key of the writer and then encrypted for a specific team. This ensures that the server cannot read or forge an entryValue, nor prove any of the metadata it knows about it. The security tradeoffs are modeled after and are extremely similar to chat. Here are some of the distinguishing details.
+许多元数据，包括命名空间、条目键以及数据库访问模式，对于 Keybase 服务器来说都是已知的。然而，条目值由写入者的设备密钥签名，然后为特定团队加密。这确保了服务器无法读取或伪造条目值，也无法证明它所知道的关于它的任何元数据。安全权衡是以聊天 (chat) 为模型设计的，并且非常相似。以下是一些区别细节。
 
-#### Metadata
+#### 元数据 (Metadata)
 
-We use [authenticated encryption with associated metadata (AEAD)](https://en.wikipedia.org/wiki/Authenticated_encryption#Authenticated_encryption_with_associated_data_%28AEAD%29), a construct that allows the inclusion of associated data (in our case, a bunch of metadata) as part of what is signed then encrypted. We do this to mitigate several possible attacks that might otherwise be available to the server.
+我们使用 [带关联数据的认证加密 (AEAD)](https://en.wikipedia.org/wiki/Authenticated_encryption#Authenticated_encryption_with_associated_data_%28AEAD%29)，这是一种允许包含关联数据（在我们的例子中是一堆元数据）作为签名然后加密的一部分的构造。我们这样做是为了减轻服务器可能利用的几种可能的攻击。
 
-One of the main risks of signing-then-encrypting a message is what happens if someone who is able to decrypt the outer layer can then reencrypt the signed message for some other purpose (e.g. a different entryKey or a previous revision). In the context of this product, an attack like that would require collusion between the Keybase server and a current (or former, depending on the specifics) member of the team. We handle this family of problems (including for example a malicious Keybase server swapping your entryValues between entryKeys) by having the writer sign over not just the entryValue, but also a hash of a bunch of metadata. The metadata specifies the expected signing and encryption keys as well as the expected entry details (team, namespace, entryKey, and revision). And this metadata hash is checked whenever an entry is decrypted and verified by a Keybase client.
+先签名后加密消息的主要风险之一是，如果能够解密外层的人随后可以将签名的消息重新加密用于其他目的（例如，不同的条目键或以前的版本），会发生什么。在这个产品的背景下，像那样的攻击将需要 Keybase 服务器与团队的当前（或前任，取决于具体情况）成员之间的勾结。我们通过让写入者不仅对条目值签名，而且对一堆元数据的哈希进行签名来处理这一类问题（例如，包括恶意 Keybase 服务器在条目键之间交换你的条目值）。元数据指定了预期的签名和加密密钥以及预期的条目详细信息（团队、命名空间、条目键和版本）。并且每当 Keybase 客户端解密和验证条目时，都会检查此元数据哈希。
 
-#### Rollback Protection
+#### 回滚保护 (Rollback Protection)
 
-Because the server can return different responses for the same request (when the current entryValue at a given entryKey changes), there are some additional verifications that each client performs: that the revision number and team key generation of an entry cannot decrease, and that the same revision number always maps to the same entryValue and team key generation.
+因为服务器可以对相同的请求返回不同的响应（当给定条目键处的当前条目值更改时），每个客户端都会执行一些额外的验证：条目的版本号和团队密钥生成代数不能减少，并且相同的版本号总是映射到相同的条目值和团队密钥生成代数。
 
-### Usage
+### 用法
 
-You can interact with key-value storage via the Keybase CLI. To see sample commands:
+你可以通过 Keybase CLI 与键值存储进行交互。要查看示例命令：
 
 ```
 keybase kvstore api help
 ```
 
-Key-value storage support has been implemented in three of our bot libraries for [Python](https://github.com/keybase/pykeybasebot), [JavaScript](https://github.com/keybase/keybase-bot), and [Golang](https://github.com/keybase/go-keybase-chat-bot). To get you started, you can also find in those libraries helpful examples of bot implementations that use the key-value store. Our very own managed bot Jirabot (for interacting with Jira) also [utilizes key-value storage](https://github.com/keybase/managed-bots/tree/master/jirabot). Give them a try!
+键值存储支持已在我们的三个机器人库中实现：[Python](https://github.com/keybase/pykeybasebot)、[JavaScript](https://github.com/keybase/keybase-bot) 和 [Golang](https://github.com/keybase/go-keybase-chat-bot)。为了让你开始，你还可以在这些库中找到使用键值存储的机器人实现的有用示例。我们自己的托管机器人 Jirabot（用于与 Jira 交互）也 [利用了键值存储](https://github.com/keybase/managed-bots/tree/master/jirabot)。试一试吧！
+

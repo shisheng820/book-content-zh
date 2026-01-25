@@ -36,6 +36,13 @@
 *   **Files** -> **文件** (作为功能模块名时)
 *   **Public-key cryptography** -> **公钥加密**
 *   **Two-factor authentication** -> **双因素认证**
+*   **Exploding messages** -> **阅后即焚**
+*   **Ephemeral keys** -> **临时密钥**
+*   **Restricted bots** -> **受限机器人**
+*   **Trust on first use (TOFU)** -> **首次使用信任**
+*   **Commitment scheme** -> **承诺方案**
+*   **Live Location** -> **实时位置**
+
 
 ## 翻译原则
 1.  **代码块与路径**：严禁翻译代码块、命令行指令、文件路径、API 端点。

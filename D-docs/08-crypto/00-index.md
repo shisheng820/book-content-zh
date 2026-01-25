@@ -1,44 +1,35 @@
+# Keybase 加密文档
 
-# Keybase Crypto Documents
+这是描述整个 Keybase 系统中起作用的加密技术的文档集合。
 
-Here is a collection of documents describing the crypto at play throughout the
-Keybase system.
+## 核心安全
 
-## Core Security
+[此文档](/docs/server) 描述了我们系统安全的高级方法：即，Keybase 客户端从我们的服务器获取提示和原始数据，但不信任它，并检查其所有工作。
 
-[This document](/docs/server) describes our high-level approach to system security: namely, that Keybase clients take hints and raw data from our server, but mistrust it, and check all of its work.
+我们发布了 [后续公开文档](/docs/server/merkle-root-in-bitcoin-blockchain)，描述了我们如何使用比特币区块链来增强安全保证。
 
-We posted a [follow-on public document](/docs/server/merkle-root-in-bitcoin-blockchain) describing how we use the bitcoin blockchain to enhance security guarantees.
+随着我们推出每设备密钥，我们发布了另一份 [文档](/docs/server#meet-your-sigchain-and-everyone-elses)，描述了用户签名链的具体细节，以及用户如何将权限委派给新密钥并吊销旧密钥。
 
-As we launched per-device secret keys, we posted another [document](/docs/server#meet-your-sigchain-and-everyone-elses) describing the specifics of user signature chains, and how users go about delegating authority to new keys and revoking old keys.
+## 密钥交换
 
-## Key Exchange
+当用户配置新设备时，他们会交换密钥，以便现有设备签署新设备使其投入运行，并且新设备可以访问一些秘密数据，否则这些数据只有在用户输入密码短语时才可用（我们在移动设备上尽量避免这种情况）。此 [文档](/docs/crypto/key-exchange) 描述了该协议，一旦协议经过审查，最终将公开。
 
-When users provision new devices, they exchange keys so that the existing device signs the new device into operation, and the new device gets access to some secret data that otherwise would only be available if the user entered her passphrase (which we try to avoid on mobile devices).  This [document](/docs/crypto/key-exchange) describes the protocol, but will eventually be public once the protocol is reviewed.
+## 本地密钥存储 (LKS)
 
-## Local Key Storage (LKS)
+Keybase 的一个可用性要求是用户应该只需要记住一个密码短语，并且如果该密码短语在一台设备上更改，所有其他设备应立即反映该更改。通常，我们试图尽量少用密码短语，但对于像锁定本地密钥这样的某些操作，密码短语可能是不可避免的。此 [文档](/docs/crypto/local-key-security) 描述了本地密钥安全系统。
 
-A usability requirement of Keybase is that the user only should have to remember one passphrase, and if that passphrase changes on one device, all other devices to immediately reflect that change.  In general, we are trying to make light use of passphrases, but for certain operations like locking local secret keys, passphrases can be unavoidable. This [document](/docs/crypto/local-key-security) describes the local-key security system.
+## 文件系统
 
-## File System
-
-The Keybase File system (KBFS) is now in active development and will be our first product launch. This [document](/docs/crypto/kbfs) describes the cryptographic decisions in the design.  This document also touches on our plan for organizations, which isn't yet in development.
-
+Keybase 文件系统 (KBFS) 现在正在积极开发中，将是我们发布的第一个产品。此 [文档](/docs/crypto/kbfs) 描述了设计中的加密决策。本文档还涉及我们的组织计划，该计划尚未开发。
 
 {##
 
-## Account Corner Cases
+## 账户边缘情况
 
-How do users change passwords, deal with lost devices, change e-mail addresses, etc?  These issues are all related, and covered in this [document](/docs/crypto/account-corner-cases) on "account corner cases."
+用户如何更改密码、处理丢失的设备、更改电子邮件地址等？这些问题都是相关的，并在关于“账户边缘情况”的此 [文档](/docs/crypto/account-corner-cases) 中涵盖。
 
 ##}
 
+## SaltPack 消息格式
 
-## SaltPack Message Format
-
-We want something like PGP messages but simpler, more modern, and easier to
-implement. The two important cases we cover now are [authenticated-encrypted
-messages](https://saltpack.org/encryption-format-v2) and [publicly signed
-statements](https://saltpack.org/signing-format-v2). We call this system
-"SaltPack", since it's half [NaCl](http://nacl.cr.yp.to/) and half [message
-pack](http://msgpack.org). More details at [saltpack.org](https://saltpack.org).
+我们需要像 PGP 消息那样但更简单、更现代且更易于实现的东西。我们现在涵盖的两个重要案例是 [认证加密消息](https://saltpack.org/encryption-format-v2) 和 [公开签名声明](https://saltpack.org/signing-format-v2)。我们称这个系统为 "SaltPack"，因为它一半是 [NaCl](http://nacl.cr.yp.to/)，一半是 [message pack](http://msgpack.org)。更多详细信息请访问 [saltpack.org](https://saltpack.org)。

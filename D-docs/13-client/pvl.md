@@ -1,71 +1,75 @@
-# Proof Verification Language
 
-## Overview
+# 证明验证语言 (PVL)
 
-The proof verification language (PVL) is a restricted json-based language for describing how clients should validate keybase proofs.
+## 概述
 
-The problem this solves is that if a proof service (for example reddit) quickly changes its presentation, keybase clients should adapt quickly and continue verifying proofs.
+证明验证语言 (PVL) 是一种基于 JSON 的受限语言，用于描述客户端应如何验证 Keybase 证明。
 
-The active PVL instructions can be updated by the keybase server quicker than we can update clients. Especially mobile clients.
+它解决的问题是，如果证明服务（例如 Reddit）快速更改其展示方式，Keybase 客户端应能快速适应并继续验证证明。
 
-Clients get the latest PVL from the server if a proof service changes its format. A change in PVL can change how the client fetches and validates the proof data.
+Keybase 服务器更新活跃 PVL 指令的速度比我们更新客户端（特别是移动客户端）的速度要快。
 
-## Security
+如果证明服务更改其格式，客户端会从服务器获取最新的 PVL。PVL 的更改可以改变客户端获取和验证证明数据的方式。
 
-Clients fetch PVL instructions from the keybase server and use it when they validate proofs. The keybase server logs the hash of the PVL it serves in an auditable Merkle tree. Clients always check fetched PVL against the merkle tree to guarantee they only execute auditable PVL.
+## 安全性
 
-Compromising the keybase server and sending attacker-controlled PVL to the client should never cause the client to execute arbitrary code. PVL will stay limited enough to not do any damage.
+客户端从 Keybase 服务器获取 PVL 指令，并在验证证明时使用它。Keybase 服务器将其提供的 PVL 的哈希值记录在可审计的 Merkle 树中。客户端总是根据 Merkle 树检查获取的 PVL，以保证它们只执行可审计的 PVL。
 
-Compromising the keybase server and sending bogus PVL could cause clients to accept validations which are not correct. For example, if Eve controlled the keybase server, she could successfully claim Alice's twitter account by posting Eve's own signature of a claim of Alice's username and pushing a change of the PVL for twitter to clients so that they fetch from the wrong user's feed. This is a problem, but is offset by auditing.
+即使 Keybase 服务器受损并向客户端发送攻击者控制的 PVL，也不应导致客户端执行任意代码。PVL 将保持足够的限制以避免造成任何损害。
 
-If the keybase server ever sends bad PVL to a client (and it is accepted by the client) there will be an audit trail. An independent auditor will be able to find out what malicious PVL was sent. To reiterate, the current PVL will be hashed into a merkle tree and clients will always validate new PVL against the merkle tree.
+如果 Keybase 服务器受损并发送伪造的 PVL，可能会导致客户端接受不正确的验证。例如，如果 Eve 控制了 Keybase 服务器，她可以通过发布 Eve 自己对 Alice 用户名声明的签名，并向客户端推送针对 Twitter 的 PVL 更改（使它们从错误的用户 feed 获取），从而成功声称拥有 Alice 的 Twitter 账户。这是一个问题，但可以通过审计来抵消。
 
-## Updating active PVL
-### Server
-The server serves a PVL blob for each version of the PVL spec that we support. So there might at some point be a different blob for `pvl_version` 2 and 3 and none for version 1. Each client can only run one version of PVL. All PVL blobs are hashed into the merkle tree so they can be validated.
+如果 Keybase 服务器曾向客户端发送错误的 PVL（并且被客户端接受），将会有审计踪迹。独立审计员将能够找出发送了什么恶意 PVL。重申一下，当前的 PVL 将被哈希到 Merkle 树中，客户端将始终根据 Merkle 树验证新的 PVL。
 
-If the server does not serve a PVL blob for some (old) `pvl_version` then that causes clients at that version to throw out their existing PVL blob and they will be unable to validate proofs. This means if we find a security bug in proof validation, but can't fix it in that version of the PVL spec, then we can disable those clients immediately.
+## 更新活跃 PVL
 
-### (A) Client wants to validate a proof and has no local PVL
+### 服务器
 
-1. A client begins its life with no active PVL blob. The first time it wants to validate a proof, it must fetch a current PVL blob for its `pvl_version` from the server along with the chain tying the blob to the merkle tree.
-2. If there is no PVL blob for its `pvl_version` being served, it informs the user that the client is out of date and aborts the proof check.
-3. If the PVL is invalid or it doesn't validate against merkle tree, it discards the PVL and aborts. The client is free to try again later.
-4. The client stores the validated blob in its local db for later use.
-5. It then executes the PVL to check proofs.
+服务器为我们支持的每个 PVL 规范版本提供一个 PVL blob。因此，在某个时候，`pvl_version` 2 和 3 可能有不同的 blob，而版本 1 则没有。每个客户端只能运行一个版本的 PVL。所有 PVL blob 都被哈希到 Merkle 树中，以便可以进行验证。
 
-### (B) Existing client wants to validate a proof, and PVL has not changed (common case)
+如果服务器不为某个（旧）`pvl_version` 提供 PVL blob，那么该版本的客户端将丢弃其现有的 PVL blob，并且无法验证证明。这意味着如果我们在证明验证中发现安全漏洞，但无法在该版本的 PVL 规范中修复它，我们可以立即禁用这些客户端。
 
-1. The client finds out from the server the hash of the active PVL blob for its `pvl_version`. In this case it is the same as its current version.
-2. The client executes its stored PVL to check proofs.
+### (A) 客户端想要验证证明且没有本地 PVL
 
-### (C) Existing client wants to validate a proof, and PVL has changed
+1. 客户端在生命周期开始时没有活跃的 PVL blob。当它第一次想要验证证明时，它必须从服务器获取其 `pvl_version` 的当前 PVL blob 以及将该 blob 绑定到 Merkle 树的链。
+2. 如果没有为其 `pvl_version` 提供 PVL blob，它会通知用户客户端已过期并中止证明检查。
+3. 如果 PVL 无效或无法通过 Merkle 树验证，它将丢弃 PVL 并中止。客户端可以稍后重试。
+4. 客户端将经过验证的 blob 存储在其本地数据库中以备后用。
+5. 然后它执行 PVL 来检查证明。
 
-1. The client finds out from the server the hash of the active PVL blob for its `pvl_version`. In this case it is different or doesn't exist.
-2. The client throws out its existing PVL and does as described in A.
+### (B) 现有客户端想要验证证明，且 PVL 未更改（常见情况）
 
-## Tools
-To see the current pvl chunk and tooling for updating it, see https://github.com/keybase/client/tree/master/pvl-tools
+1. 客户端从服务器获知其 `pvl_version` 的活跃 PVL blob 的哈希值。在这种情况下，它与当前版本相同。
+2. 客户端执行其存储的 PVL 来检查证明。
 
-## Structure
+### (C) 现有客户端想要验证证明，且 PVL 已更改
 
-This section describes the structure of a PVL chunk.
+1. 客户端从服务器获知其 `pvl_version` 的活跃 PVL blob 的哈希值。在这种情况下，它不同或不存在。
+2. 客户端丢弃其现有的 PVL 并按 A 中所述进行操作。
 
-The examples in this document are all written in CoffeeScript (CSON). But the format that will be signed and sent to clients is JSON. If you would like to see a pretty-printed json version of something in this document, run this and quickly paste the cson version:
+## 工具
+
+要查看当前的 PVL 块和用于更新它的工具，请参阅 https://github.com/keybase/client/tree/master/pvl-tools
+
+## 结构
+
+本节描述 PVL 块的结构。
+
+本文档中的示例均用 CoffeeScript (CSON) 编写。但将被签名并发送给客户端的格式是 JSON。如果你想查看本文档中某些内容的漂亮的 JSON 版本，请运行此命令并快速粘贴 CSON 版本：
 
 ```sh
 cson2json | underscore print
 ```
 
-You will need [cson2json](https://www.npmjs.com/package/cson) and [underscore-cli](https://www.npmjs.com/package/underscore-cli)
+你需要 [cson2json](https://www.npmjs.com/package/cson) 和 [underscore-cli](https://www.npmjs.com/package/underscore-cli)
 
-### Top
+### 顶层
 
-At the top level PVL is a map from proof service names to a service entry describing how to validate a proof.
+在顶层，PVL 是从证明服务名称到描述如何验证证明的服务条目的映射。
 
 ```coffeescript
-pvl_version: 1 # The version of the pvl spec this is written for
-revision: 1    # What revision of the scripts validation scripts we're on
+pvl_version: 1 # 编写此 PVL 规范的版本
+revision: 1    # 我们正在使用的脚本验证脚本的修订版
 services:
   coinbase: [...]
   dns: [...]
@@ -76,19 +80,19 @@ services:
   web: [...]
 ```
 
-### Service Entry
+### 服务条目
 
-Each service entry is a list of scripts. Each script is a list of instructions. Each script is tried one by one in a short-circuiting OR. If any script succeeds, the proof is ok. If all scripts fail, the proof is invalid. This is done so that if we catch a service in the middle of a split-test or deployment, we can write one script for each type of response.
+每个服务条目都是脚本列表。每个脚本都是指令列表。每个脚本在一个短路 OR（或）逻辑中逐个尝试。如果任何脚本成功，则证明是好的。如果所有脚本都失败，则证明无效。这样做是为了如果我们发现服务处于拆分测试或部署中间，我们可以为每种类型的响应编写一个脚本。
 
-When a client runs a script, the script has limited access to the RemoteProofChainLink and the hint from the keybase server. From the server gets `hint_url` which is a URL where the proof data is.
+当客户端运行脚本时，脚本对 RemoteProofChainLink 和来自 Keybase 服务器的提示具有有限的访问权限。从服务器获取 `hint_url`，即证明数据所在的 URL。
 
-Each script describes how to first validate the hint URL and then fetch and validate the proof.
+每个脚本描述了如何首先验证提示 URL，然后获取并验证证明。
 
-Here is an example of a service entry with 1 script:
+这是一个包含 1 个脚本的服务条目示例：
 
 ```coffeescript
 generic_web_site: [[
-  # URL validation. Must be HTTP or HTTPS. Must be a known path from the proof domain.
+  # URL 验证。必须是 HTTP 或 HTTPS。必须是证明域名的已知路径。
   { assert_regex_match: {
     , pattern: "^%{protocol}://%{hostname}/(?:\\.well-known/keybase\\.txt|keybase\\.txt)$"
     , from: "hint_url"
@@ -97,7 +101,7 @@ generic_web_site: [[
     , kind: "string"
     , from: "hint_url"
     , into: "blob" } },
-  # Verify and find the sig.
+  # 验证并查找签名。
   { assert_find_base64: {
     , needle: "sig"
     , haystack: "blob"
@@ -105,7 +109,7 @@ generic_web_site: [[
 ]]
 ```
 
-And here it is again in JSON:
+这也是 JSON 格式的：
 
 ```json
 "generic_web_site": [[
@@ -124,36 +128,37 @@ And here it is again in JSON:
 ]]
 ```
 
-### Registers
-Instructions can read and write named registers. Each register stores a string value, can only be set once, and cannot be read before being set. Registers must be named according to `[a-z0-9_]+`.
+### 寄存器
 
-Some registers are pre-filled before the script is run. These special registers are described in the following table. A few of these special registers do not make sense in certain proof types, for example `username_service` does not make sense in DNS proofs. Such registers are banned in those situations and cannot be read or set.
+指令可以读取和写入命名寄存器。每个寄存器存储一个字符串值，只能设置一次，并且在设置之前不能读取。寄存器必须根据 `[a-z0-9_]+` 命名。
 
-When register values are substituted into regexes they are regex-escaped by the client. The proof sig is opened in order to derive the shorter sig IDs.
+某些寄存器在运行脚本之前已预先填充。下表描述了这些特殊寄存器。其中一些特殊寄存器在某些证明类型中没有意义，例如 `username_service` 在 DNS 证明中没有意义。此类寄存器在这些情况下被禁止，不能读取或设置。
 
-This is a complete list of the pre-set registers:
+当寄存器值被代入正则表达式时，它们会被客户端进行正则转义。打开证明签名是为了导出较短的签名 ID。
 
-| Variable name      | Meaning                      | Example value                         | Comment                                                   |
+这是预设寄存器的完整列表：
+
+| 变量名 | 含义 | 示例值 | 注释 |
 |--------------------|------------------------------|---------------------------------------|-----------------------------------------------------------|
-| `hint_url`         | hint url from keybase server | https://gist.github.com/github/etc.md |                                                           |
-| `username_service` | username on the service      | cjbprime                              | Banned in web/dns proofs                                  |
-| `username_keybase` | username on keybase          | cjb                                   |                                                           |
-| `sig`              | full signature of the proof  | owG...HAA                             | b64 encoded proof sig                                     |
-| `sig_id_medium`    | medium length sig id         | BYA...Q1I                             |                                                           |
-| `sig_id_short`     | short sig id                 | 970...icQ                             |                                                           |
-| `hostname`         | hostname for DNS or web      | printf.net                            | Banned except in web/dns proofs. Validated.               |
-| `protocol`         | protocol for web proofs      | https                                 | Banned except in web proofs. Validated and canonicalized. |
+| `hint_url` | 来自 Keybase 服务器的提示 URL | https://gist.github.com/github/etc.md | |
+| `username_service` | 服务上的用户名 | cjbprime | 在 web/dns 证明中被禁止 |
+| `username_keybase` | Keybase 上的用户名 | cjb | |
+| `sig` | 证明的完整签名 | owG...HAA | base64 编码的证明签名 |
+| `sig_id_medium` | 中等长度的签名 ID | BYA...Q1I | |
+| `sig_id_short` | 短签名 ID | 970...icQ | |
+| `hostname` | DNS 或 web 的主机名 | printf.net | 除 web/dns 证明外被禁止。已验证。 |
+| `protocol` | web 证明的协议 | https | 除 web 证明外被禁止。已验证并规范化。 |
 
-There is a little bit of hidden storage too. When an HTML or JSON fetch occurs, the parsed response is stored where only the `selector_css` or `selector_json` instructions can access implicitly. The `assert_find_base64` uses the bytes version of the sig, and so can only be run on the sig variable.
+还有一点隐藏存储。当发生 HTML 或 JSON 获取时，解析的响应存储在只有 `selector_css` 或 `selector_json` 指令可以隐式访问的地方。`assert_find_base64` 使用签名的字节版本，因此只能在 sig 变量上运行。
 
-### Script Instructions
+### 脚本指令
 
-Each script instruction is a json object; a map from instruction name to another map containing its arguments. Script instructions are run in order. A script cannot be empty. Each script must end in an assertion. At most one fetch instruction can exist in a script.
+每个脚本指令都是一个 json 对象；从指令名称到包含其参数的另一个映射的映射。脚本指令按顺序运行。脚本不能为空。每个脚本必须以断言结束。脚本中最多可以存在一个 fetch 指令。
 
-In the end a script can either succeed in which case the proof is valid or fail with an error in which case it is not. See the error reporting section below for more. A script succeeds if it makes it to the end.
+最后，脚本要么成功（在这种情况下证明有效），要么因错误而失败（在这种情况下证明无效）。有关更多信息，请参见下面的错误报告部分。如果脚本运行到最后，则表示成功。
 
 #### assert_regex_match
-This instruction asserts that the supplied regex `pattern` matches the value of the register named in `from`. The provided regex must be of the form `^body$` where body can include register substitutions. The `^$` are required because they are easy to forget. Searching for a substring can be done explicitly with `^.*stuff.*$`. Register substitutions are of the form `%{varname}`. Values must be regex escaped by the client. Additional options `case_insensitive`, `multiline`, and `negate` are optional and default to false.
+此指令断言提供的正则 `pattern` 匹配 `from` 中命名的寄存器的值。提供的正则表达式必须是 `^body$` 的形式，其中 body 可以包含寄存器替换。`^$` 是必需的，因为它们很容易被遗忘。可以使用 `^.*stuff.*$` 显式完成子字符串搜索。寄存器替换的形式为 `%{varname}`。值必须由客户端进行正则转义。其他选项 `case_insensitive`、`multiline` 和 `negate` 是可选的，默认为 false。
 
 ```coffeescript
 { assert_regex_match: {
@@ -163,7 +168,7 @@ This instruction asserts that the supplied regex `pattern` matches the value of 
 ```
 
 #### assert_find_base64
-Assert that the register value named by `needle` can be found in the register value named by `haystack`. Uses custom base64 value finder functions like [`FindBase64Block`](https://github.com/keybase/client/blob/master/go/libkb/base64_finder.go#L116) in `base64_finder.go` that are especially resilient to whitespace. `sig` is the only valid variable to use.
+断言可以在 `haystack` 命名的寄存器值中找到 `needle` 命名的寄存器值。使用自定义 base64 值查找函数，如 `base64_finder.go` 中的 [`FindBase64Block`](https://github.com/keybase/client/blob/master/go/libkb/base64_finder.go#L116)，这些函数对空格特别有弹性。`sig` 是唯一可以使用的有效变量。
 
 ```coffeescript
 { assert_find_base64: {
@@ -172,12 +177,12 @@ Assert that the register value named by `needle` can be found in the register va
 ```
 
 #### assert_compare
-Assert that the two registers named by `a` and `b` contain values equivalent according to the comparison function `cmp`.
+断言 `a` 和 `b` 命名的两个寄存器包含根据比较函数 `cmp` 等效的值。
 
-Possible comparisons are:
-- `exact`: Exact string comparison
-- `cicmp`: Case insensitive comparison
-- `stripdots-then-cicmp`: Strip away `'.'` characters and then cicmp.
+可能的比较是：
+- `exact`: 精确字符串比较
+- `cicmp`: 不区分大小写的比较
+- `stripdots-then-cicmp`: 去除 `'.'` 字符然后进行不区分大小写的比较。
 
 ```coffeescript
 { assert_compare: {
@@ -188,7 +193,7 @@ Possible comparisons are:
 
 #### whitespace_normalize
 
-Normalize whitespace so that all runs of consecutive whitespace become one space. Trims whitespace off the front and end of the string. Reads from register `from` and into register `into`.
+规范化空格，使所有连续的空格运行变为一个空格。修剪字符串开头和结尾的空格。从寄存器 `from` 读取并写入寄存器 `into`。
 
 ```coffeescript
 { whitespace_normalize: {
@@ -197,7 +202,8 @@ Normalize whitespace so that all runs of consecutive whitespace become one space
 ```
 
 #### regex_capture
-Assert that the regex `pattern` matches the register `from`. Substitution and options are allowed as in `assert_regex_match`. The regex should have at least one capture group. If the regex matches then the capture group results are loaded into the registers specified by the `into` array. If there are not enough matches, the instruction fails.
+
+断言正则 `pattern` 匹配寄存器 `from`。允许像 `assert_regex_match` 一样的替换和选项。正则表达式应至少有一个捕获组。如果正则表达式匹配，则捕获组结果将加载到 `into` 数组指定的寄存器中。如果没有足够的匹配项，则指令失败。
 
 ```coffeescript
 { regex_capture: {
@@ -208,7 +214,7 @@ Assert that the regex `pattern` matches the register `from`. Substitution and op
 ```
 
 #### replace_all
-Replace all occurrences of the string `old` with the string `new` in the `from` register and put the result in the `into` register.
+将 `from` 寄存器中所有出现的字符串 `old` 替换为字符串 `new`，并将结果放入 `into` 寄存器。
 
 ```coffeescript
 { replace_all: {
@@ -219,7 +225,7 @@ Replace all occurrences of the string `old` with the string `new` in the `from` 
 ```
 
 #### parse_url
-Take a url from register `from`, assert that it is a valid url, and parse it into pieces. The pieces `path`, `host`, and `scheme` can be optionally specified and those parts of the url will be loaded into the specified registers.
+从寄存器 `from` 获取 url，断言它是有效的 url，并将其解析为片段。可以可选地指定片段 `path`、`host` 和 `scheme`，并将 url 的这些部分加载到指定的寄存器中。
 
 ```coffeescript
 { parse_url: {
@@ -228,9 +234,9 @@ Take a url from register `from`, assert that it is a valid url, and parse it int
 ```
 
 #### fetch
-Fetch the URL contained in the register named by `from` as one of `html`, `json`, or `string`. There is no option for DNS because DNS is specially handled. For HTML and JSON, the response is parsed and tucked away in special storage where the selector instructions can read it. In the case of a string fetch, an `into` register must be specified which will contain the response.
+获取由 `from` 命名的寄存器中包含的 URL，类型为 `html`、`json` 或 `string` 之一。DNS 没有选项，因为 DNS 是特殊处理的。对于 HTML 和 JSON，响应会被解析并隐藏在选择器指令可以读取的特殊存储中。在字符串获取的情况下，必须指定一个 `into` 寄存器，其中将包含响应。
 
-At most one fetch instruction can exist in a script.
+脚本中最多可以存在一个 fetch 指令。
 
 ```coffeescript
 { fetch: {
@@ -240,7 +246,7 @@ At most one fetch instruction can exist in a script.
 ```
 
 #### parse_html
-Parse the contents of the register `from` as html. The resulting DOM is stored in the special storage where the selector instructions can read it. It overwrites the original page load.
+将寄存器 `from` 的内容解析为 html。生成的 DOM 存储在选择器指令可以读取的特殊存储中。它会覆盖原始页面加载。
 
 ```coffeescript
 { parse_html: {
@@ -248,11 +254,11 @@ Parse the contents of the register `from` as html. The resulting DOM is stored i
 ```
 
 #### selector_json
-Traverse a json document and select an element. If the value is not a string, it will be serialized according to json. The `selectors` list is a list of keys or indices. So the example below is the same as in javascript `root_object[0]["data"]["children"][0]["data"]["author"]`. If the selector cannot be followed, the script fails the proof.
+遍历 json 文档并选择一个元素。如果值不是字符串，它将根据 json 进行序列化。`selectors` 列表是键或索引的列表。所以下面的例子与 javascript 中的 `root_object[0]["data"]["children"][0]["data"]["author"]` 相同。如果无法跟随选择器，脚本将使证明失败。
 
-A `selector_json` instruction can only appear in a script with a json-typed fetch. This will be detected as part of validating a PVL chunk.
+`selector_json` 指令只能出现在具有 json 类型 fetch 的脚本中。这将作为验证 PVL 块的一部分进行检测。
 
-If an index is negative, it looks for that element from the end python-style. If an index is the special `{all: true}` object then the rest of the selector is run on all elements of the array or values of the object and the result strings are concatenated with a separating space.
+如果索引为负数，它会像 python 风格一样从末尾查找该元素。如果索引是特殊的 `{all: true}` 对象，则选择器的其余部分将在数组的所有元素或对象的值上运行，并将结果字符串用分隔空格连接起来。
 
 ```coffeescript
 { selector_json: {
@@ -261,17 +267,17 @@ If an index is negative, it looks for that element from the end python-style. If
 ```
 
 #### selector_css
-Select an html element from a document and extract the text or attribute as a string. Selection is always from the root of the fetch result. Provide a list of CSS selector strings or indices. Each selector/index is followed in order. If the selection contains no elements, the script fails the proof.
+从文档中选择一个 html 元素并将文本或属性提取为字符串。选择始终从 fetch 结果的根目录开始。提供 CSS 选择器字符串或索引的列表。每个选择器/索引按顺序跟随。如果选择不包含任何元素，脚本将使证明失败。
 
-The `attr` string field specifies what attribute to extract from the element.
-The `data` bool field specifies whether to get the data (including comments) of the first node in each selection element.
-If the `attr` field is not present and `data` is false (the defaults) then the text content of the selection is extracted.
+`attr` 字符串字段指定要从元素中提取什么属性。
+`data` 布尔字段指定是否获取每个选择元素的第一个节点的数据（包括注释）。
+如果不存在 `attr` 字段且 `data` 为 false（默认值），则提取选择的文本内容。
 
-If an index is negative it looks for that element from the end.
+如果索引为负数，它会从末尾查找该元素。
 
-If a selector entry is the special value `{contents: true}` then that is equivalent to calling `.contents()` in jquery.
+如果选择器条目是特殊值 `{contents: true}`，则相当于调用 jquery 中的 `.contents()`。
 
-An optional `multi` key may be provided and if its value is true, then if the selection at the end contains multiple elements, the result strings are concatenated with a separating space. By default, if the selector matches multiple elements, the script fails.
+可以提供可选的 `multi` 键，如果其值为 true，则如果末尾的选择包含多个元素，结果字符串将用分隔空格连接。默认情况下，如果选择器匹配多个元素，脚本将失败。
 
 ```coffeescript
 { selector_css: {
@@ -281,7 +287,7 @@ An optional `multi` key may be provided and if its value is true, then if the se
 ```
 
 #### fill
-Fill a register `into` with a string `with`. The `with` can contain register substitutions like `assert_regex_match` but they will not be regex-escaped in this step.
+用字符串 `with` 填充寄存器 `into`。`with` 可以包含像 `assert_regex_match` 一样的寄存器替换，但在此步骤中它们不会被正则转义。
 
 ```coffeescript
 { fill: {
@@ -289,35 +295,35 @@ Fill a register `into` with a string `with`. The `with` can contain register sub
   , into: "our_url" } },
 ```
 
-## Error Reporting
+## 错误报告
 
-There are several types of failures (see `prove_common.avdl`):
+有几种类型的失败（见 `prove_common.avdl`）：
 
-- Retryable soft errors (100): for example HTTP 500.
-- Medium errors (200): for example HTTP 400.
-- Hard errors (300): for example bad signature.
-- PVL is invalid (which is in the 300's)
+- 可重试的软错误 (100): 例如 HTTP 500。
+- 中等错误 (200): 例如 HTTP 400。
+- 硬错误 (300): 例如签名错误。
+- PVL 无效（在 300 范围内）
 
-If a PVL chunk is invalid and a script cannot be read for a proof type, the checker will report `INVALID_PVL`.
+如果 PVL 块无效并且无法读取证明类型的脚本，检查器将报告 `INVALID_PVL`。
 
-For errors that occur while validating a proof, the PVL interpreter will report default errors, which individual instructions can override.
+对于验证证明时发生的错误，PVL 解释器将报告默认错误，单个指令可以覆盖这些错误。
 
-If a failure occurs while running the `fetch` instruction, the interpreter will do the right thing.
+如果运行 `fetch` 指令时发生失败，解释器将执行正确的操作。
 
-For customized reporting, an additional `error` field is supported for every instruction. The `error` field must contain a pair of error name and description string which will be reported to the user.
+对于自定义报告，每个指令都支持额外的 `error` 字段。`error` 字段必须包含一对错误名称和描述字符串，这些字符串将报告给用户。
 
 ```coffeescript
 error: ["CONTENT_FAILURE", "Bad author; wanted \"%{username_service}\", got \"%{author_from_tweet}\""]
 ```
 
 ## DNS
-DNS is a little special. And will also not change its protocol faster than we can update an app. So here's how it works.
+DNS 有点特殊。而且也不会比我们更新应用程序更快地更改其协议。所以这是它的工作原理。
 
-The DNS script can not contain any fetch instructions.
+DNS 脚本不能包含任何 fetch 指令。
 
-The `hostname` TXT records are fetched. Each DNS script is run against each txt record with the `txt` register set to the record value. If the script succeeds on *any*, then the proof succeeds. If that doesn't work, the process is repeated for `_keybase.proof.domain`.
+获取 `hostname` TXT 记录。每个 DNS 脚本都针对每个 txt 记录运行，`txt` 寄存器设置为记录值。如果脚本在*任何*记录上成功，则证明成功。如果这不起作用，则对 `_keybase.proof.domain` 重复该过程。
 
-Here is the DNS service entry, which is expected not to change:
+这是 DNS 服务条目，预计不会更改：
 
 ```coffeescript
 dns: [[
@@ -328,21 +334,21 @@ dns: [[
 ]]
 ```
 
-## Limitations
-PVL cannot run scripts which fetch from more than one URL.
+## 限制
+PVL 无法运行从多个 URL 获取的脚本。
 
-There are no branches or loops, the same instructions execute in the same order every time a script is run.
+没有分支或循环，每次运行脚本时，相同的指令以相同的顺序执行。
 
-## Examples
-### Full PVL
-This example aims to capture our current (11/18/2016 5e09b59) proof validation rules.
+## 示例
+### 完整 PVL
+此示例旨在捕获我们要当前 (11/18/2016 5e09b59) 的证明验证规则。
 
 ```coffeescript
 pvl_version: 1
 revision: 1
 services:
   coinbase: [[
-    # make the url (we don't need the hint)
+    # 构造 url（我们不需要提示）
     { fill: {
       , with: "https://coinbase.com/%{username_service}/public-key"
       , into: "our_url" } },
@@ -350,7 +356,7 @@ services:
     { fetch: {
       , kind: "html"
       , from: "our_url" } },
-    # find the sig
+    # 查找签名
     { selector_css: {
       , selectors: ["pre.statement", 0]
       , into: "haystack"
@@ -361,49 +367,44 @@ services:
       , error: ["TEXT_NOT_FOUND", "signature not found in body"] },
   ]]
   dns: [[
-    # DNS has no hint. And it checks every txt record on two domains. And errors are handled specially.
-    # So everything is kind of different.
-    # Check this regex on each txt entry. If any match, the check succeeds.
+    # DNS 没有提示。并且它检查两个域上的每个 txt 记录。错误被特殊处理。
+    # 所以一切都有点不同。
+    # 在每个 txt 条目上检查此正则表达式。如果有任何匹配，检查成功。
     { assert_regex_match: {
       , pattern: "^keybase-site-verification=%{sig_id_medium}$"
       , from: "txt"
       , error: ["NOT_FOUND", "matching DNS entry not found"] } },
   ]]
   facebook: [[
-    # Check that the claimed username has no slashes or funny business that
-    # might trick us into checking a different url.
-    # Facebook usernames don't actually allow any special characters, but it's
-    # still possible for a malicious user to *claim* they have some slashes
-    # and a question mark in their name, in the hopes that that will trick us
-    # into hitting a totally unrelated URL. Guard against that happening by
-    # checking for special characters in the claimed name.
+    # 检查声称的用户名是否没有斜杠或可能欺骗我们检查不同 url 的滑稽业务。
+    # Facebook 用户名实际上不允许任何特殊字符，但恶意用户仍然可能
+    # *声称*他们的名字中有一些斜杠和问号，希望能欺骗我们点击一个完全无关的 URL。
+    # 通过检查声称的名字中的特殊字符来防止这种情况发生。
     { assert_regex_match: {
       , pattern: "^[a-zA-Z0-9\\.]+$"
       , from: "username_service"
       , error: ["BAD_USERNAME", "Invalid characters in username '%{username_service}'"] } },
 
-    # Check the provided url and extract the username and path.
-    # Accept either mobile or desktop urls. The fetched url will be rewritten later.
-    # We want to be strict about the structure of the url.
-    # No query parameters, no unexpected characters in the post ID.
+    # 检查提供的 url 并提取用户名和路径。
+    # 接受移动或桌面 url。获取的 url 稍后将被重写。
+    # 我们想要严格控制 url 的结构。
+    # 没有查询参数，帖子 ID 中没有意外字符。
     { regex_capture: {
       , pattern: "^https://(m|www)\\.facebook\\.com/([^/]*)/posts/([0-9]+)$"
       , from: "hint_url"
       , into: ["unused1", "username_from_url", "post_id"]
       , error: ["BAD_API_URL", "Bad hint from server; URL should start with 'https://m.facebook.com/%{username_service}/posts/', got '%{hint_url}'"] } },
 
-    # Check that the claimed username matches the url.
-    # Checking for the correct username is essential here. We rely on this
-    # check to prove that the user in question actually wrote the post. (Note
-    # that the m-site does *not* enforce this part of the URL. Only the
-    # desktop site does.)
+    # 检查声称的用户名是否与 url 匹配。
+    # 在这里检查正确的用户名至关重要。我们依靠此检查来证明相关用户实际上写了帖子。
+    # （请注意，移动站点*不*强制执行 URL 的这一部分。只有桌面站点执行。）
     { assert_compare: {
       , cmp: "stripdots-then-cicmp"
       , a: "username_from_url"
       , b: "username_service"
       , error: ["BAD_API_URL", "Bad hint from server; username in URL should match '%{username_service}', received '%{username_from_url}'"] } },
 
-    # Create the desktop url using the validated username and (not validated) post id.
+    # 使用验证的用户名和（未验证的）帖子 ID 创建桌面 url。
     { fill: {
       , with: "https://www.facebook.com/%{username_from_url}/posts/%{post_id}"
       , into: "our_url" } },
@@ -411,16 +412,16 @@ services:
       , kind: "html"
       , from: "our_url" } },
 
-    # Get the contents of the first (only) comment inside the first <code>
-    # block. Believe it or not, this comment contains the post markup below.
+    # 获取第一个 <code> 块内的第一个（唯一）注释的内容。
+    # 信不信由你，此注释包含下面的帖子标记。
     { selector_css: {
       , selectors: ["code", 0, {contents: true}, 0]
       , into: "first_code_comment"
       , data: true
       , error: ["FAILED_PARSE", "Could not find proof markup comment in Facebook's response"] } },
 
-    # Facebook escapes "--" as "-\-\" and "\" as "\\" when inserting text into
-    # comments. Unescape these.
+    # Facebook 在将文本插入注释时将 "--" 转义为 "-\-\"，将 "\" 转义为 "\\"。
+    # 取消转义这些。
     { replace_all: {
       , old: "-\\-\\"
       , new: "--"
@@ -432,254 +433,7 @@ services:
       , from: "fcc2"
       , into: "fcc3" } },
 
-    # Load the de-escaped comment as html
+    # 将取消转义的注释作为 html 加载
     { parse_html: {
       , from: "fcc3"
       , error: ["FAILED_PARSE", "Failed to parse proof markup comment in Facebook post: %{fcc3}"] } },
-
-    # This query operates on the newly extractaparsed comment, not the original page load
-    # This is the selector for the post attachment links, which contains the
-    # proof text. It's the "<a> tags inside the div that's the immediate
-    # *sibling* of the 'userContet' div". The second of these three <a> tags
-    # contains the proof text, the others are blank. But we just check their concatenation.
-    { selector_css: {
-      , selectors: ["div.userContent+div a"]
-      , multi: true
-      , into: "link_text"
-      , error: ["FAILED_PARSE", "Could not find link text in Facebook's response"] } },
-    { whitespace_normalize: {
-      , from: "link_text"
-      , into: "link_text_nw" } },
-
-    # Check the link text for username and sig
-    { regex_capture: {
-      , pattern: "^Verifying myself: I am (\\S+) on Keybase.io. (\\S+)$"
-      , from: "link_text_nw"
-      , into: ["username_from_link", "sig_from_link"]
-      , error: ["TEXT_NOT_FOUND", "Could not find Verifying myself: I am %{username_keybase} on Keybase.io. (%{sig_id_medium})"] } },
-    # Check username in link text
-    { assert_compare: {
-      , cmp: "cicmp"
-      , a: "username_from_link"
-      , b: "username_keybase"
-      , error: ["BAD_USERNAME", "Wrong keybase username in post '%{username_from_link}' should be '%{username_keybase}'"] } },
-    # Check the sig id in the link text
-    { assert_compare: {
-      , cmp: "exact"
-      , a: "sig_id_medium"
-      , b: "sig_from_link"
-      , error: ["BAD_SIGNATURE", "Could not find sig; '%{sig_from_link}' != '%{sig_id_medium}'"] } },
-  ]]
-  github: [[
-    # validate url and extract username
-    { regex_capture: {
-      , pattern: "^https://gist\\.github(?:usercontent)?\\.com/([^/]*)/.*$"
-      , from: "hint_url"
-      , into: ["username_from_url"]
-      , error: ["BAD_API_URL", "Bad hint from server; URL should start with either https://gist.github.com OR https://gist.githubusercontent.com"] } },
-    { assert_compare: {
-      , cmp: "cicmp"
-      , a: "username_from_url"
-      , b: "username_service"
-      , error: ["BAD_API_URL", "Bad hint from server; URL should contain username matching %{username_service}; got %{username_from_url}"] } },
-    { fetch: {
-      , kind: "string"
-      , from: "hint_url"
-      , into: "haystack" } },
-    # find the sig
-    { assert_find_base64: {
-      , needle: "sig"
-      , haystack: "haystack" }
-      , error: ["TEXT_NOT_FOUND", "signature not found in body"] },
-  ]]
-  hackernews: [[
-    # validate url and extract username
-    { regex_capture: {
-      , pattern: "^https://hacker-news\\.firebaseio\\.com/v0/user/([^/]+)/about.json$"
-      , from: "hint_url"
-      , into: ["username_from_url"]
-      , error: ["BAD_API_URL", "Bad hint from server; URL should match https://hacker-news.firebaseio.com/v0/user/%{username_service}/about.json"] } },
-    { assert_compare: {
-      , cmp: "cicmp"
-      , a: "username_from_url"
-      , b: "username_service"
-      , error: ["BAD_API_URL", "Bad hint from server; URL should contain username matching %{username_service}; got %{username_from_url}"] } },
-    { fetch: {
-      , kind: "string"
-      , from: "hint_url"
-      , into: "profile" } },
-    { assert_regex_match: {
-      , pattern: "^.*%{sig_id_medium}.*$"
-      , from: "profile"
-      , error: ["TEXT_NOT_FOUND", "Posted text does not include signature '%{sig_id_medium}'"] } },
-  ]]
-  reddit: [[
-    # validate the url
-    { regex_capture: {
-      , pattern: "^https://www.reddit.com/r/([^/]+)/(.*)$"
-      , from: "hint_url"
-      , into: ["subreddit_from_url", "path_remainder"]
-      , error: ["BAD_API_URL", "URL should start with 'https://www.reddit.com/r/keybaseproofs'"] } },
-    { assert_regex_match: {
-      , pattern: "^keybaseproofs$"
-      , case_insensitive: true
-      , from: "subreddit_from_url"
-      , error: ["BAD_API_URL", "URL contained wrong subreddit '%{subreddit_from_url}' !+ 'keybaseproofs'"] } },
-    { fetch: {
-      , from: "hint_url"
-      , kind: "json" } },
-    # check that the first thing is a Listing
-    { selector_json: {
-      , selectors: [0, "kind"]
-      , into: "kind"
-      , error: ["CONTENT_MISSING", "Could not find 'kind' in json"] } },
-    { assert_regex_match: {
-      , pattern: "^Listing$"
-      , from: "kind"
-      , error: ["CONTENT_FAILURE", "Wanted a post of type 'Listing', but got %{kind}"] } },
-    # check that the inner thing is a t3
-    { selector_json: {
-      , selectors: [0, "data", "children", 0, "kind"]
-      , into: "inner_kind"
-      , error: ["CONTENT_MISSING", "Could not find inner 'kind' in json"] } },
-    { assert_regex_match: {
-      , pattern: "^t3$"
-      , from: "inner_kind"
-      , error: ["CONTENT_FAILURE", "Wanted a child of type 't3' but got %{inner_kind}"] } },
-    # check the subreddit
-    { selector_json: {
-      , selectors: [0, "data", "children", 0, "data", "subreddit"]
-      , into: "subreddit_from_json"
-      , error: ["CONTENT_MISSING", "Could not find 'subreddit' in json"] } },
-    { assert_regex_match: {
-      , pattern: "^keybaseproofs$"
-      , case_insensitive: true
-      , from: "subreddit_from_json"
-      , error: ["CONTENT_FAILURE", "Wrong subreddit %{subreddit_from_json}"] } },
-    # check the author
-    { selector_json: {
-      , selectors: [0, "data", "children", 0, "data", "author"]
-      , into: "author"
-      , error: ["CONTENT_MISSING", "Could not find author in json"] } },
-    { assert_compare: {
-      , cmp: "cicmp"
-      , a: "author"
-      , b: "username_service"
-      , error: ["BAD_USERNAME", "Bad post author; wanted '%{username_service} but got '%{author}'"] } },
-    # check the title
-    { selector_json: {
-      , selectors: [0, "data", "children", 0, "data", "title"]
-      , into: "title"
-      , error: ["CONTENT_MISSING", "Could not find title in json"] } },
-    { assert_regex_match: {
-      , pattern: "^.*%{sig_id_medium}.*$"
-      , from: "title"
-      , error: ["TITLE_NOT_FOUND", "Missing signature ID (%{sig_id_medium})) in post title '%{title}'"] } },
-    # check the selftext
-    { selector_json: {
-      , selectors: [0, "data", "children", 0, "data", "selftext"]
-      , into: "selftext"
-      , error: ["CONTENT_MISSING", "Could not find selftext in json"] } },
-    { assert_find_base64: {
-      , needle: "sig"
-      , haystack: "selftext"
-      , error: ["TEXT_NOT_FOUND", "signature not found in body"] } },
-  ]]
-  rooter: [[
-    # URL validation.
-    { assert_regex_match: {
-      , pattern: "^https?://[\\w:_\\-\\.]+/_/api/1\\.0/rooter/%{username_service}/.*$"
-      , case_insensitive: true
-      , from: "hint_url" } },
-    # rooter is special cased by the interpreter to hit the api server
-    { fetch: {
-      , from: "hint_url"
-      , kind: "json" } },
-    { selector_json: {
-      , selectors: ["status", "name"]
-      , into: "name" } },
-    { assert_regex_match: {
-      , pattern: "^ok$"
-      , case_insensitive: true
-      , from: "name" } },
-    { selector_json: {
-      , selectors: ["toot", "post"]
-      , into: "post" } },
-    { assert_regex_match: {
-      , pattern: "^.*%{sig_id_medium}.*$"
-      , from: "post" } },
-  ]]
-  twitter: [[
-    # Twitter verification is a HTML fetch and two checks.
-    # One that the correct user posted the tweet according to data-screen-name.
-    # And another that the proof hash is in the tweet text.
-
-    # validate url and extract username
-    { regex_capture: {
-      , pattern: "^https://twitter\\.com/([^/]+)/.*$"
-      , from: "hint_url"
-      , into: ["username_from_url"]
-      , error: ["BAD_API_URL", "Bad hint from server; URL should start with 'https://twitter.com/%{username_service}/'"] } },
-    { assert_compare: {
-      , cmp: "cicmp"
-      , a: "username_from_url"
-      , b: "username_service"
-      , error: ["BAD_API_URL", "Bad hint from server; URL should contain username matching %{username_service}; got %{username_from_url}"] } },
-    # url validation passed
-    { fetch: {
-      , from: "hint_url"
-      , kind: "html" } },
-    # Check the author.
-    { selector_css: {
-      , selectors: [ "div.permalink-tweet-container div.permalink-tweet", 0 ]
-      , attr: "data-screen-name"
-      , into: "data_screen_name"
-      , error: ["FAILED_PARSE", "Couldn't find a div $(div.permalink-tweet-container div.permalink-tweet).eq(0)"] } },
-    { assert_compare: {
-      , cmp: "cicmp"
-      , a: "data_screen_name"
-      , b: "username_service"
-      , error: ["BAD_USERNAME", "Bad post authored: wanted ${username_service} but got %{data_screen_name}"] } },
-    # Check the username in the tweet. Case insensitive.
-    { selector_css: {
-      , selectors: ["div.permalink-tweet-container div.permalink-tweet", 0, "p.tweet-text", 0]
-      , into: "tweet_contents"
-      , error: ["CONTENT_MISSING", "Missing <div class='tweet-text'> container for tweet"] } },
-    { whitespace_normalize: {
-      , from: "tweet_contents"
-      , into: "tweet_contents_nw" } },
-    # Strip mentions off the front. Get username and sig.
-    { regex_capture: {
-      , pattern: "^ *(?:@[a-zA-Z0-9_-]+\\s*)* *Verifying myself: I am ([A-Za-z0-9_]+) on Keybase\\.io\\. (\\S+) */.*$"
-      , from: "tweet_contents_nw"
-      , into: ["username_from_tweet_contents", "sig_from_tweet_contents"]
-      , error: ["DELETED", "Could not find 'Verifying myself: I am %{username_keybase} on Keybase.io. %{sig_id_short}'"] } },
-    # Check username in tweet body
-    { assert_compare: {
-      , cmp: "cicmp"
-      , a: "username_from_tweet_contents"
-      , b: "username_keybase"
-      , error: ["BAD_USERNAME", "Wrong username in tweet '%{username_from_tweet_contents}' should be '%{username_keybase}'"] } },
-    # Check the sig id in the tweet.
-    { assert_regex_match: {
-      , pattern: "^%{sig_id_short}$"
-      , from: "sig_from_tweet_contents"
-      , error: ["TEXT_NOT_FOUND", "Could not find sig '%{sig_from_tweet_contents}' != '%{sig_id_short}'"] } },
-  ]]
-  generic_web_site: [[
-    # URL validation. Must be HTTP or HTTPS. Must be a known path from the proof domain.
-    { assert_regex_match: {
-      , pattern: "^%{protocol}://%{hostname}/(?:\\.well-known/keybase\\.txt|keybase\\.txt)$"
-      , from: "hint_url"
-      , error: ["BAD_API_URL", "Bad hint from server; didn't recognize API url: \"%{hint_url}\""]} },
-    { fetch: {
-      , kind: "string"
-      , from: "hint_url"
-      , into: "blob" } },
-    # Verify and find the sig.
-    { assert_find_base64: {
-      , needle: "sig"
-      , haystack: "blob"
-      , error: ["TEXT_NOT_FOUND", "signature not found in body"] } },
-  ]]
-```

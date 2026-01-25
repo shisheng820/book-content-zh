@@ -1,168 +1,92 @@
-<div class="local-key-security">
+# 本地密钥安全
 
-# Local Key Security
+如何在各种设备上加密和解密本地存储的密钥。
 
-How to encrypt and decrypt locally stored keys on your various devices.
+### 基本思路
 
-### The Basic Idea
+每当用户在设备上存储密钥时，该密钥都应使用其口令进行加密，**并且**如果她在任何一台机器上更改了口令，这种更改应反映在其他机器上。
 
-Whenever a user stores a secret key on a device, the secret should be encrypted
-with her passphrase, <em>and</em> if she changed her passphrase on any one of
-her machines, it would be reflected on the others.
+我们开发了一种简单的服务器辅助协议来实现这一点，其中服务器端掩码在密码更改期间更新，以便离线客户端上的加密设备密钥可以使用新密码解密。服务器在解密期间提供此掩码，但设备密钥永远不会暴露给服务器，即使是加密形式也不例外。
 
-We've developed a simple server-aided protocol to do so, in which a server-side
-mask is updated during a password change, so that encrypted device keys on
-offline clients will be decryptable with the new password. The server supplies
-this mask during decryption, but device keys are never exposed to the server,
-even in encrypted form.
+有五个重要的步骤需要考虑：[密钥建立](#key-establishment)、[加密/解密](#encrypting-and-decrypting)、[设备上的密钥存储](#key-storage-on-the-device)、[密码更改](#password-changes)以及[掩码重置](#mask-resets-not-yet-implemented-)。
 
-There are five important steps to consider: [key
-establishment](#key-establishment),
-[encrypting/decrypting](#encrypting-and-decrypting), [key storage on the
-device](#key-storage-on-the-device), [password changes](#password-changes), and
-[mask resets](#mask-resets-not-yet-implemented-).
+### 密钥建立
 
-### Key Establishment
+在爱丽丝（Alice）需要加密其设备特定密钥的任何设备 \\(d\\) 上，给定她的口令 \\(p_A\\)，她执行以下操作：
 
-On any device \\(d\\) that Alice needs to encrypt her device-specific keys,
-she does the following, given her passphrase \\(p_A\\).
+- 生成一个新的随机密钥 \\(k^d_A \in [0,2^{256}-1]\\)，并用它加密她的设备特定密钥。
+- 计算 \\(c_A =\\)<strong>Scrypt</strong>\\((p_A)\\)
+- 计算 \\(s^d_A = k^d_A \oplus c_A\\)
+- 将 \\(s^d_A\\) 发送到服务器，服务器将其存储在设备 \\(d\\) 下。
 
-- Generates a new random secret key \\(k^d_A \in [0,2^{256}-1]\\), and
-  encrypts her device-specific keys with it.
-- Computes \\(c_A =\\)<strong>Scrypt</strong>\\((p_A)\\)
-- Computes \\(s^d_A = k^d_A \oplus c_A\\)
-- Sends \\(s^d_A\\) to the server, which it stores under device \\(d\\).
+### 加密和解密
 
-### Encrypting and Decrypting
+以下是爱丽丝在设备 \\(d\\) 上进行加密或解密的方法。当然，操作是对称的，因此处理方式相同：
 
-Here's how Alice would encrypt or decrypt on device \\(d\\). Of course
-the operation is symmetric, so they are handled equivalently:
+- 爱丽丝向服务器验证自己的身份。
+- 爱丽丝通过 Scrypt 从 \\(p_A\\) 计算 \\(c_A\\)。
+- 爱丽丝请求设备 \\(d\\) 的 \\(s^d_A\\)。
+- 爱丽丝计算 \\(k^d_A = s^d_A \oplus c_A\\)。
+- 使用 \\(k^d_A\\) 和 NaCl 的 <a href="http://nacl.cr.yp.to/secretbox.html">SecretBox</a> 加密或解密设备特定密钥。
 
-- Alice authenticates herself to the server.
-- Alice computes \\(c_A\\) from \\(p_A\\) via Scrypt.
-- Alice asks for \\(s^d_A\\) for device \\(d\\).
-- Alice computes \\(k^d_A = s^d_A \oplus c_A\\).
-- Encrypts or decrypts device-specific keys using \\(k^d_A\\) and
-  NaCl's <a href="http://nacl.cr.yp.to/secretbox.html">SecretBox</a>.
+### 设备上的密钥存储
 
-### Key Storage on the Device
+我们倾向于不不断提示用户输入密码，而是在登录时将解密密钥存储在本地。在 macOS、iOS 和 Android 上，我们将 \\(k^d_A\\) 存储在操作系统的钥匙串中，因为这些操作系统具有良好的硬件集成，提供删除保证和相当标准的钥匙串系统。
 
-We prefer not to constantly prompt the user for passwords and instead store the
-decryption key locally while logged in. On macOS, iOS, and Android we store
-\\(k^d_A\\) in the OS's keychain, since those OSes have nice hardware
-integrations which provide deletion guarantees and reasonably standard keychain
-systems.
+在 Windows 上，以及未安装密钥环的 Linux 系统上，代替标准钥匙串，我们要执行以下操作：
 
-On Windows, and also on Linux systems without a keyring installed, in lieu of a
-standard keychain we so instead we do the following:
+- 生成一个 2MB 的随机数据文件，称之为 \\(f\\)
+- 将 \\(f\\) 哈希为一个 32 字节的密钥 \\(h\\)
+- 用 \\(h\\) 加密 \\(k^d_A\\)，并将结果写入你的主目录。
 
-- Generate a 2MB file of random data, call it \\(f\\)
-- Hash \\(f\\) to a 32-byte key \\(h\\)
-- Encrypt \\(k^d_A\\) with \\(h\\), and write that to your home directory.
+这意味着解密私钥的所有元素都在你的主目录中，但是当你执行 `logout`（注销）或取消选中 `remember passphrase`（记住口令）时，我们会将文件 \\(f\\) 归零。这里的想法是，即使 \\(f\\) 位于 SSD 上（这使得实际删除文件块变得困难），对于能够访问你未加密 SSD 的攻击者来说，构建 \\(f\\)、解密 \\(k^d_A\\) 然后解密你的密钥仍然是非常具有挑战性的。
 
-This means that all the elements to decrypt your private keys are in your home
-directory, but when you `logout` or unclick `remember passphrase`, we zero out
-the file \\(f\\). The thought here is that even if \\(f\\) is on an
-SSD (which makes it hard to actually delete file blocks), it's still very
-challenging for an attacker who has access to your unencrypted SSD to construct
-\\(f\\), decrypt \\(k^d_A\\), and then decrypt your secret keys.
+在带有密钥环（gnome-keyring 或 KWallet）的 Linux 系统上，我们使用拆分密钥环系统：
 
-On Linux systems with a keyring (gnome-keyring or KWallet), we use a split keyring
-system:
+- 生成一个新的 32 字节密钥 \\(r\\)，并将其存储在默认集合的系统密钥环中
+- 生成如上所述的 2MB 噪声文件 \\(f\\)
+- 计算 \\(p=\text{HKDF-SHA256}(f \Vert r, \text{salt}={nil}, \text{info}=\text{Keybase-Derived-LKS-SecretBox-1})\text{[:32]}\\)
+- 使用 NaCl SecretBox 用 \\(p\\) 加密 \\(k^d_A\\)，并将此文件和 \\(f\\) 存储到你的主目录
 
-- Generate a new 32-byte key \\(r\\), and store this in the system keyring
-  in the default collection
-- Generate a 2MB noise file \\(f\\) as described above
-- Compute \\(p=\text{HKDF-SHA256}(f \Vert r, \text{salt}={nil}, \text{info}=\text{Keybase-Derived-LKS-SecretBox-1})\text{[:32]}\\)
-- Encrypt \\(k^d_A\\) with \\(p\\) using NaCl SecretBox, and store this file and \\(f\\) to your home directory
+通过这种方案，当你尝试注销或取消选中“记住口令”时，我们会粉碎噪声文件并从系统密钥环中删除 \\(r\\)。如果你的硬盘驱动器遭到破坏，\\(r\\) 仍然会用你的系统密钥环加密，因此你的口令仍然是保密的。另一方面，如果由于系统密钥环中的某些错误，未能安全删除 \\(r\\)，Keybase 已经粉碎了噪声文件 \\(f\\)，因此口令仍然无法恢复（对于我们无法安全粉碎噪声文件的情况也是对称的）。
 
-With this scheme, when you try to logout or uncheck &ldquo;Remember
-Passphrase,&rdquo; we both shred the noise file and delete \\(r\\) from
-the system keyring. In the event that your hard drive has been compromised,
-\\(r\\) will still be encrypted with your system keyring, so your
-passphrase remains secret. On the other hand, if due to some bug in the system
-keyring, it fails to delete \\(r\\) securely, Keybase has shredded the
-noise file \\(f\\) and so, the passphrase is still unrecoverable
-(symmetrically for the case where we are unable to securely shred the noise
-file).
+为了让 Keybase 使用此方案，必须在登录之前启用并运行你的系统密钥环。请注意，我们目前不对[无口令注册](#signing-up-without-a-passphrase)的用户使用此方案。
 
-For Keybase to use this scheme, your system keyring must be enabled and running
-before logging in. Note that we do not currently use this scheme for users
-who [sign up without a passphrase](#signing-up-without-a-passphrase).
+### 密码更改
 
-### Password Changes
+爱丽丝现在在她的一台设备上将密码从 \\(p_A\\) 更新为 \\(p_A'\\)。她运行密码更新协议：
 
-Alice now updates her password from \\(p_A\\) to \\(p_A'\\) on one
-of her devices. She runs the password update protocol:
+- 计算 \\(c_A = \\)<strong>Scrypt</strong>\\((p_A)\\) 和 \\(c_A' = \\)<strong>Scrypt</strong>\\((p_A')\\)
+- 计算 \\(\delta = c_A \oplus c_A'\\)。
+- 将 \\(\delta\\) 发送到服务器。
+- 对于每个设备 \\(d\\)：
+- 更新 \\({s^d_A}' \leftarrow s^d_A \oplus \delta\\)
 
-- Compute \\(c_A = \\)<strong>Scrypt</strong>\\((p_A)\\) and
-  \\(c_A' = \\)<strong>Scrypt</strong>\\((p_A')\\)
-- Compute \\(\delta = c_A \oplus c_A'\\).
-- Sends \\(\delta\\) to the server.
-- For each device \\(d\\):
-- Update \\({s^d_A}' \leftarrow s^d_A \oplus \delta\\)
+### 掩码重置（尚未实现）
 
-### Mask Resets (not yet implemented)
+上述密码更改方案的一个漏洞是，可以使用旧密码解密密钥。如果用户的密码被泄露，并且攻击者还能够获取用户的服务器端掩码 \\(s^d_A\\)，那么该攻击者将能够解密用户的本地密钥，*即使*用户更改了密码。
 
-One vulnerability of the password change scheme above, is that it's possible to
-decrypt secret keys using an old password. If a user's password was
-compromised, and an attacker was also able to obtain the user's server-side
-mask \\(s^d_A\\), then that attacker would be able to decrypt the user's
-local keys <em>even after</em> the user did a password change.
+为了防止这种情况，在解密密钥时，设备应注意到当前口令比最初用于加密密钥的口令更新。在这种情况下，它应该生成一个全新的加密密钥，重复上述[密钥建立](#key-establishment)中的步骤。请注意，这必须以一种能够从设备崩溃中恢复的方式完成，以便永远不会出现用户最终处于无法解密其密钥的状态的风险。我们可以使用以下过程。
 
-To prevent this, when decrypting keys, a device should notice that the current
-passphrase is newer than the one its keys were originally encrypted with. In
-that case it should generate an entirely new encryption key, repeating the
-steps from [Key Establishment](#key-establishment) above. Note that this has to
-be done in a way that's resilient to the device crashing in the middle, so that
-there's never a risk that the user could end up in a state where their keys are
-impossible to decrypt. We can use the following procedure.
+1. 生成一个新的随机加密密钥。
+1. 使用新的加密密钥加密设备特定密钥，将此密文存储在磁盘上，*作为*旧密文的*补充*。每个密文都应与最初用于加密它的口令生成号一起存储，以区分它们。
+1. 计算新的服务器端掩码，并将其与对应的口令生成号一起发送到服务器。
+1. 只有在上一步成功后，才从磁盘删除旧密文。
 
-1. Generate a new random encryption key.
-1. Encrypt the device-specific keys with the new encryption key, storing this
-   ciphertext on disk <em>in addition</em> to the old ciphertext. Each ciphertext
-   should be stored with the generation number of the passphrase that was
-   originally used to encrypt it, to distinguish them.
-1. Compute the new server-side mask and send it to the server along with the
-   passphrase generation it corresponds to.
-1. Only after the previous step succeeds, delete the old ciphertext from disk.
+如果设备恰好在 (2) 之后但在 (4) 之前崩溃，它的磁盘上将有两个密文。当它去解密它们时，它会发现服务器端掩码的口令生成号仅对应其中一个。成功解密那个之后，它应该删除另一个，然后如果密钥的口令生成号仍然落后，它应该尝试另一次掩码重置。
 
-If the device happens to crash after (2) but before (4), it will have two
-ciphertexts on disk. When it goes to decrypt them, it will find that the
-server-side mask's passphrase generation corresponds to only one of them. After
-successfully decrypting that one, it should delete the other, and then if the
-passphrase generation of the key is still behind it should attempt another mask
-reset.
+请注意，持续离线的设备（例如，封存在衣柜里的设备）将没有机会进行掩码重置，并且此类设备上的加密密钥仍然可以使用旧密码/掩码解密，直到该设备再次使用。但是，如果一个磁盘 N 年没有变化，它仍然可以用 N 年前的密钥读取，这是不可避免的——我们无法神奇地改变衣柜里磁盘的内容。
 
-Note that a device that's persistently offline (as in, mothballed in your
-closet) won't have an opportunity to do a mask reset, and encrypted keys on
-such a device will still be decryptable using old passwords/masks until that
-device is used again. But it's unavoidable that a disk that hasn't changed in N
-years will still be readable with keys from N years ago -- we can't magically
-change the contents of the disk in the closet.
+此方案尚未实现，但以下是我们将来为支持它需要进行的更改：
 
-This scheme isn't implemented yet, but here are the changes we will need to
-make to support it in the future:
+- 在服务器上，存储每个掩码最初创建时的口令生成号。这使得客户端在掩码刷新中间崩溃时更容易清理。
+- 在设备上，存储每个加密设备密钥最初加密时的口令生成号。在获取掩码时，这将与用户帐户当前的口令生成号进行比较，以决定是否需要重置掩码。
 
-- On the server, store the passphrase generation that each mask was originally
-  created with. This makes it easier for the client to clean up after itself if
-  it crashes in the middle of a mask refresh.
-- On the device, store the passphrase generation that each encrypted device key
-  was originally encrypted with. This will get compared to the user account's
-  current passphrase generation when masks are fetched, to decide whether a mask
-  reset is needed.
+### 示例
 
-### Example
+这是服务器和客户端上的口令更新和随后的掩码刷新应该是什么样子的草图。
 
-Here's a sketch of what a passphrase update and later mask refresh should look
-like on the server and client.
-
-In the beginning there's one device key and one server-side mask. Note that
-we're only seeing the server masks for this specific device key. The same user
-will have more masks for other devices, and also for other device keys on the
-same device. (We could in theory use the same LKS encryption key for all device
-keys on one device, but we've implemented it with a unique LKS key for each
-device key.)
+一开始有一个设备密钥和一个服务器端掩码。请注意，我们只看到了此特定设备密钥的服务器掩码。同一用户将拥有其他设备的更多掩码，以及同一设备上其他设备密钥的更多掩码。（理论上我们可以对一台设备上的所有设备密钥使用相同的 LKS 加密密钥，但我们在实现时为每个设备密钥使用了唯一的 LKS 密钥。）
 
 <pre>
     SERVER
@@ -176,10 +100,7 @@ device key.)
     0x4    | 1              | 7314ab...             | scrypt(pp1) X fabc
 </pre>
 
-Using another device somewhere else, the user does a passphrase update. This
-adds a new mask to the server, but the device we're looking at here is
-unchanged. (There's now a new way to compute the encryption key, but this just
-a fact about the world, not actual data on disk.)
+在其他地方使用另一台设备，用户进行了口令更新。这向服务器添加了一个新掩码，但我们要查看的设备未更改。（现在有一种计算加密密钥的新方法，但这只是关于世界的一个事实，而不是磁盘上的实际数据。）
 
 <pre>
     SERVER
@@ -194,9 +115,7 @@ a fact about the world, not actual data on disk.)
     0x4    | 1              | 7314ab...             | scrypt(pp1) X fabc, scrypt(pp2) X d123
 </pre>
 
-Later, our device wakes up, gets the latest passphrase from the user, and does
-a mask reset. It generates a new LKS key, uses that to encrypt another copy of
-the key locally, and then sends the new mask to the server.
+后来，我们的设备唤醒，从用户那里获取最新的口令，并进行掩码重置。它生成一个新的 LKS 密钥，用它在本地加密密钥的另一个副本，然后将新掩码发送到服务器。
 
 <pre>
     SERVER
@@ -213,30 +132,16 @@ the key locally, and then sends the new mask to the server.
     0x4    | 2              | cc6142...             | scrypt(pp2) X e456
 </pre>
 
-For security (and the whole point of the mask reset to begin with), the device
-should now delete the original device key ciphertext, and keep only the new
-one. It must guarantee that the server has the latest mask before it does that,
-to avoid accidentally losing access to the device key forever. The server could
-delete old device masks, but the security model here assumes that it can't
-reliably do that, so the masks could also be kept around for auditability, and
-just in case of client bugs.
+为了安全（这也是开始掩码重置的全部意义），设备现在应该删除原始设备密钥密文，并仅保留新的密文。它必须保证服务器在执行此操作之前具有最新的掩码，以避免意外永远丢失对设备密钥的访问权限。服务器可以删除旧的设备掩码，但这里的安全模型假设它不能可靠地做到这一点，因此为了可审计性以及防止客户端错误，也可以保留掩码。
 
-### Signing up without a passphrase
+### 无密码注册
 
-As of client version 3.2, new Keybase users are not asked to set a password
-upon signup. The client will generate a random 16-byte passphrase and store it
-as described above (this occurs automatically; the random passphrase is not
-revealed in the UI). When users provision new devices, as usual, the passphrase
-is sent over the secure channel provided by [KEX](/docs/crypto/key-exchange).
+从客户端版本 3.2 开始，新 Keybase 用户在注册时不需要设置密码。客户端将生成一个随机的 16 字节口令并如上所述进行存储（这是自动发生的；随机口令不会在 UI 中显示）。当用户配置新设备时，照常通过 [KEX](/docs/crypto/key-exchange) 提供的安全通道发送口令。
 
-The following actions are not allowed for users without a passphrase.
+没有密码的用户不允许执行以下操作。
 
-- Logging out
-- Signing in on the website [keybase.io](/)
-- Using the [server-synced encrypted PGP key feature](/docs/api/1.0/p3skb_format)
+- 注销
+- 在网站 [keybase.io](/) 上登录
+- 使用 [服务器同步的加密 PGP 密钥功能](/docs/api/1.0/p3skb_format)
 
-Users can opt to set a passphrase after the fact to perform those actions, and
-in particular, users are prompted to set one when they try to log out.
-[Lockdown mode](/docs/lockdown/index) may be of interest to users who want to set
-a passphrase but do not want attackers to be able to reset their Keybase account
-in the event that their passphrase is compromised.
+用户可以选择在事后设置密码来执行这些操作，特别是当用户尝试注销时，系统会提示用户设置密码。想要设置密码但不希望攻击者在密码泄露时重置其 Keybase 帐户的用户可能会对 [锁定模式](/docs/lockdown/index) 感兴趣。

@@ -1,58 +1,34 @@
-# Coin Flip
+# 抛硬币
 
-The /flip command on Keybase chat implements a [commitment
-scheme](https://en.wikipedia.org/wiki/Commitment_scheme) protocol
-allowing the members of a channel to participate in secure coin flips.
-Leveraging the fact that all messages in chat are signed by the sender, building
-such a protocol on top of chat is a natural fit. In addition to flipping coins,
-the shared randomness can also be used to present different forms of the flip;
-such as shuffling items, picking a random number, and even dealing hands of
-playing cards.
+Keybase 聊天中的 /flip 命令实现了一种 [承诺方案](https://en.wikipedia.org/wiki/Commitment_scheme) 协议，允许频道成员参与安全的抛硬币活动。利用聊天中所有消息均由发送者签名的特性，在聊天系统之上构建此类协议十分自然且合适。除抛硬币外，共享随机性还可用于呈现不同形式的抛掷；例如洗牌项目列表、选取随机数，甚至分发扑克牌手牌。
 
-# Flips
+# 抛掷类型
 
-The types of flips supported right now include the following:
+目前支持的抛掷类型包括：
 
-1. /flip - Flip a coin.
-2. /flip 6 - Roll a _k_-sided die.
-3. /flip -10..10 - Pick a random number in a range
-4. /flip apple, orange, pear - Shuffle a list of items
-5. /flip cards - deal a deck of cards
-6. /flip cards 5 mike, chris, max, patrick - Deal out a hand of 5 cards to a
-   list of people
-7. /flip @here - shuffle the members of a channel
-8. /flip cards 5 @here - deal out hands of 5 cards to the channel
+1.  `/flip` - 抛硬币。
+2.  `/flip 6` - 掷一个 _k_ 面骰子。
+3.  `/flip -10..10` - 在范围内选取随机数。
+4.  `/flip apple, orange, pear` - 洗牌项目列表。
+5.  `/flip cards` - 发一副牌。
+6.  `/flip cards 5 mike, chris, max, patrick` - 向指定人员列表分发 5 张手牌。
+7.  `/flip @here` - 对频道成员进行洗牌（随机排序）。
+8.  `/flip cards 5 @here` - 向频道成员分发 5 张手牌。
 
-# Protocol
+# 协议
 
-The following is a description of the protocol the chat client uses to implement
-the commitment scheme.
+以下是聊天客户端用于实现承诺方案的协议描述。
 
-1. The _initiator_ starts the flip by issuing a /flip command.
-2. All members of the channel commit to a secret by sending a chat message into
-   a special hidden "developer" channel including the same members as the host
-   channel.
-3. The initiator collects all commitments in a set time interval, and sends a
-   message with all of the participants that responded in time. These are the
-   participants in the flip result.
-4. Upon reception of this message, clients send chat messages revealing their
-   secrets, and confirm that the secrets of others match their commitments.
-5. The final result is displayed in the chat channel once all secrets are
-   revealed.
+1.  _发起者_ 通过发布 /flip 命令开始抛掷。
+2.  频道所有成员通过向包含与宿主频道相同成员的特殊隐藏“开发者”频道发送聊天消息，来提交一个秘密。
+3.  发起者在设定时间间隔内收集所有承诺，并发送一条包含所有及时响应参与者的消息。这些即为抛掷结果的参与者。
+4.  收到此消息后，客户端发送聊天消息以揭示其秘密，并确认他人的秘密与其承诺相符。
+5.  一旦所有秘密被揭示，最终结果将显示在聊天频道中。
 
-As long as a participant trusts at least one person in the flip (including
-themselves if they participated), then the result of the flip is fair.
+只要参与者在抛掷中信任至少一人（若其本人参与，则包括其本人），抛掷结果即为公平。
 
-A caveat with this protocol is that participants can disappear after committing
-to a flip. In this case, the chat client will render an error for the flip,
-since it could be the case that a disappearing participant is just trying to
-force a new flip to happen (although it is more likely the user just
-disconnected).
+此协议的一个限制在于参与者可能会在提交抛掷后消失。在此情况下，聊天客户端将针对该抛掷渲染错误，因为消失的参与者可能仅是试图强制重新进行抛掷（尽管更常见的情况是用户仅是断开了连接）。
 
-# UI Display
+# UI 显示
 
-A special feature of the UI is rendering the flip while it is in progress. This
-can be seen with the orange and purple boxes that animate while the flip is
-happening. These boxes are a visualization of the bytes of the commitments and
-secrets as they are received by the chat client. The color of each cell maps a
-byte of a commitment or secret to a color pallette.
+UI 的一项特殊功能是在抛掷进行时对其进行渲染。这表现为抛掷过程中动画显示的橙色和紫色方块。这些方块是聊天客户端接收到的承诺和秘密字节的可视化呈现。每个单元格的颜色将承诺或秘密的一个字节映射至调色板。

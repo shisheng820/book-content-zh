@@ -1,161 +1,100 @@
-# Keybase Account Corner Cases (Plan)
+# Keybase 账户边缘情况（计划）
 
-This document covers corner cases involving device loss, device
-revocation, password reset, and account reset.  These issues
-are closely related and are covered in sum.
+本文档涵盖涉及设备丢失、设备吊销、密码重置和账户重置的边缘情况。这些问题密切相关，我们将一并讨论。
 
-We call the various reset mechanisms "corner cases" since they
-will be rare, but unfortunately, they will require a fair amount
-of work to get right.
+我们将各种重置机制称为“边缘情况”，因为它们很少发生，但不幸的是，它们需要大量工作才能正确处理。
 
-**Important note!** Most of this document isn't yet implemented. We're pretty
-busy over here and haven't completed all aspects of the system. However, the
-standard and forced password change mechanisms do work. In the interim, a bad
-guy who steals an unlocked phone can do a lot of damage.
+**重要提示！** 本文档的大部分内容尚未实现。我们非常忙，尚未完成系统的所有方面。但是，标准和强制密码更改机制确实有效。在此期间，偷走未锁定手机的坏人可能会造成很大破坏。
 
-## Account Probation
+## 账户观察期（Probation）
 
-The purpose of account *probation* is to prevent a bad guy from stealing one
-device, and then pressing his advantage to gain complete control of the
-account. For instance, with an unlocked phone, an attacker can change
-passphrases, revoke old devices, and add new ones.
+账户*观察期*的目的是防止坏人偷走一台设备，然后利用优势获得对账户的完全控制。例如，使用未锁定的手机，攻击者可以更改口令、吊销旧设备并添加新设备。
 
-**Entering**. Users enter probation when they "force-reset" their
-passphrase from a provisioned device, and they have more than one currently
-provisioned device. The server sends email and push notifications upon this
-transition, alerting the user of why probation started, how long it lasts,
-and how to short-circuit out of it.
+**进入观察期**。当用户从已配置的设备“强制重置”其口令，并且他们拥有多个当前已配置的设备时，用户进入观察期。服务器在此转换时发送电子邮件和推送通知，提醒用户为什么开始观察期、持续多长时间以及如何提前结束它。
 
-**During**. Probation lasts for 5 days, and during this time, users cannot
-revoke devices (i.e., they cannot revoke sibkey or subkey signatures),
-they cannot reset their accounts, and they cannot change their email addresses.
+**观察期期间**。观察期持续 5 天，在此期间，用户无法吊销设备（即，他们无法吊销 sibkey 或 subkey 签名），无法重置其账户，也无法更改其电子邮件地址。
 
-**Leaving**. User accounts leave probation if:
+**离开观察期**。如果发生以下情况，用户账户将离开观察期：
 
-   * the specified timeout elapses;
-   * a device that was authorized before the start of probation signs an "early-release" statement;
-   * or if the user proves knowledge of the passphrase in use before probation started.
+   * 指定的超时时间已过；
+   * 在观察期开始之前授权的设备签署了“提前释放”声明；
+   * 或者如果用户证明了对观察期开始前使用的口令的知悉。
 
-If a user leaves probation before the timeout, he/she has the option to
-simultaneously revoke the device that caused entry into probation (on the
-assumption that it was stolen and controlled by an adversary).
+如果用户在超时之前离开观察期，他/她可以选择同时吊销导致进入观察期的设备（假设它被盗并由对手控制）。
 
-## Passphrase Changes
+## 口令更改
 
-Passphrases on keybase are not commonly used, but they have the following
-important roles:
+Keybase 上的口令并不常用，但它们具有以下重要作用：
 
-  * **Local Key Security (LKS)**. Passphrases lock local secret keys on
-    desktop machines. So to "unlock" a secret key, a user needs to type
-    his/her keybase passphrase. Users can check a "remember my passphrase"
-    box so this unlocking might only happen once.
-  * **Login**. Though logins typically happen via public-key authentication, they
-    can also occur via passphrase.
-  * **Signature Revocations**. Whenever a user wants to revoke a signature,
-    he/she needs to prove knowledge of the current passphrase.  This is to
-    prevent an attacker who just stole a user's phone from deauthorizing
-    the user's other devices.
-  * **Account Reset**. Proof of passphrase knowledge is one of two factors
-    required for an account reset.
-  * **Standard Passphrase Update**. If a user knows his/her current passphrase,
-    he/she can update to a new one without much disturbance.
-  * **Email address changes**.  A user needs to prove knowledge of the current
-    passphrase before he/she can change email addresses (which is a usual requirement).
-  * **Erasing KBFS History**. Permanently erasing KBFS history requires a passphrase.
-    Just `rm`'ing a file does not, since there's still a snapshot of the file.
+  * **本地密钥安全 (LKS)**。口令锁定桌面机器上的本地密钥。因此，要“解锁”密钥，用户需要输入他/她的 Keybase 口令。用户可以勾选“记住我的口令”框，以便这种解锁可能只发生一次。
+  * **登录**。虽然登录通常通过公钥身份验证进行，但也可能通过口令进行。
+  * **签名吊销**。每当用户想要吊销签名时，他/她都需要证明知道当前的口令。这是为了防止刚刚偷走用户手机的攻击者取消授权用户的其他设备。
+  * **账户重置**。口令知识证明是账户重置所需的两个因素之一。
+  * **标准口令更新**。如果用户知道他/她当前的口令，他/她可以在不受太多干扰的情况下更新为新口令。
+  * **更改电子邮件地址**。用户需要证明知道当前的口令，然后才能更改电子邮件地址（这是一个通常的要求）。
+  * **擦除 KBFS 历史记录**。永久擦除 KBFS 历史记录需要口令。仅仅 `rm` 一个文件是不行的，因为仍然存在该文件的快照。
 
-### Standard Passphrase Change
+### 标准口令更改
 
-In standard passphrase reset, the user proves knowledge of the old
-passphrase and sets a new one.  Many things about the user's account change,
-like: LKS server-halves; encrypted LKS client halves; and the user's
-server-stored passphrase hash.  However, the account doesn't change into
-probation mode.
+在标准口令重置中，用户证明知道旧口令并设置新口令。用户账户的许多内容都会发生变化，例如：LKS 服务器半部分；加密的 LKS 客户端半部分；以及用户在服务器存储的口令哈希。但是，账户不会进入观察期模式。
 
-### Forced Passphrase Change
+### 强制口令更改
 
-In a forced passphrase update, the user has forgotten his/her passphrase
-and must replace it with a new one.  He/she can do this if she has access
-to an unlocked signing key. The same server-side changes need to happen,
-but in addition, the account goes into probation mode.
+在强制口令更新中，用户忘记了他/她的口令，必须将其替换为新口令。如果她可以访问未锁定的签名密钥，她就可以这样做。同样的服务器端更改需要发生，但此外，账户进入观察期模式。
 
-## Email Address Changes
+## 更改电子邮件地址
 
-Users can change their email address if they prove knowledge of the current
-passphrase, and aren't in a probationary period.
+如果用户证明知道当前的口令，并且不在观察期内，则可以更改其电子邮件地址。
 
-## Device Revocation
+## 设备吊销
 
-To revoke a device, the user must revoke the signatures that provisioned
-the device in the first place. To revoke signatures, the user must:
+要吊销设备，用户必须吊销最初配置该设备的签名。要吊销签名，用户必须：
 
-   * have access to a valid signing sibkey secret-key (can be a device key or a backup key)
-   * have a valid session
-   * prove knowledge of the current passphrase hash
-   * not be in a probationary state
+   * 有权访问有效的签名 sibkey 密钥（可以是设备密钥或备份密钥）
+   * 拥有有效的会话
+   * 证明知道当前的口令哈希
+   * 不处于观察期状态
 
-The last two bullets points, combined, protect the user against an attack
-in which the Alice recovers Bob's device, and then starts revoking
-(immediately) the Bob's other devices, locking him out of his account.
-Alice must carry on this attack over ~5 days with the probationary waiting
-period.
+最后两点结合起来，保护用户免受攻击，即爱丽丝（Alice）恢复了鲍勃（Bob）的设备，然后开始吊销（立即）鲍勃的其他设备，将他锁定在他的账户之外。爱丽丝必须在约 5 天的观察期等待期内持续进行此攻击。
 
-## Backup Keys
+## 备份密钥
 
-Each user should provision a pair of backup keys for their account.  They won't be asked
-to do so when they first sign up, but they should do so after they have been using the system
-for a little bit.  The intended use is the backup keys are written down to a piece of paper
-and then squirreled away in a desk drawer or a safety deposit box.  In practice, a sequence
-of 11 randomly generated words can be stretched into the needed backup keys, but it is
-crucial that this passphrase has at least 128 bits of true entropy, and therefore shouldn't
-be trusted to weak human-generated entropy.
+每个用户都应该为其账户配置一对备份密钥。当他们首次注册时不会被要求这样做，但在使用系统一段时间后应该这样做。预期的用途是将备份密钥写在一张纸上，然后藏在抽屉或保险箱中。实际上，11 个随机生成的单词序列可以扩展为所需的备份密钥，但至关重要的是，该口令至少具有 128 位的真实熵，因此不应信任弱的人工生成的熵。
 
-Backup keys are different from device keys in that they are not protected with local key
-security.  Having access to the piece of paper the backup key is written down on is enough
-to use the key.
+备份密钥与设备密钥的不同之处在于它们不受本地密钥安全的保护。只要能拿到写有备份密钥的纸张，就足以使用该密钥。
 
-Otherwise, backup keys behave like regular keys.
+除此之外，备份密钥的行为类似于常规密钥。
 
-### Implementation
+### 实现
 
-Backup keys are generated as follows:
+备份密钥生成如下：
 
-   1. Pick 11 random words from the [BIP0039](https://github.com/bitcoin/bips/blob/master/bip-0039/english.txt) dictionary.
-   1. Stretch the secret via scrypt (with an empty salt)
-   1. Use 32 bytes for a secret EdDSA key, and 32 bytes as a secret Curve25519 DH key.
-   1. Sign the corresponding public keys into the signature chain.
+   1. 从 [BIP0039](https://github.com/bitcoin/bips/blob/master/bip-0039/english.txt) 字典中挑选 11 个随机单词。
+   1. 通过 scrypt（使用空盐）扩展密钥
+   1. 使用 32 字节作为秘密 EdDSA 密钥，使用 32 字节作为秘密 Curve25519 DH 密钥。
+   1. 将相应的公钥签署到签名链中。
 
-Thus, possession of the 11 secret words from step 1 suffice to regenerate the signing
-and encryption keys in Step 3.
+因此，拥有步骤 1 中的 11 个秘密单词足以重新生成步骤 3 中的签名和加密密钥。
 
-## Account Resets
+## 账户重置
 
-In an account reset, a user must start from scratch.  She must reprovision all devices;
-reprove all identities; and re-upload data to KBFS.  It's obviously a case to be
-avoided in all costs, and nothing we want attackers to be able to initiate for victims.
+在账户重置中，用户必须从头开始。她必须重新配置所有设备；重新证明所有身份；并将数据重新上传到 KBFS。这显然是不惜一切代价要避免的情况，我们不希望攻击者能够为受害者发起这种情况。
 
-### Easy Resets
+### 简易重置
 
-Users might find themselves in a resettable position if: (1) they've lost all of their
-active devices and (2); don't have backup keys but (3) do remember their
-passphrase.  In this case, if users: (1) can prove knowledge of the currently active passphrase;
-(2) can prove ownership of an email account (via link-click); and (3) aren't in probation,
-then they can reset their account right away.
+如果用户：(1) 丢失了所有活动设备；(2) 没有备份密钥，但 (3) 确实记得他们的口令，那么他们可能会发现自己处于可重置的位置。在这种情况下，如果用户：(1) 可以证明知道当前活动的口令；(2) 可以证明拥有电子邮件账户（通过点击链接）；并且 (3) 不在观察期内，那么他们可以立即重置其账户。
 
-### Last-Ditch Resets
+### 绝境重置
 
-In a last ditch reset, the only thing the user still has is access to an email account.
-In this case, the best we can do is have them click through and ask for access to
-the nuclear trigger.  This is an ugly situation.  The best response I can think up is:
+在绝境重置中，用户唯一拥有的就是对其电子邮件账户的访问权限。在这种情况下，我们能做的最好的事情就是让他们点击并通过请求访问核按钮。这是一个糟糕的情况。我能想到的最好的回应是：
 
-   1. User clicks on "last-ditch account reset"
-   1. If they have a twitter proof
-      1. send a Tweet: "@bob We will reset your Keybase account in 7 days as per your instructions. If this is in error, visit your settings page."
-      1. Send a similar warning when the day gets closer.
-   1. Every day over the next week, send an email to the user:
-      1. If they click on the "Go-ahead" link all 7 times, then go ahead and nuke it.
-      1. Otherwise, abandon the nuke protocol.
+   1. 用户点击“绝境账户重置”
+   1. 如果他们有 twitter 证明
+      1. 发送推文：“@bob 我们将按照您的指示在 7 天内重置您的 Keybase 账户。如果这是错误的，请访问您的设置页面。”
+      1. 当日期临近时发送类似的警告。
+   1. 在接下来的一周里，每天向用户发送一封电子邮件：
+      1. 如果他们点击所有 7 次的“继续”链接，那么就继续并清除它。
+      1. 否则，放弃清除协议。
 
-The only way a user can get attacked via this protocol is if the user loses control of their email account to an attacker for 7 days or more. The attacked would need to hide these emails from the
-user, and click on the "Go ahead" link before the user clicks on the "cancel" link.
+用户通过此协议受到攻击的唯一方式是用户将对其电子邮件账户的控制权丢失给攻击者 7 天或更长时间。攻击者需要向用户隐藏这些电子邮件，并在用户点击“取消”链接之前点击“继续”链接。
 

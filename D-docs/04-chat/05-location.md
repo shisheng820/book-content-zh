@@ -1,41 +1,21 @@
-# Location Sharing
+# 位置共享
 
-Keybase offers the option of sharing your location into conversations in chat
-from the mobile app. These can be either personal chats or team chats, wherever
-the /location command is available. In addition, the client allows for posting
-your location over a time interval, a so-called "live location". The proper use
-of this feature requires Keybase to have access to the user's location on the
-mobile device.
+Keybase 提供了通过移动应用在聊天会话中共享位置的选项。此功能适用于个人聊天或团队聊天，只要 /location 命令可用即可。此外，客户端允许在一段时间内发布位置，即所谓的“实时位置”。正常使用此功能需要 Keybase 获得移动设备上的用户位置访问权限。
 
-## How it Works
+## 工作原理
 
-Locations are shared into conversations through the use of the Google Maps
-Static API. The system for obtaining the map is similar to how [Giphy search is
-implemented](linkpreviews). We use the following procedure to obtain a map:
+位置信息通过使用 Google Maps Static API 共享至会话中。获取地图的系统类似于 [Giphy 搜索的实现方式](linkpreviews)。我们使用以下流程获取地图：
 
-1. Keybase client opens a TCP connection to the Keybase Google Maps proxy
-   server.
-2. Keybase client performs TLS for the googleapis.com domain and certificate.
-   This protects the data from Keybase.
-3. The Keybase proxy server opens a TCP connection to googleapis.com and begins
-   forwarding packets to/from Google and the Keybase client. This protects the
-   client from exposing its IP address to Google.
+1.  Keybase 客户端开启与 Keybase Google Maps 代理服务器的 TCP 连接。
+2.  Keybase 客户端针对 googleapis.com 域名及其证书执行 TLS 连接。此举可保护数据免受 Keybase 服务器窥探。
+3.  Keybase 代理服务器开启与 googleapis.com 的 TCP 连接，并开始在 Google 与 Keybase 客户端之间转发数据包。此举可保护客户端免向 Google 暴露其 IP 地址。
 
-Once we have the map, we package it up, encrypt it, and send it directly into
-the chat selected. As a result, receivers of this map will just be downloading
-an encrypted payload like any other from Keybase, no communication with any
-third party is required.
+获取地图后，我们将其封装、加密，并直接发送至所选聊天中。因此，该地图的接收方仅需下载加密载荷，如同从 Keybase 下载其他内容一样，无需与任何第三方通信。
 
-## Live Location
+## 实时位置
 
-In order to post a location continuously over a time interval, Keybase
-implements the following procedure:
+为了在一段时间内持续发布位置，Keybase 实现了以下流程：
 
-1. Start a loop that will run until the user either explicitly stops location
-   sharing, or the timer runs out.
-2. At most every 30 seconds, delete the current map posted for the location
-   share, and replace it with a new one containing the updated location. In
-   addition, we add on another map that shows where the user has been during the
-   location share.
-3. Once the location share is complete, we post a final map indicating the user
-   is no longer sharing their location.
+1.  启动一个循环，直至用户明确停止位置共享或计时器结束。
+2.  每隔不超过 30 秒，删除当前发布的位置共享地图，并替换为包含更新位置的新地图。此外，我们会附加另一张地图，显示用户在位置共享期间的移动轨迹。
+3.  位置共享结束后，我们将发布最终地图，表明用户不再共享其位置。

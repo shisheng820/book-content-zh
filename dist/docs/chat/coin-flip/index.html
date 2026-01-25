@@ -117,7 +117,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/chat" class="chapter-nav__link chapter-nav__link--active">Chat</a>
+                        <a href="/docs/chat" class="chapter-nav__link chapter-nav__link--active">聊天</a>
                         
                             
                             
@@ -224,31 +224,31 @@
                                 <ol class="chapter-nav__nested-list">
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/crypto" class="chapter-nav__nested-link">High Level Overview</a>
+                                        <a href="/docs/chat/crypto" class="chapter-nav__nested-link">聊天加密</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/ephemeral" class="chapter-nav__nested-link">Hierarchical Ephemeral Keys for Exploding Messages</a>
+                                        <a href="/docs/chat/ephemeral" class="chapter-nav__nested-link">用于阅后即焚消息的分层临时密钥</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/link-previews" class="chapter-nav__nested-link">Link Previews</a>
+                                        <a href="/docs/chat/link-previews" class="chapter-nav__nested-link">链接预览</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/location" class="chapter-nav__nested-link">Location Sharing</a>
+                                        <a href="/docs/chat/location" class="chapter-nav__nested-link">位置共享</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/coin-flip" class="chapter-nav__nested-link">Coin Flip</a>
+                                        <a href="/docs/chat/coin-flip" class="chapter-nav__nested-link">抛硬币</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/phones-and-emails" class="chapter-nav__nested-link">Phone Numbers and Emails</a>
+                                        <a href="/docs/chat/phones-and-emails" class="chapter-nav__nested-link">手机号码与电子邮件</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/restricted-bots" class="chapter-nav__nested-link">Restricted Bots in Chat</a>
+                                        <a href="/docs/chat/restricted-bots" class="chapter-nav__nested-link">聊天中的受限机器人</a>
                                     </li>
                                     
                                 </ol>
@@ -274,7 +274,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/files" class="chapter-nav__link">Introducing the Keybase Filesystem</a>
+                        <a href="/docs/files" class="chapter-nav__link">Keybase 文件系统介绍</a>
                         
                     </li>
                     
@@ -284,7 +284,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/wallet" class="chapter-nav__link">Stellar Wallet Key Management</a>
+                        <a href="/docs/wallet" class="chapter-nav__link">Stellar 钱包密钥管理</a>
                         
                     </li>
                     
@@ -292,7 +292,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/crypto" class="chapter-nav__link">Keybase Crypto Documents</a>
+                        <a href="/docs/crypto" class="chapter-nav__link">Keybase 加密文档</a>
                         
                     </li>
                     
@@ -308,7 +308,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/bots" class="chapter-nav__link">Bots</a>
+                        <a href="/docs/bots" class="chapter-nav__link">机器人 (Bots)</a>
                         
                     </li>
                     
@@ -316,7 +316,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/linux" class="chapter-nav__link">Linux User Guide</a>
+                        <a href="/docs/linux" class="chapter-nav__link">Linux 用户指南</a>
                         
                     </li>
                     
@@ -324,7 +324,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/lockdown" class="chapter-nav__link">Lockdown Mode</a>
+                        <a href="/docs/lockdown" class="chapter-nav__link">锁定模式 (Lockdown Mode)</a>
                         
                     </li>
                     
@@ -332,7 +332,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/client" class="chapter-nav__link">Keybase client-side architecture</a>
+                        <a href="/docs/client" class="chapter-nav__link">Keybase 客户端架构</a>
                         
                     </li>
                     
@@ -358,64 +358,40 @@
         
         <div class="content__inner">
             <section id="overview" class="content__section">
-                <h1 id="coin-flip">Coin Flip</h1>
-<p>The /flip command on Keybase chat implements a <a href="https://en.wikipedia.org/wiki/Commitment_scheme">commitment
-scheme</a> protocol
-allowing the members of a channel to participate in secure coin flips.
-Leveraging the fact that all messages in chat are signed by the sender, building
-such a protocol on top of chat is a natural fit. In addition to flipping coins,
-the shared randomness can also be used to present different forms of the flip;
-such as shuffling items, picking a random number, and even dealing hands of
-playing cards.</p>
-<h1 id="flips">Flips</h1>
-<p>The types of flips supported right now include the following:</p>
+                <h1 id="抛硬币">抛硬币</h1>
+<p>Keybase 聊天中的 /flip 命令实现了一种 <a href="https://en.wikipedia.org/wiki/Commitment_scheme">承诺方案</a> 协议，允许频道成员参与安全的抛硬币活动。利用聊天中所有消息均由发送者签名的特性，在聊天系统之上构建此类协议十分自然且合适。除抛硬币外，共享随机性还可用于呈现不同形式的抛掷；例如洗牌项目列表、选取随机数，甚至分发扑克牌手牌。</p>
+<h1 id="抛掷类型">抛掷类型</h1>
+<p>目前支持的抛掷类型包括：</p>
 <ol>
-<li>/flip - Flip a coin.</li>
-<li>/flip 6 - Roll a <em>k</em>-sided die.</li>
-<li>/flip -10..10 - Pick a random number in a range</li>
-<li>/flip apple, orange, pear - Shuffle a list of items</li>
-<li>/flip cards - deal a deck of cards</li>
-<li>/flip cards 5 mike, chris, max, patrick - Deal out a hand of 5 cards to a
-   list of people</li>
-<li>/flip @here - shuffle the members of a channel</li>
-<li>/flip cards 5 @here - deal out hands of 5 cards to the channel</li>
+<li><code>/flip</code> - 抛硬币。</li>
+<li><code>/flip 6</code> - 掷一个 <em>k</em> 面骰子。</li>
+<li><code>/flip -10..10</code> - 在范围内选取随机数。</li>
+<li><code>/flip apple, orange, pear</code> - 洗牌项目列表。</li>
+<li><code>/flip cards</code> - 发一副牌。</li>
+<li><code>/flip cards 5 mike, chris, max, patrick</code> - 向指定人员列表分发 5 张手牌。</li>
+<li><code>/flip @here</code> - 对频道成员进行洗牌（随机排序）。</li>
+<li><code>/flip cards 5 @here</code> - 向频道成员分发 5 张手牌。</li>
 </ol>
-<h1 id="protocol">Protocol</h1>
-<p>The following is a description of the protocol the chat client uses to implement
-the commitment scheme.</p>
+<h1 id="协议">协议</h1>
+<p>以下是聊天客户端用于实现承诺方案的协议描述。</p>
 <ol>
-<li>The <em>initiator</em> starts the flip by issuing a /flip command.</li>
-<li>All members of the channel commit to a secret by sending a chat message into
-   a special hidden "developer" channel including the same members as the host
-   channel.</li>
-<li>The initiator collects all commitments in a set time interval, and sends a
-   message with all of the participants that responded in time. These are the
-   participants in the flip result.</li>
-<li>Upon reception of this message, clients send chat messages revealing their
-   secrets, and confirm that the secrets of others match their commitments.</li>
-<li>The final result is displayed in the chat channel once all secrets are
-   revealed.</li>
+<li><em>发起者</em> 通过发布 /flip 命令开始抛掷。</li>
+<li>频道所有成员通过向包含与宿主频道相同成员的特殊隐藏“开发者”频道发送聊天消息，来提交一个秘密。</li>
+<li>发起者在设定时间间隔内收集所有承诺，并发送一条包含所有及时响应参与者的消息。这些即为抛掷结果的参与者。</li>
+<li>收到此消息后，客户端发送聊天消息以揭示其秘密，并确认他人的秘密与其承诺相符。</li>
+<li>一旦所有秘密被揭示，最终结果将显示在聊天频道中。</li>
 </ol>
-<p>As long as a participant trusts at least one person in the flip (including
-themselves if they participated), then the result of the flip is fair.</p>
-<p>A caveat with this protocol is that participants can disappear after committing
-to a flip. In this case, the chat client will render an error for the flip,
-since it could be the case that a disappearing participant is just trying to
-force a new flip to happen (although it is more likely the user just
-disconnected).</p>
-<h1 id="ui-display">UI Display</h1>
-<p>A special feature of the UI is rendering the flip while it is in progress. This
-can be seen with the orange and purple boxes that animate while the flip is
-happening. These boxes are a visualization of the bytes of the commitments and
-secrets as they are received by the chat client. The color of each cell maps a
-byte of a commitment or secret to a color pallette.</p>
+<p>只要参与者在抛掷中信任至少一人（若其本人参与，则包括其本人），抛掷结果即为公平。</p>
+<p>此协议的一个限制在于参与者可能会在提交抛掷后消失。在此情况下，聊天客户端将针对该抛掷渲染错误，因为消失的参与者可能仅是试图强制重新进行抛掷（尽管更常见的情况是用户仅是断开了连接）。</p>
+<h1 id="ui-显示">UI 显示</h1>
+<p>UI 的一项特殊功能是在抛掷进行时对其进行渲染。这表现为抛掷过程中动画显示的橙色和紫色方块。这些方块是聊天客户端接收到的承诺和秘密字节的可视化呈现。每个单元格的颜色将承诺或秘密的一个字节映射至调色板。</p>
             </section>
         </div>
     </div>
         <footer class="footer" data-footer-label="下一章">
         <a class="footer__link" href="/docs/chat/phones-and-emails">
             <div class="footer__inner">
-            <p class="footer__title" data-chapter-count="D">Phone Numbers and Emails</p>
+            <p class="footer__title" data-chapter-count="D">手机号码与电子邮件</p>
                 
             </div>
             <img alt="" class="footer__image" src="/static/img/illos/docs.jpg" loading="lazy" width="870"/>

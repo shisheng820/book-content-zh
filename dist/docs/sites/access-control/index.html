@@ -117,7 +117,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/chat" class="chapter-nav__link">Chat</a>
+                        <a href="/docs/chat" class="chapter-nav__link">聊天</a>
                         
                     </li>
                     
@@ -139,7 +139,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/files" class="chapter-nav__link">Introducing the Keybase Filesystem</a>
+                        <a href="/docs/files" class="chapter-nav__link">Keybase 文件系统介绍</a>
                         
                     </li>
                     
@@ -149,7 +149,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/wallet" class="chapter-nav__link">Stellar Wallet Key Management</a>
+                        <a href="/docs/wallet" class="chapter-nav__link">Stellar 钱包密钥管理</a>
                         
                     </li>
                     
@@ -157,7 +157,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/crypto" class="chapter-nav__link">Keybase Crypto Documents</a>
+                        <a href="/docs/crypto" class="chapter-nav__link">Keybase 加密文档</a>
                         
                     </li>
                     
@@ -173,7 +173,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/bots" class="chapter-nav__link">Bots</a>
+                        <a href="/docs/bots" class="chapter-nav__link">机器人 (Bots)</a>
                         
                     </li>
                     
@@ -181,7 +181,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/linux" class="chapter-nav__link">Linux User Guide</a>
+                        <a href="/docs/linux" class="chapter-nav__link">Linux 用户指南</a>
                         
                     </li>
                     
@@ -189,7 +189,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/lockdown" class="chapter-nav__link">Lockdown Mode</a>
+                        <a href="/docs/lockdown" class="chapter-nav__link">锁定模式 (Lockdown Mode)</a>
                         
                     </li>
                     
@@ -197,7 +197,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/client" class="chapter-nav__link">Keybase client-side architecture</a>
+                        <a href="/docs/client" class="chapter-nav__link">Keybase 客户端架构</a>
                         
                     </li>
                     
@@ -304,11 +304,11 @@
                                 <ol class="chapter-nav__nested-list">
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/sites/access-control" class="chapter-nav__nested-link">Access Control with .kbp_config</a>
+                                        <a href="/docs/sites/access-control" class="chapter-nav__nested-link">使用 .kbp_config 进行访问控制</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/sites/custom" class="chapter-nav__nested-link">Getting Started with Keybase Pages</a>
+                                        <a href="/docs/sites/custom" class="chapter-nav__nested-link">Keybase Pages 入门</a>
                                     </li>
                                     
                                 </ol>
@@ -328,74 +328,49 @@
         
         <div class="content__inner">
             <section id="overview" class="content__section">
-                <h2 id="access-control-with-kbp_config">Access Control with .kbp_config</h2>
-<p><code>.kbp_config</code> is an optional <code>json</code>-encoded configuration file. By default,
-Keybase Pages enables reading and listing for the entire site. If you prefer to
-turn off directory listing, or want a simple ACL control using <a href="https://tools.ietf.org/html/rfc2617">HTTP Basic
-Authentication</a>, you can create such a
-file at the root of your site. For example if your site is configured to
-<code>"kbp=/keybase/private/alice,kbpbot/my-site"</code>, <code>.kbp_config</code> should be at
-<code>/keybase/private/alice,kbpbot/my-site/.kbp_config</code>.</p>
-<p>To make editing the config file easy, we have a command-line tool that can
-completely replace editing .kbp_config by hand.</p>
-<p>Install it with <code>go get</code>:</p>
+                <h2 id="使用-kbp_config-进行访问控制">使用 .kbp_config 进行访问控制</h2>
+<p><code>.kbp_config</code> 是一个可选的 <code>json</code> 编码的配置文件。默认情况下，Keybase Pages 启用整个站点的读取和列表功能。如果你更喜欢关闭目录列表，或者想要使用 <a href="https://tools.ietf.org/html/rfc2617">HTTP 基本认证</a> 进行简单的 ACL 控制，你可以在站点的根目录下创建这样一个文件。例如，如果你的站点配置为 <code>"kbp=/keybase/private/alice,kbpbot/my-site"</code>，那么 <code>.kbp_config</code> 应该位于 <code>/keybase/private/alice,kbpbot/my-site/.kbp_config</code>。</p>
+<p>为了方便编辑配置文件，我们有一个命令行工具，可以完全取代手动编辑 .kbp_config。</p>
+<p>使用 <code>go get</code> 安装它：</p>
 <pre class="codehilite"><code>go get -u github.com/keybase/client/go/kbfs/kbpagesconfig
 </code></pre>
 
-<p><code>kbpagesconfig</code> operates on (creates if needed) <code>.kbp_config</code> in the current
-directory, so typically you can <code>cd</code> into the site root and use it:</p>
+<p><code>kbpagesconfig</code> 在当前目录中操作（如果需要则创建）<code>.kbp_config</code>，所以通常你可以 <code>cd</code> 到站点根目录并使用它：</p>
 <pre class="codehilite"><code class="language-bash">$ cd /keybase/private/yourname,kbpbot/my-site
 $ kbpagesconfig ...
 </code></pre>
 
-<p>Or override the directory using <code>-d</code> flag:</p>
+<p>或者使用 <code>-d</code> 标志覆盖目录：</p>
 <pre class="codehilite"><code class="language-bash">$ kbpagesconfig -d /keybase/private/yourname,kbpbot/my-site ...
 </code></pre>
 
-<p>Watch <a href="https://asciinema.org/a/AOPxXIhC4vNCj04T1fzaydzZg">this asciinema
-recording</a> or continue
-reading for some examples!</p>
-<h3 id="how-keybase-pages-uses-kbp_config">How Keybase Pages uses .kbp_config</h3>
-<p>If <code>.kbp_config</code> exists, Keybase Pages servers assume a predefined structure
-composed of mainly two parts, a user map for <code>users</code> and (bcrypt'ed) password
-pairs, and an <code>acls</code> map that defines permissions on each specified path. When
-a Keybase Pages server (<code>kbpagesd</code>) receives an incoming request for the site,
-it roughly goes through the following steps: </p>
+<p>观看<a href="https://asciinema.org/a/AOPxXIhC4vNCj04T1fzaydzZg">此 asciinema 录屏</a>或继续阅读一些示例！</p>
+<h3 id="keybase-pages-如何使用-kbp_config">Keybase Pages 如何使用 .kbp_config</h3>
+<p>如果 <code>.kbp_config</code> 存在，Keybase Pages 服务器假设一个预定义的结构，主要由两部分组成：一个用于 <code>users</code> 和（bcrypt 加密的）密码对的用户映射，以及一个定义每个指定路径权限的 <code>acls</code> 映射。当 Keybase Pages 服务器 (<code>kbpagesd</code>) 收到对站点的传入请求时，它大致会经过以下步骤：</p>
 <ol>
 <li>
-<p>Try to authenticate the request using HTTP Basic Authentication, and map the
-request to either anonymous, or a pre-defined user.</p>
+<p>尝试使用 HTTP 基本认证验证请求，并将请求映射为匿名或预定义用户。</p>
 </li>
 <li>
-<p>Look for the ACL in the config that most accurately matches the requested
-path. So for example if the only entry is <code>/</code>, it matches everything. If
-<code>/foo</code> is also defined, then that's used for <code>/foo</code> and everything under it,
-and <code>/</code> is used for everything else.</p>
+<p>在配置中查找最准确匹配请求路径的 ACL。例如，如果唯一的条目是 <code>/</code>，它匹配所有内容。如果 <code>/foo</code> 也被定义，那么它用于 <code>/foo</code> 及其下的所有内容，而 <code>/</code> 用于其他所有内容。</p>
 </li>
 <li>
-<p>Use the ACL to decide whether the mapped user has sufficient permission on
-the requested resource. For a directory without <code>index.html</code>, the <code>list</code>
-permission is required. Otherwise, the <code>read</code> permission is required.</p>
+<p>使用 ACL 决定映射的用户是否有足够的权限访问请求的资源。对于没有 <code>index.html</code> 的目录，需要 <code>list</code> 权限。否则，需要 <code>read</code> 权限。</p>
 </li>
 <li>
-<p>If needed, respond with HTTP status code 401, and a <code>WWW-Authenticate</code>
-header to request for Basic Authentication. Otherwise return the resource.</p>
+<p>如果需要，以 HTTP 状态码 401 响应，并带有一个 <code>WWW-Authenticate</code> 头来请求基本认证。否则返回资源。</p>
 </li>
 </ol>
-<p>The ACL object for each path has two fields:</p>
+<p>每个路径的 ACL 对象有两个字段：</p>
 <ol>
 <li>
-<p><code>anonymous_permissions</code>, which defines the permission(s) that all visitors
-have on the give path. This applies to anonymous traffic that's not
-authenticated, as well as requests that have HTTP Basic Authentication headers.</p>
+<p><code>anonymous_permissions</code>，定义所有访问者在给定路径上拥有的权限。这适用于未认证的匿名流量，以及具有 HTTP 基本认证头的请求。</p>
 </li>
 <li>
-<p><code>whitelist_additional_permissions</code>, which defines additional permissions
-that authenticated users can get on the given path, in addition to what's in
-<code>anonymous_permissions</code>.</p>
+<p><code>whitelist_additional_permissions</code>，定义认证用户在给定路径上可以获得的额外权限，这是在 <code>anonymous_permissions</code> 之外的。</p>
 </li>
 </ol>
-<p>Putting them together, <code>.kbp_config</code> has the following format in <code>json</code> form:</p>
+<p>把它们放在一起，<code>.kbp_config</code> 具有以下 <code>json</code> 格式：</p>
 <pre class="codehilite"><code class="language-json">{
   &quot;version&quot;: &quot;v1&quot;,
   &quot;users&quot;: {
@@ -414,10 +389,9 @@ that authenticated users can get on the given path, in addition to what's in
 }
 </code></pre>
 
-<h3 id="examples">Examples</h3>
-<h4 id="default-config">Default Config</h4>
-<p>If the <code>.kbp_config</code> is missing for a site, Keybase Pages uses a default config
-that allows <code>read</code> and <code>list</code> permissions on the entire site, a.k.a.:</p>
+<h3 id="示例">示例</h3>
+<h4 id="默认配置">默认配置</h4>
+<p>如果站点缺少 <code>.kbp_config</code>，Keybase Pages 使用默认配置，允许整个站点的 <code>read</code> 和 <code>list</code> 权限，即：</p>
 <pre class="codehilite"><code class="language-json">{
   &quot;version&quot;: &quot;v1&quot;,
   &quot;users&quot;: {},
@@ -430,18 +404,16 @@ that allows <code>read</code> and <code>list</code> permissions on the entire si
 }
 </code></pre>
 
-<h4 id="friends-and-no-listing"><code>/friends</code> and <code>/no-listing</code></h4>
-<p>Here is a more complete example with the <code>users</code> map populated and referenced
-in <code>acls</code>, where only <code>alice</code> is allowed to access <code>/friends</code>, and directory
-listing is disabled on <code>/no-listing</code>:</p>
-<p>Using <code>kbpconfig</code>:</p>
-<pre class="codehilite"><code class="language-bash">$ kbpagesconfig user add alice  # adds user &quot;alice&quot;; this'll prompt for a password
-$ kbpagesconfig acl set default &quot;&quot; /friends  # removes default (anonymous) permissions on /friends and its sub-directories
-$ kbpagesconfig acl set additional alice &quot;read,list&quot; /friends  # gives &quot;alice&quot; read and list permissions
-$ kbpagesconfig acl set default &quot;read&quot; /no-listing # overrides the default (anonymous) permission for /no-listing to `read`, i.e. removing `list`.
+<h4 id="friends-和-no-listing"><code>/friends</code> 和 <code>/no-listing</code></h4>
+<p>这是一个更完整的示例，其中 <code>users</code> 映射已填充并在 <code>acls</code> 中引用，其中只有 <code>alice</code> 被允许访问 <code>/friends</code>，并且在 <code>/no-listing</code> 上禁用了目录列表：</p>
+<p>使用 <code>kbpconfig</code>：</p>
+<pre class="codehilite"><code class="language-bash">$ kbpagesconfig user add alice  # 添加用户 &quot;alice&quot;；这将提示输入密码
+$ kbpagesconfig acl set default &quot;&quot; /friends  # 移除 /friends 及其子目录的默认（匿名）权限
+$ kbpagesconfig acl set additional alice &quot;read,list&quot; /friends  # 给予 &quot;alice&quot; 读取和列表权限
+$ kbpagesconfig acl set default &quot;read&quot; /no-listing # 将 /no-listing 的默认（匿名）权限覆盖为 `read`，即移除 `list`。
 </code></pre>
 
-<p>In <code>json</code>:</p>
+<p>在 <code>json</code> 中：</p>
 <pre class="codehilite"><code class="language-json">{
   &quot;version&quot;: &quot;v1&quot;,
   &quot;users&quot;: {
@@ -471,7 +443,7 @@ $ kbpagesconfig acl set default &quot;read&quot; /no-listing # overrides the def
         <footer class="footer" data-footer-label="下一章">
         <a class="footer__link" href="/docs/sites/custom">
             <div class="footer__inner">
-            <p class="footer__title" data-chapter-count="D">Getting Started with Keybase Pages</p>
+            <p class="footer__title" data-chapter-count="D">Keybase Pages 入门</p>
                 
             </div>
             <img alt="" class="footer__image" src="/static/img/illos/docs.jpg" loading="lazy" width="870"/>

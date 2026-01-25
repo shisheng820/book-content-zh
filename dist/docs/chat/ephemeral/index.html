@@ -117,7 +117,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/chat" class="chapter-nav__link chapter-nav__link--active">Chat</a>
+                        <a href="/docs/chat" class="chapter-nav__link chapter-nav__link--active">聊天</a>
                         
                             
                             
@@ -224,31 +224,31 @@
                                 <ol class="chapter-nav__nested-list">
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/crypto" class="chapter-nav__nested-link">High Level Overview</a>
+                                        <a href="/docs/chat/crypto" class="chapter-nav__nested-link">聊天加密</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/ephemeral" class="chapter-nav__nested-link">Hierarchical Ephemeral Keys for Exploding Messages</a>
+                                        <a href="/docs/chat/ephemeral" class="chapter-nav__nested-link">用于阅后即焚消息的分层临时密钥</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/link-previews" class="chapter-nav__nested-link">Link Previews</a>
+                                        <a href="/docs/chat/link-previews" class="chapter-nav__nested-link">链接预览</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/location" class="chapter-nav__nested-link">Location Sharing</a>
+                                        <a href="/docs/chat/location" class="chapter-nav__nested-link">位置共享</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/coin-flip" class="chapter-nav__nested-link">Coin Flip</a>
+                                        <a href="/docs/chat/coin-flip" class="chapter-nav__nested-link">抛硬币</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/phones-and-emails" class="chapter-nav__nested-link">Phone Numbers and Emails</a>
+                                        <a href="/docs/chat/phones-and-emails" class="chapter-nav__nested-link">手机号码与电子邮件</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/chat/restricted-bots" class="chapter-nav__nested-link">Restricted Bots in Chat</a>
+                                        <a href="/docs/chat/restricted-bots" class="chapter-nav__nested-link">聊天中的受限机器人</a>
                                     </li>
                                     
                                 </ol>
@@ -274,7 +274,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/files" class="chapter-nav__link">Introducing the Keybase Filesystem</a>
+                        <a href="/docs/files" class="chapter-nav__link">Keybase 文件系统介绍</a>
                         
                     </li>
                     
@@ -284,7 +284,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/wallet" class="chapter-nav__link">Stellar Wallet Key Management</a>
+                        <a href="/docs/wallet" class="chapter-nav__link">Stellar 钱包密钥管理</a>
                         
                     </li>
                     
@@ -292,7 +292,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/crypto" class="chapter-nav__link">Keybase Crypto Documents</a>
+                        <a href="/docs/crypto" class="chapter-nav__link">Keybase 加密文档</a>
                         
                     </li>
                     
@@ -308,7 +308,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/bots" class="chapter-nav__link">Bots</a>
+                        <a href="/docs/bots" class="chapter-nav__link">机器人 (Bots)</a>
                         
                     </li>
                     
@@ -316,7 +316,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/linux" class="chapter-nav__link">Linux User Guide</a>
+                        <a href="/docs/linux" class="chapter-nav__link">Linux 用户指南</a>
                         
                     </li>
                     
@@ -324,7 +324,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/lockdown" class="chapter-nav__link">Lockdown Mode</a>
+                        <a href="/docs/lockdown" class="chapter-nav__link">锁定模式 (Lockdown Mode)</a>
                         
                     </li>
                     
@@ -332,7 +332,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/client" class="chapter-nav__link">Keybase client-side architecture</a>
+                        <a href="/docs/client" class="chapter-nav__link">Keybase 客户端架构</a>
                         
                     </li>
                     
@@ -358,97 +358,26 @@
         
         <div class="content__inner">
             <section id="overview" class="content__section">
-                <h1 id="hierarchical-ephemeral-keys-for-exploding-messages">Hierarchical Ephemeral Keys for Exploding Messages</h1>
-<p>Keybase now has support for "exploding" messages, which are automatically
-deleted after some expiration time. As part of that feature, we guarantee
-forward secrecy for those messages. That means that in addition to deleting the
-messages themselves, clients will also delete the keys that were used to
-encrypt them. The goal is that even if an attacker steals one of your encrypted
-exploding messages from our server, and then later steals one of your devices
-and all the keys on it, there should still be no way for the attacker to
-decrypt the message.</p>
-<h2 id="high-level-design">High Level Design</h2>
-<p>Each Keybase device creates a daily ephemeral encryption keypair, signs over it
-with the device's long term signing key, and publishes the public half of it
-and that signature to the Keybase server. Each key is fully random, not derived
-from any previous keys or any long term keys. The maximum lifetime of any
-ciphertext using these keys is one week. If a device doesn't come online to
-publish a new key, senders can continue using its most recent key, and later
-the device will postpone deleting that key to compensate. After not publishing
-a new key for long enough, the device is considered stale, and it can no longer
-receive ephemeral messages of any kind. That staleness window is currently three
-months to allow for devices that are rarely online. Putting limit on the
-staleness means that one mothballed device won't compromise the forward secrecy
-of an entire group forever.</p>
-<p>Instead of using device ephemeral keys (EKs) directly at the application level
-to encrypt chat messages, we build a hierarchy of user and team keys on top of
-them. Each user publishes a daily user EK, and the private half gets encrypted
-for each valid device EK. Likewise teams publish team EKs and encrypt them for
-each user EK belonging to a team member. This mirrors our hierarchy of
-long-term <a href="https://keybase.io/docs/teams/puk">per-user</a> and
-<a href="https://keybase.io/docs/teams/crypto">per-team</a> keys. All of these higher
-level EKs have the same one week lifetime that device EKs do. An issuing device
-skips over stale devices and stale users when encrypting copies of these secret
-keys for transport.</p>
-<p>At the chat application level, we always encrypt with the most recent team EK
-available. That means that regardless of the lifetime chosen for a message,
-which could be just minutes, the lifetime of the encryption key is about a
-week. Clients and the server make a best effort to delete messages immediately
-after their lifetime is up, but a saved copy of the message could still be
-decrypted with a stolen device, until the key is finally deleted about a week
-later.</p>
-<h2 id="comparison-to-the-signal-double-ratchet">Comparison to the Signal Double Ratchet</h2>
-<p>The <a href="https://signal.org/docs/specifications/doubleratchet">Signal double
-ratchet</a> is a widely used
-design for managing ephemeral message keys. It's the combination of two
-mechanisms: hashing keys forward as they're used to provide forward secrecy,
-and continuously performing Diffie-Hellman to recover from past compromises.
-The advantage of the double ratchet is that it achieves forward secrecy as
-quickly as possible for asynchronous senders. There's no week-long window
-before keys are deleted. Instead, in an active conversation, they're deleted
-immediately.</p>
-<p>There are two main reasons we aren't using the double ratchet for Keybase's
-exploding messages. The first is that we're worried about performance in
-conversations with lots of participants. Keybase supports teams with thousands
-of members, and each of those members in turn has many devices. The standard
-approach for using the double ratchet in a group is for each participant to
-maintain a separate ratchet for each other participant. That would make it
-expensive to send messages to a large team, both in terms of the time it would
-take to process each recipient, and the bandwidth it would take to send a long
-list of authenticators. Signal supports a <a href="https://signal.org/blog/private-groups/#the-textsecure-group-protocol">"sender keys"
-variant</a>
-that can amortize that work over many messages, but it's still work that needs
-to be done on every sending device, and senders with weak hardware or poor
-network conditions would suffer.</p>
-<p>The second reason is that we want to avoid mixing key management with
-application state. In Signal, the ratchet sequence and the message sequence are
-tied together. That works well for their use case, and it provides some of
-their reordering and replay protection. The Keybase app is more complicated,
-though, in ways that are harder to model with a mostly-linear sequence of keys:</p>
+                <h1 id="用于阅后即焚消息的分层临时密钥">用于阅后即焚消息的分层临时密钥</h1>
+<p>Keybase 现在支持“阅后即焚”消息，这些消息会在过期后自动删除。作为该功能的一部分，我们保证这些消息的前向保密性。这意味着除了删除消息本身之外，客户端还会删除用于加密它们的密钥。目标是即使攻击者从我们的服务器窃取了您的一条加密的阅后即焚消息，然后又窃取了您的一个设备及其上的所有密钥，攻击者仍然无法解密该消息。</p>
+<h2 id="高层设计">高层设计</h2>
+<p>每个 Keybase 设备都会创建一个每日临时加密密钥对，用设备的长期签名密钥对其进行签名，并将公钥和该签名发布到 Keybase 服务器。每个密钥都是完全随机的，不是从任何先前的密钥或任何长期密钥派生的。使用这些密钥的任何密文的最长生命周期为一周。如果设备没有上线发布新密钥，发送者可以继续使用其最近的密钥，之后设备将推迟删除该密钥以进行补偿。在足够长的时间没有发布新密钥后，该设备被视为陈旧，并且无法再接收任何类型的临时消息。该陈旧窗口目前为三个月，以允许设备很少上线的情况。限制陈旧性意味着一个被封存的设备不会永远损害整个群组的前向保密性。</p>
+<p>我们不在应用层直接使用设备临时密钥 (EK) 来加密聊天消息，而是在它们之上构建用户和团队密钥的层次结构。每个用户发布一个每日用户 EK，私钥为每个有效的设备 EK 加密。同样，团队发布团队 EK 并为属于团队成员的每个用户 EK 加密。这反映了我们长期的 <a href="/docs/teams/puk">每用户</a> 和 <a href="/docs/teams/crypto">每团队</a> 密钥的层次结构。所有这些更高级别的 EK 都具有与设备 EK 相同的一周生命周期。发布设备在加密这些密钥的副本进行传输时会跳过陈旧的设备和陈旧的用户。</p>
+<p>在聊天应用层，我们总是使用可用的最新团队 EK 进行加密。这意味着无论为消息选择的生命周期如何（可能只有几分钟），加密密钥的生命周期约为一周。客户端和服务器会尽最大努力在消息生命周期结束后立即删除消息，但在密钥最终在约一周后被删除之前，保存的消息副本仍然可以用窃取的设备解密。</p>
+<h2 id="与-signal-双棘轮的比较">与 Signal 双棘轮的比较</h2>
+<p><a href="https://signal.org/docs/specifications/doubleratchet">Signal 双棘轮</a> 是一种广泛使用的管理临时消息密钥的设计。它是两种机制的结合：在使用密钥时对其进行哈希处理以提供前向保密性，以及持续执行 Diffie-Hellman 以从过去的泄露中恢复。双棘轮的优点是它能尽快为异步发送者实现前向保密性。在删除密钥之前没有一周的窗口期。相反，在活跃的对话中，它们会被立即删除。</p>
+<p>我们不为 Keybase 的阅后即焚消息使用双棘轮主要有两个原因。首先是我们担心在拥有大量参与者的对话中的性能。Keybase 支持拥有数千名成员的团队，而这些成员中的每一个又有许多设备。在群组中使用双棘轮的标准方法是每个参与者为每个其他参与者维护一个单独的棘轮。这将使得向大型团队发送消息变得昂贵，无论是处理每个接收者所需的时间，还是发送长列表的认证器所需的带宽。Signal 支持一种 <a href="https://signal.org/blog/private-groups/#the-textsecure-group-protocol">"发送者密钥" 变体</a>，可以在许多消息上分摊这项工作，但这仍然是需要在每个发送设备上完成的工作，硬件较弱或网络条件较差的发送者会受到影响。</p>
+<p>第二个原因是我们希望避免将密钥管理与应用程序状态混合在一起。在 Signal 中，棘轮序列和消息序列是绑定在一起的。这对他们的用例很有效，并且它提供了一些重新排序和重放保护。然而，Keybase 应用程序更复杂，其方式难以用主要线性的密钥序列来建模：</p>
 <ul>
-<li>A <a href="https://keybase.io/docs/crypto/chat">team chat</a> can have multiple
-  different channels.</li>
-<li>In the "sharing before signup" case, you can chat with someone who hasn't
-  joined Keybase yet, and automatically re-encrypt for them later after they
-  prove who they are.</li>
-<li>The <a href="https://keybase.io/docs/kbfs">Keybase File System</a> could support
-  "exploding files" in the future.</li>
-<li><a href="https://saltpack.org/">Saltpack encrypted messages</a> could add an exploding
-  mode.</li>
-<li>We could create app-specific derived keys for 3rd-party apps, and some of
-  these could be ephemeral.</li>
+<li><a href="https://keybase.io/docs/crypto/chat">团队聊天</a> 可以有多个不同的频道。</li>
+<li>在“注册前共享”的情况下，您可以与尚未加入 Keybase 的人聊天，并在他们证明自己是谁后自动为他们重新加密。</li>
+<li><a href="https://keybase.io/docs/kbfs">Keybase 文件系统</a> 将来可能支持“阅后即焚文件”。</li>
+<li><a href="https://saltpack.org/">Saltpack 加密消息</a> 可以添加阅后即焚模式。</li>
+<li>我们可以为第三方应用程序创建特定于应用程序的派生密钥，其中一些可能是临时的。</li>
 </ul>
-<p>It's conceivable that we could handle all of these cases by adding more
-ratchets and managing them in interesting ways, but this would push a lot of
-complexity up into the application layer. An API whose contract is instead
-"this key is valid for a week, do whatever you want with it" makes building
-applications much simpler.</p>
-<h2 id="ephemeral-key-protocol-details">Ephemeral Key Protocol Details</h2>
-<p>Our
-<a href="https://github.com/keybase/client/blob/master/protocol/avdl/keybase1/ephemeral.avdl"><code>keybase1/ephemeral.avdl</code></a>
-protocol file defines the objects we sign over when we publish ephemeral keys.
-Here's the layout of a device EK statement. The corresponding user and team
-objects are almost identical.</p>
+<p>可以想象，我们可以通过添加更多棘轮并以有趣的方式管理它们来处理所有这些情况，但这会将大量复杂性推向应用层。相反，一个合约为“此密钥有效期为一周，随你处置”的 API 使构建应用程序变得简单得多。</p>
+<h2 id="临时密钥协议细节">临时密钥协议细节</h2>
+<p>我们的 <a href="https://github.com/keybase/client/blob/master/protocol/avdl/keybase1/ephemeral.avdl"><code>keybase1/ephemeral.avdl</code></a> 协议文件定义了我们在发布临时密钥时签名的对象。这是一个设备 EK 声明的布局。相应的用户和团队对象几乎相同。</p>
 <pre class="codehilite"><code>  record DeviceEkMetadata {
     KID kid;
     Time ctime;
@@ -463,102 +392,32 @@ objects are almost identical.</p>
 </code></pre>
 
 <ul>
-<li><code>kid</code> is the public half of a Curve25519 keypair derived from the ephemeral
-  secret. Given the ephemeral secret <code>s</code>, the private half of the keypair is
-  <code>HMAC-SHA256(key=s, msg="Derived-Ephemeral-Device-NaCl-DH-1")</code>, and the
-  public half is the <code>crypto_scalarmult_base</code> of the private half.</li>
-<li><code>ctime</code> is the time when the seed was created. Rather than using its own
-  clock, which could cause bad behavior on machines with weird clocks, the
-  client fetches the latest root of the Keybase Merkle tree and uses the
-  <code>ctime</code> from there.</li>
-<li><code>deviceCtime</code> is the creation time according to the local device clock. The
-  client falls back to this if it fails to fetch a Merkle tree root, enabling
-  offline device key deletion.</li>
-<li><code>hashMeta</code> is the SHA256 hash of the Merkle tree root that provided <code>ctime</code>.</li>
-<li><code>generation</code> is an incrementing counter of all EKs this device has issued so
-  far.</li>
-<li><code>currentDeviceEkMetadata</code> describes the new deviceEK that this statement is
-  publishing.</li>
+<li><code>kid</code> 是从临时秘密派生的 Curve25519 密钥对的公钥部分。给定临时秘密 <code>s</code>，密钥对的私钥部分是 <code>HMAC-SHA256(key=s, msg="Derived-Ephemeral-Device-NaCl-DH-1")</code>，公钥部分是私钥部分的 <code>crypto_scalarmult_base</code>。</li>
+<li><code>ctime</code> 是种子创建的时间。客户端获取 Keybase Merkle 树的最新根并使用那里的 <code>ctime</code>，而不是使用自己的时钟（这可能会在时钟奇怪的机器上导致不良行为）。</li>
+<li><code>deviceCtime</code> 是根据本地设备时钟的创建时间。如果客户端无法获取 Merkle 树根，则回退到此时间，从而启用离线设备密钥删除。</li>
+<li><code>hashMeta</code> 是提供 <code>ctime</code> 的 Merkle 树根的 SHA256 哈希。</li>
+<li><code>generation</code> 是此设备迄今为止发布的所有 EK 的递增计数器。</li>
+<li><code>currentDeviceEkMetadata</code> 描述了此声明发布的具体设备 EK。</li>
 </ul>
-<p>Device EK statements are signed by the device's long term signing key. User EK
-statements are signed by the current per-user long term signing key, given in
-the user's signature chain. And team EK statements are signed by the current
-per-team signing key, given in the team's signature chain. Although device
-long-term keys never rotate, per-user and per-team keys do rotate when a device
-is revoked or when a team member is removed. As part of that rotation, clients
-also rotate the user/team EK and issue a new EK statement signed by the new
-long-term key.</p>
-<p>When publishing new user EKs and team EKs, the publishing client encrypts a
-copy of the ephemeral secret for every device or team member that isn't stale,
-and it uploads those ciphertexts along with the signed EK statement. Clients
-will also make another encrypted copy of the current EK when provisioning a new
-device, or when adding a new member to a team. When decrypting an EK secret,
-clients check the secret's derived Curve25519 public key against the <code>kid</code>
-field in the associated EK statement.</p>
-<h2 id="expiration-vs-deletion">Expiration vs Deletion</h2>
-<p>Ephemeral ciphertexts are never valid for more than a week, but clients need to
-keep ephemeral keys somewhat longer. Consider the following scenario: Your
-laptop publishes a device EK (<code>laptop_dek</code>) and then goes offline for six days.
-On day 6, your desktop publishes a new user EK (<code>uek</code>), and it encrypts a copy
-of <code>uek</code>'s secret for the 6-days-old-but-still-valid <code>laptop_dek</code>. So although
-<code>laptop_dek</code> was originally intended to expire on day 7, it might be needed to
-decrypt <code>uek</code>'s secret as late as day 13.</p>
-<p>One way to solve this issue could be to postpone deletion based on how the key
-was used, waiting until there aren't any valid ciphertexts left that might need
-to be decrypted. That's doable within the key hierarchy with the server's help,
-but it's impractical when keys are used at the application level. It would also
-require clients to be online to delete anything.</p>
-<p>Instead, we apply the following rule: Keys are deleted one week after the
-<em>following</em> generation is issued. Since encryption always uses the latest EK
-available, and no ephemeral ciphertext is valid for longer than a week, that
-guarantees that secret keys will stick around as long as any ciphertexts
-encrypted for them. In the typical case where a new EK is issued daily, this
-rule means that secret keys get deleted after 8 days instead of 7. In the case
-where no new EK is issued for several days, deletion is postponed by several
-days in turn. We cap this extension at the maximum staleness window (three
-additional months), at which point the device or user is considered stale.</p>
-<h2 id="authentication-and-repudiability">Authentication and Repudiability</h2>
-<p>In both the exploding case and the ordinary case, communication within a group
-has three options for authenticity:</p>
+<p>设备 EK 声明由设备的长期签名密钥签名。用户 EK 声明由当前每用户长期签名密钥签名，该密钥在用户的签名链中给出。团队 EK 声明由当前每团队签名密钥签名，该密钥在团队的签名链中给出。虽然设备长期密钥从不轮换，但当设备被撤销或团队成员被移除时，每用户和每团队密钥会轮换。作为轮换的一部分，客户端还会轮换用户/团队 EK 并发布由新长期密钥签名的新 EK 声明。</p>
+<p>在发布新的用户 EK 和团队 EK 时，发布客户端为每个未过期的设备或团队成员加密一份临时秘密的副本，并将这些密文连同签名的 EK 声明一起上传。在配置新设备或向团队添加新成员时，客户端还会制作当前 EK 的另一个加密副本。在解密 EK 秘密时，客户端根据关联 EK 声明中的 <code>kid</code> 字段检查秘密派生的 Curve25519 公钥。</p>
+<h2 id="过期与删除">过期与删除</h2>
+<p>临时密文的有效期绝不会超过一周，但客户端需要将临时密钥保留稍长的时间。考虑以下场景：您的笔记本电脑发布了一个设备 EK (<code>laptop_dek</code>)，然后离线六天。在第 6 天，您的台式机发布了一个新的用户 EK (<code>uek</code>)，并为这个使用了 6 天但仍然有效的 <code>laptop_dek</code> 加密了一份 <code>uek</code> 的秘密副本。因此，虽然 <code>laptop_dek</code> 最初打算在第 7 天过期，但它可能在第 13 天才被需要用来解密 <code>uek</code> 的秘密。</p>
+<p>解决这个问题的一种方法可能是根据密钥的使用情况推迟删除，直到没有剩余的有效密文需要解密为止。在服务器的帮助下，这在密钥层次结构中是可行的，但在应用层使用密钥时是不切实际的。这也要求客户端在线才能删除任何东西。</p>
+<p>相反，我们应用以下规则：密钥在<em>下一</em>代发布一周后被删除。由于加密总是使用可用的最新 EK，并且没有临时密文的有效期超过一周，这保证了私钥会与为它们加密的任何密文一样长久地存在。在每天发布新 EK 的典型情况下，此规则意味着私钥在 8 天而不是 7 天后被删除。在几天没有发布新 EK 的情况下，删除也会相应推迟几天。我们将此延期限制在最大陈旧窗口（额外三个月），此时设备或用户被视为陈旧。</p>
+<h2 id="认证与可否认性">认证与可否认性</h2>
+<p>在阅后即焚和普通情况下，群组内的通信有三种认证选项：</p>
 <ol>
-<li>"One MAC." Use a shared team encryption key to MAC messages.</li>
-<li>"Pairwise MACs." Make a separate MAC between the sender and each member of
-   the team, either for each message or for a short-lived signing key. This is
-   what Signal does.</li>
-<li>"Signing." Sign messages with the sender's long term signing keypair. This
-   is what Keybase chat does.</li>
+<li>"单一 MAC (One MAC)." 使用共享团队加密密钥对消息进行 MAC。</li>
+<li>"成对 MAC (Pairwise MACs)." 在发送者和团队的每个成员之间制作单独的 MAC，可以针对每条消息或针对短期签名密钥。这就是 Signal 所做的。</li>
+<li>"签名 (Signing)." 使用发送者的长期签名密钥对消息进行签名。这就是 Keybase 聊天所做的。</li>
 </ol>
-<p>The one-MAC approach doesn't provide "sender-specific authentication". That is,
-the members of the team, who all share the encryption key, can impersonate each
-other within the team. Although some designs consider this a repudiability
-feature, it becomes a bigger problem as teams get larger, and as the members
-are less likely to fully trust one another. Keybase avoids the one-MAC approach
-for that reason.</p>
-<p>The tradeoff between pairwise-MACs and signing is less clear cut. The
-pairwise-MACs approach provides repudiability, since pairwise authenticators
-are forgeable. Public key signing isn't repudiable. On the other hand, signing
-is cheaper in large groups, because you only need to sign a message once. Also,
-signing is more flexible: If new members are added to the group in the future,
-they will be able to validate old signatures, but not old pairwise-MACs. That
-membership flexibility is the decisive reason that Keybase uses signing to
-authenticate files and chat messages, at the cost of repudiability.</p>
-<p>Exploding messages can make a different tradeoff here, however. Marking a
-message as exploding means the sender doesn't care very much about letting
-future team members read it, or perhaps the sender deliberately wants to avoid
-letting future team members read it. Exploding messages might also be more
-sensitive, and so the sender might care more about repudiability. (We don't
-know of any cases in the real world where someone has used repudiability as a
-defense, but it could happen!) For those reasons, Keybase uses
-pairwise-MACs instead of signing for exploding messages in small teams (those with
-100 members or fewer).</p>
-<p>As the key for these pairwise MACs, we use Diffie-Hellman output from the
-sender and each recipient's long term device encryption keys, mixed with a
-context string. This mirrors our approach with regular chat messages and
-exploding messages in large teams, where we use device long term signing keys.</p>
-<h2 id="chat-protocol-example">Chat Protocol Example</h2>
-<p>Here's an example message with pairwise MACs, formatted as JSON for
-readability. Fields that differ between regular messages and exploding messages
-are commented:</p>
+<p>单一 MAC 方法不提供“特定于发送者的认证”。也就是说，共享加密密钥的团队成员可以在团队内相互冒充。虽然有些设计认为这是一种可否认性功能，但随着团队变大，以及成员之间不太可能完全信任彼此，这成为一个更大的问题。出于这个原因，Keybase 避免使用单一 MAC 方法。</p>
+<p>成对 MAC 和签名之间的权衡不那么明确。成对 MAC 方法提供可否认性，因为成对认证器是可伪造的。公钥签名不可否认。另一方面，在大型群组中签名更便宜，因为您只需要对消息签名一次。此外，签名更灵活：如果将来有新成员加入群组，他们将能够验证旧签名，但不能验证旧的成对 MAC。这种成员资格的灵活性是 Keybase 使用签名来认证文件和聊天消息的决定性原因，代价是失去了可否认性。</p>
+<p>然而，阅后即焚消息在这里可以做出不同的权衡。将消息标记为阅后即焚意味着发送者不太在乎让未来的团队成员阅读它，或者也许发送者故意想避免让未来的团队成员阅读它。阅后即焚消息也可能更敏感，因此发送者可能更在乎可否认性。（我们不知道现实世界中有谁使用可否认性作为辩护的案例，但这可能会发生！）出于这些原因，Keybase 在小型团队（100 名成员或更少）中对阅后即焚消息使用成对 MAC 而不是签名。</p>
+<p>作为这些成对 MAC 的密钥，我们使用发送者和每个接收者的长期设备加密密钥的 Diffie-Hellman 输出，并与上下文宁字符串混合。这反映了我们在常规聊天消息和大型团队阅后即焚消息中的方法，在这些情况下我们使用设备长期签名密钥。</p>
+<h2 id="聊天协议示例">聊天协议示例</h2>
+<p>这是一个带有成对 MAC 的示例消息，格式化为 JSON 以便于阅读。常规消息和阅后即焚消息之间不同的字段已注释：</p>
 <pre class="codehilite"><code class="language-js">{
   &quot;version&quot;: 4,
   &quot;clientHeader&quot;: {
@@ -591,24 +450,19 @@ are commented:</p>
       &quot;composeTime&quot;: 1529342305341
     },
 
-    // The &quot;ephemeral metadata&quot; which indicates that this message is exploding.
-    // When this section is present, the client uses an ephemeral key rather
-    // than the team's long term key decrypt the body.
+    // &quot;临时元数据&quot;，指示此消息是阅后即焚的。
+    // 当存在此部分时，客户端使用临时密钥而不是团队的长期密钥来解密主体。
     &quot;em&quot;: {
-      // The &quot;lifetime&quot; of the message, in seconds. 604800 seconds is one week.
+      // 消息的&quot;生命周期&quot;，以秒为单位。604800 秒是一周。
       &quot;l&quot;: 604800,
-      // The &quot;generation&quot; of the ephemeral key used to encrypt the body.
+      // 用于加密主体的临时密钥的&quot;代数&quot;。
       &quot;g&quot;: 1
     },
 
-    // The &quot;pariwise MACs&quot; used to authenticate this message, paired with the
-    // public key of the recipient device each MAC is intended for. When this
-    // section is present, recipients look up the sending device's public
-    // encryption key via the &quot;sender&quot; and &quot;senderDevice&quot; fields above, and
-    // they use it to validate the MAC intended for their device. In this mode,
-    // the &quot;verifyKey&quot; is a public constant, corresponding to the all-zeroes
-    // private key, and the header ciphertext by itself doesn't provide any
-    // authenticity.
+    // 用于认证此消息的&quot;成对 MAC&quot;，与每个 MAC 预期的接收者设备的公钥配对。
+    // 当存在此部分时，接收者通过上面的 &quot;sender&quot; 和 &quot;senderDevice&quot; 字段查找发送设备的公钥，
+    // 并使用它来验证用于其设备的 MAC。在此模式下，&quot;verifyKey&quot; 是一个公共常量，
+    // 对应于全零私钥，头部密文本身不提供任何真实性。
     &quot;pm&quot;: {
       &quot;012105d72ff6d356715621baebcf5e138b15414232c189ef9925ccbe0f36b79693330a&quot;:
         &quot;+4MjACPtaegHy+YwA9Gv3S0UOGaht/l5K2l/KbzNNus=&quot;,
@@ -647,55 +501,42 @@ are commented:</p>
     }
   },
 
-  // Header metadata is always encrypted with the team's long-term key indicated
-  // by &quot;keyGeneration&quot; below, even in exploding messages. It's also signed
-  // internally by the private half of the &quot;verifyKey&quot;. The decrypted metadata
-  // contains a hash of the body ciphertext, so that the body can be deleted
-  // independently.
+  // 头部元数据总是用下面 &quot;keyGeneration&quot; 指示的团队长期密钥加密，
+  // 即使在阅后即焚消息中也是如此。它还在内部由 &quot;verifyKey&quot; 的私钥部分签名。
+  // 解密的元数据包含主体密文的哈希，以便主体可以独立删除。
   &quot;headerCiphertext&quot;: {
     &quot;v&quot;: 1,
     &quot;e&quot;: &quot;dextrPkwdy/Y6Fk34UMNeKIujFlbFN+AU/FTupb13515mC4fWO6XGBQk2EoOptbQBZ2ZVN/2CF+xNLIXB60oHWNW6IwwcdWQjkwnayhjaKx5Ux6osysd9ssDJE6LMdOQw9IsOT3foXhHtTapXAoOkqdRErpPTle1YM6wk1arxogB8hcezTNSIdIhgH0V0HkrqBB1CV4Cn+m/4MmECP3czAt0iRIeUY5RQvthVHyL79GiFTExV3JGWgEg3YxNuhrPhKmVrM4Q3zmzY1f7DSQgS0sni8SsbQR808hD675briUho0ZcD2KjDeDqF6JMyyLd1uzZs9hBCrFxYeAf+hHOqQdEabdGdAcCfROeXzY+z+tDQtJ90G33pMJhrCH8OfUGGAxGHLMwtNwNmxcWNSjJ/HyFK0r3w1PzmUxFD2wnsv2JbGoRprtQV/umLHbj9ahxbbjOl7Xw4wiTlIny6pA1FD0iTaTdYFJKkDO6RsCuJlkdrUYuDjYxpK5MmZEGsPyCXY5bGNloA7nI7U4Z4pt6Vo7uBdEdT+WTT/bEi/oU80RrzzdQruYGBkt3BJAi/6Imz+X/PUh2HEqLeA2sqpJN7auXyVYpxf0v3fGnuM3sEM91ZqXQzo1otfpnyT2Cqw33zYpFUPk8K6qH8U4NrKW7rSpuvHwU6Ar1wCWHfrl2bZ2IEHP18y36l2u2ivSNu02Kra3Sh50Pvw2PkGOEEpTGvPt1eboSNu6h5U1L&quot;,
     &quot;n&quot;: &quot;OdPwtDykhMkegzPjyFxN9Q==&quot;
   },
 
-  // In regular chat messages, the body is encrypted with the same key as the
-  // header. In exploding chat messages (indicated by the &quot;em&quot; field above), the
-  // body is encrypted with an ephemeral key.
+  // 在常规聊天消息中，主体使用与头部相同的密钥加密。
+  // 在阅后即焚聊天消息中（由上面的 &quot;em&quot; 字段指示），主体使用临时密钥加密。
   &quot;bodyCiphertext&quot;: {
     &quot;v&quot;: 1,
     &quot;e&quot;: &quot;7U/UIEeq+CHLAhl3qwdFTuZ3wL7g7YHfJjMJFhnLTFer4Bx8D1nx4EgxsMYNrZHGbUSTQhlVd6Ek2TVeMqh43YgGm2YapKdSKSOQ5Ug=&quot;,
     &quot;n&quot;: &quot;0qjVyFRig0RWr5VkcPuF9EXJMeJu1TE3&quot;
   },
 
-  // In messages with pairwise MACs (like this one), this ed25519 public
-  // signing key is generated from a private key of all zeroes. Otherwise the
-  // recipient must verify that it's the long-term signing key of the sending
-  // device.
+  // 在带有成对 MAC 的消息中（像这条），这个 ed25519 公共签名密钥
+  // 是从全零私钥生成的。否则接收者必须验证它是发送设备的长期签名密钥。
   &quot;verifyKey&quot;: &quot;ASA7aie8zrakLWKjqNAqbw1zZTIVdx3iQ6Y6wEihi1naKQo=&quot;,
 
-  // The generation of the team shared encryption key that the header is
-  // encrypted with. In regular, non-exploding messages, the body is also
-  // encrypted with this key.
+  // 头部加密所使用的团队共享加密密钥的代数。
+  // 在常规的非阅后即焚消息中，主体也使用此密钥加密。
   &quot;keyGeneration&quot;: 1
 }
 </code></pre>
 
-<h2 id="directions-for-future-work">Directions for Future Work</h2>
-<p>The key schedule could expand to include more fine-grained keys, for example
-keys that expire after one day or one hour. This could reduce the gap between
-the double ratchet design and our static design. We would need to decide how
-these different "tiers" of key lifetimes interact. (For example, if a message
-is supposed to be encrypted for a 1-hour key, is it ok to silently fall back to
-a 1-week key for some recipients? Or should frequently-offline devices be
-excluded from the shortest-lived messages?) We would also need to be careful
-not to wake up too frequently on mobile devices.</p>
+<h2 id="未来工作方向">未来工作方向</h2>
+<p>密钥计划可以扩展到包括更细粒度的密钥，例如一天或一小时过期的密钥。这可以减少双棘轮设计和我们的静态设计之间的差距。我们需要决定这些不同“层级”的密钥生命周期如何交互。（例如，如果一条消息应该用 1 小时密钥加密，是否可以对某些接收者默默地回退到 1 周密钥？或者是否应该将经常离线的设备排除在最短命的消息之外？）我们还需要小心不要在移动设备上过于频繁地唤醒。</p>
             </section>
         </div>
     </div>
         <footer class="footer" data-footer-label="下一章">
         <a class="footer__link" href="/docs/chat/link-previews">
             <div class="footer__inner">
-            <p class="footer__title" data-chapter-count="D">Link Previews</p>
+            <p class="footer__title" data-chapter-count="D">链接预览</p>
                 
             </div>
             <img alt="" class="footer__image" src="/static/img/illos/docs.jpg" loading="lazy" width="870"/>

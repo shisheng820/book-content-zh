@@ -7,42 +7,31 @@
 
 <md>
 
-## Getting Started with Keybase Pages
+## Keybase Pages 入门
 
-Keybase Pages serves static sites from the Keybase Filesystem or Keybase Git,
-under your own domain, with HTTPS certs issued by [Let's
-Encrypt](https://letsencrypt.org/docs/faq/).
+Keybase Pages 从 Keybase 文件系统或 Keybase Git 提供静态站点服务，使用你自己的域名，并带有由 [Let's Encrypt](https://letsencrypt.org/docs/faq/) 颁发的 HTTPS 证书。
 
-You can host a static site using Keybase Pages with two simple steps:
+你可以通过两个简单的步骤使用 Keybase Pages 托管静态站点：
 
-1. Put the site content into the Keybase Filesystem or Keybase Git, in a folder
-(or repo) readable by our bot user #{botname}.
+1. 将站点内容放入 Keybase 文件系统或 Keybase Git 中，放在我们的机器人用户 #{botname} 可读的文件夹（或仓库）中。
 
-2. Configure 2 DNS records for your domain to 1) direct traffic for the
-domain to the Keybase Pages servers, and 2) tell the Keybase Pages servers
-where to look for the site content.
+2. 配置你的域名的 2 个 DNS 记录，以 1) 将域名的流量引导至 Keybase Pages 服务器，以及 2) 告诉 Keybase Pages 服务器去哪里查找站点内容。
 
-### Prepare or Update the Site
+### 准备或更新站点
 
-The simplest way to prepare a site is to copy a directory with static site
-content into a folder in Keybase Filesystem. This can be simply your public
-folder (`/keybase/public/#{yername}`), or a non-public folder that `#{botname}`
-has read access to. For example, `/keybase/private/#{yername},#{botname}` or 
-`/keybase/team/aclu.bots` (assuming #{botname} is a reader in `aclu.bots`).
+准备站点最简单的方法是将带有静态站点内容的目录复制到 Keybase 文件系统的一个文件夹中。这可以简单地是你的公开文件夹 (`/keybase/public/#{yername}`)，或者是一个 `#{botname}` 有读取权限的非公开文件夹。例如，`/keybase/private/#{yername},#{botname}` 或 `/keybase/team/aclu.bots`（假设 #{botname} 是 `aclu.bots` 的读取者）。
 
-If you prefer to deploy with git for easy atomic updates, you can also push
-your static site into a git repo. For example,
-`keybase://private/#{yername},#{botname}/my-site.git`.
+如果你更喜欢使用 git 进行部署以便轻松进行原子更新，你也可以将静态站点推送到 git 仓库中。例如，`keybase://private/#{yername},#{botname}/my-site.git`。
 
-For example, to create a hello-world site in a shared folder with `#{botname}`:
+例如，要在与 `#{botname}` 共享的文件夹中创建一个 hello-world 站点：
 
 </md>
   <div class="well">
     <div class="form-group">
-      <label for="populate-site-with">Populate your site with ... </label>
+      <label for="populate-site-with">填充你的站点使用 ... </label>
       <select class="form-control auto-focus"
         name="populate-site-with" id="populate-site-with">
-        <option value="kbfs" selected>KBFS Path</option> 
+        <option value="kbfs" selected>KBFS 路径</option> 
         <option value="git">Git</option>
       </select>
     </div>
@@ -59,31 +48,21 @@ git push kbp master</pre>
   </div>
 <md>
 
-### DNS Configuration
+### DNS 配置
 
-To delegate traffic handling to Keybase Pages, you'll need to configure your
-domain to point to the Keybase Pages endpoint #{kbpdomain}. This is usually
-done with a `CNAME` record. But if your DNS service supports `A`/`AAAA` `ALIAS`
-records, you may use that as well.
+要将流量处理委托给 Keybase Pages，你需要配置你的域名指向 Keybase Pages 端点 #{kbpdomain}。这通常通过 `CNAME` 记录完成。但如果你的 DNS 服务支持 `A`/`AAAA` `ALIAS` 记录，你也可以使用那个。
 
-A second record is needed to specify the site's root so that Keybase Pages
-servers know where to serve the static site from. As described above, two types
-of roots are supported: KBFS paths and Git repos hosted on Keybase. This is
-done with a single TXT record on the `_keybase_pages.` subdomain under the
-domain that the site is on. For example, if you have a static site on
-`https://example.com`, you need this TXT record on `_keybase_pages.example.com`
-(in addition to the CNAME record on `example.com`). The value of the TXT record
-should be in one of the following formats:
+还需要第二个记录来指定站点的根目录，以便 Keybase Pages 服务器知道从哪里提供静态站点服务。如上所述，支持两种类型的根目录：KBFS 路径和托管在 Keybase 上的 Git 仓库。这是通过在站点所在域名下的 `_keybase_pages.` 子域名上的单个 TXT 记录完成的。例如，如果你在 `https://example.com` 上有一个静态站点，你需要在 `_keybase_pages.example.com` 上有这个 TXT 记录（除了 `example.com` 上的 CNAME 记录）。TXT 记录的值应为以下格式之一：
 
-1. KBFS Path: `"kbp=<kbfs_path>"`
-2. Git Repo: `"kbp=git@keybase:<private|public|team>/<folder_name>/<repo_name>"`
+1. KBFS 路径：`"kbp=<kbfs_path>"`
+2. Git 仓库：`"kbp=git@keybase:<private|public|team>/<folder_name>/<repo_name>"`
 
-You can generate the DNS records for your site using the following tool:
+你可以使用以下工具为你的站点生成 DNS 记录：
 
 </md>
   <div class="well">
     <div class="form-group">
-      <label for="user-domain-name">Domain Name:</label>
+      <label for="user-domain-name">域名：</label>
       <input class="form-control auto-focus" id="user-domain-name"
                autocapitalize="off" autocorrect="off" spellcheck="false"
                value="example.com" />
@@ -93,12 +72,9 @@ You can generate the DNS records for your site using the following tool:
   </div>
 <md>
 
-Note that we are using a 5-minute TTL here. After you are sure about your
-configuration, you can change it into something larger e.g. 3600 (1 hour).
+注意，我们这里使用的是 5 分钟的 TTL。在你确定配置无误后，你可以将其更改为更大的值，例如 3600（1 小时）。
 
-Every domain registrar has a different UI for DNS configuration, so it's easy
-to get this wrong. To verify the DNS configuration you may use `dig` to query
-the configured domain. You should see something like this:
+每个域名注册商都有不同的 DNS 配置界面，所以很容易弄错。为了验证 DNS 配置，你可以使用 `dig` 查询配置的域名。你应该看到类似这样的内容：
 
 </md>
   <pre id='dig-cname'>
@@ -107,24 +83,17 @@ the configured domain. You should see something like this:
   </pre>
 <md>
 
-Note that this may not show up immediately, since there's generally a few
-minutes delay in DNS propagation for newly added records. If you are updating
-an existing record, the existing record's TTL is the upper bound of the
-propagation delay.
+注意，这可能不会立即显示，因为新添加的记录通常会有几分钟的 DNS 传播延迟。如果你正在更新现有记录，现有记录的 TTL 是传播延迟的上限。
 
 </md>
   <p>
-    After the DNS propagation, your site should be up at <a id="site-url"></a> 🎉
+    DNS 传播后，你的站点应该可以在 <a id="site-url"></a> 访问了 🎉
   </p>
 <md>
 
-### Access Controls
+### 访问控制
 
-By default, Keybase Pages enables reading and listing for the entire site. If
-you prefer to turn off directory listing, or want a simple ACL control using
-[HTTP Basic Authentication](https://tools.ietf.org/html/rfc2617), you can
-provide an optional `.kbp_config` in your site root. See the [.kbp_config
-doc](/docs/kbp/kbp_config) for more details.
+默认情况下，Keybase Pages 启用整个站点的读取和列表功能。如果你更喜欢关闭目录列表，或者想要使用 [HTTP 基本认证](https://tools.ietf.org/html/rfc2617) 进行简单的 ACL 控制，你可以在站点根目录下提供一个可选的 `.kbp_config`。查看 [.kbp_config 文档](/docs/kbp/kbp_config) 获取更多详情。
 
 </md>
 

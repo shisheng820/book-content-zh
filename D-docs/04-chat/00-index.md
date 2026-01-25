@@ -1,12 +1,10 @@
-# Chat
+# 聊天
 
-Here is the technical documentation for chat:
+这里是聊天的技术文档：
 
-- [Crypto](/docs/chat/crypto) describes the use of cryptography in chat.
-- [Exploding Messages](/docs/chat/ephemeral) explains the technical details of exploding
-  messages.
-- [Link Previews](/docs/chat/linkpreviews) discusses how privacy is respected when posting
-  URLs that can be previewed inline.
-- [Location Sharing](/docs/chat/location) discusses how the location sharing feature is implemented.
-- [Coin Flip](/docs/chat/coin-flip) describes the /flip coin flipping protocol.
-- [Phone Numbers and Emails](/docs/chat/phones-and-emails) describes how users can start conversations with phone numbers or emails.
+- [加密](/docs/chat/crypto) 描述了聊天中密码学的使用。
+- [阅后即焚](/docs/chat/ephemeral) 解释了阅后即焚消息的技术细节。
+- [链接预览](/docs/chat/linkpreviews) 讨论了在发布可内联预览的 URL 时如何尊重隐私。
+- [位置共享](/docs/chat/location) 讨论了位置共享功能的实现方式。
+- [抛硬币](/docs/chat/coin-flip) 描述了 /flip 抛硬币协议。
+- [电话号码和电子邮件](/docs/chat/phones-and-emails) 描述了用户如何通过电话号码或电子邮件发起对话。

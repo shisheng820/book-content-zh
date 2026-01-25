@@ -1,89 +1,53 @@
-# Keybase client-side architecture
 
-The Keybase client is a command-line application written in
-[Go](https://golang.org/). Today it runs on macOS, Linux and Windows.
-The code lives in the
-[keybase/client](https://github.com/keybase/client) GitHub repository.
+# Keybase 客户端架构
 
-## Client and Service split
+Keybase 客户端是一个用 [Go](https://golang.org/) 编写的命令行应用程序。目前它运行在 macOS、Linux 和 Windows 上。
+代码位于 [keybase/client](https://github.com/keybase/client) GitHub 仓库中。
 
-The Keybase binary can act as both a command-line tool and a long-running
-"service" — each time you run a command, both the tool ("client") and the
-service are involved. The service stays active after each command, whereas a
-separate client process is created and terminated for each command. If there's
-work to be done in response to a command (going out on to the network, running
-PGP, etc), it's done by the service.
+## 客户端与服务的拆分
 
-On Linux, the service is started in the background when you run a client
-command for the first time, and subsequent client commands check
-`$XDG_RUNTIME_DIR/keybased.sock` for an active service and use it if one
-is listening there — this is called "autofork" mode.
+Keybase 二进制文件既可以作为命令行工具，也可以作为长期运行的“服务”——每次你运行一个命令时，工具（“客户端”）和服务都会参与其中。服务在每个命令之后保持活动状态，而每个命令都会创建一个单独的客户端进程并终止。如果需要响应命令执行工作（访问网络、运行 PGP 等），则由服务完成。
 
-On macOS, the service is started by `launchd` at boot.
+在 Linux 上，当你第一次运行客户端命令时，服务会在后台启动，后续的客户端命令会检查 `$XDG_RUNTIME_DIR/keybased.sock` 是否有活动服务，如果有则使用它——这被称为 "autofork" 模式。
 
-For debugging, you might find it helpful to use `--standalone` mode, which
-just runs everything in one process.
+在 macOS 上，服务由 `launchd` 在启动时启动。
 
-For our forthcoming KBFS project, the `kbfsfuse` binary will act as a client
-that talks to the regular Keybase service over the long-running socket.
+为了调试，你可能会发现使用 `--standalone` 模式很有帮助，它只是在一个进程中运行所有内容。
 
-For iOS and Android, apps can't spawn extra threads, so we'll be using
-standalone mode there. We can't even have an iOS/Android process and
-a separate Go process, so we'll need to embed a Go runtime into the single
-app process and pass messages to it.
+对于我们即将推出的 KBFS 项目，`kbfsfuse` 二进制文件将作为一个客户端，通过长期运行的套接字与常规 Keybase 服务通信。
 
-For macOS and Electron desktop GUI clients, we'll use separate processes just
-as we do with the command-line clients.
+对于 iOS 和 Android，应用程序无法生成额外的线程，因此我们将在那里使用独立模式。我们甚至不能有一个 iOS/Android 进程和一个单独的 Go 进程，所以我们需要将 Go 运行时嵌入到单个应用程序进程中并向其传递消息。
 
-## Secrets
+对于 macOS 和 Electron 桌面 GUI 客户端，我们将使用单独的进程，就像我们对命令行客户端所做的那样。
 
-The service caches the user's passphrase to avoid asking the user for it every
-time a command is run (so if you use `--standalone` you'll have to enter it
-every time).
+## 机密信息 (Secrets)
 
-The secrets being cached are:
+服务缓存用户的口令，以避免每次运行命令时都询问用户（因此如果你使用 `--standalone`，你必须每次都输入它）。
 
-- `libkb.PassphraseStream`: an [scrypt](https://en.wikipedia.org/wiki/Scrypt)
-  of the user's Keybase passphrase, cached in the service as
-  `libkb.PassphraseStreamCache`.
-- A login session salt cached as `libkb.LoginSession.Salt()`.
+被缓存的机密信息是：
 
-## Interacting with GPG
+- `libkb.PassphraseStream`: 用户 Keybase 口令的 [scrypt](https://en.wikipedia.org/wiki/Scrypt)，作为 `libkb.PassphraseStreamCache` 缓存在服务中。
+- 一个登录会话盐，缓存为 `libkb.LoginSession.Salt()`。
 
-We try to run crypto operations internally, using Go's `openpgp` module, but
-there are some situations (such as importing local keys) that require shelling
-out to GPG — you can run `keybase help gpg` to learn more.
+## 与 GPG 交互
 
-## RPC protocol
+我们尝试使用 Go 的 `openpgp` 模块在内部运行加密操作，但在某些情况下（例如导入本地密钥）需要调用外部 GPG——你可以运行 `keybase help gpg` 来了解更多信息。
 
-The client and service communicate by using an RPC protocol called
-[framed-msgpack-rpc](https://github.com/maxtaco/go-framed-msgpack-rpc) (which
-is a version of [msgpack-rpc](https://github.com/msgpack-rpc/msgpack-rpc) with
-message framing added). This is a duplex protocol — the client opens an RPC
-connection to the service and makes function calls, and the service can do the
-same back to the client.
+## RPC 协议
 
-Passing the argument `--local-rpc-debug-unsafe=csv`
-allows you to see the content of these RPC transactions. (It's "unsafe"
-because private data is emitted to the logs.)
+客户端和服务通过使用一种称为 [framed-msgpack-rpc](https://github.com/maxtaco/go-framed-msgpack-rpc) 的 RPC 协议进行通信（这是添加了消息分帧的 [msgpack-rpc](https://github.com/msgpack-rpc/msgpack-rpc) 版本）。这是一个双工协议——客户端打开到服务的 RPC 连接并进行函数调用，服务也可以对客户端做同样的事情。
 
-## Protocol bindings
+传递参数 `--local-rpc-debug-unsafe=csv` 允许你查看这些 RPC 事务的内容。（它是“不安全”的，因为私有数据会被输出到日志中。）
 
-We use a language-independent protocol description format to define all of the
-available commands and their arguments and return values. The protocol format
-is called [AVDL](http://avro.apache.org/docs/1.7.5/idl.html) and lives in
-[`client/protocol/avdl/*`](https://github.com/keybase/client/tree/master/protocol/avdl).
+## 协议绑定
 
-We automatically generate per-language bindings (objc, JS, Golang) from this
-protocol. For example, the generated Golang bindings are written to
-[`client/go/protocol/keybase_v1.go`](https://github.com/keybase/client/blob/master/go/protocol/keybase_v1.go)
-and imported into client code as `keybase1`.
+我们使用与语言无关的协议描述格式来定义所有可用的命令及其参数和返回值。协议格式称为 [AVDL](http://avro.apache.org/docs/1.7.5/idl.html)，位于 [`client/protocol/avdl/*`](https://github.com/keybase/client/tree/master/protocol/avdl)。
 
-The reason to use a language-independent protocol is that we're expecting to
-have command-line, GUI, and mobile clients using different programming
-languages and want to be able to update bindings in one place.
+我们根据此协议自动生成每种语言的绑定（objc, JS, Golang）。例如，生成的 Golang 绑定写入 [`client/go/protocol/keybase_v1.go`](https://github.com/keybase/client/blob/master/go/protocol/keybase_v1.go) 并作为 `keybase1` 导入到客户端代码中。
 
-Calling a generated function looks like this in Golang:
+使用与语言无关的协议的原因是，我们期望拥有使用不同编程语言的命令行、GUI 和移动客户端，并希望能够在一个地方更新绑定。
+
+在 Golang 中调用生成的函数如下所示：
 
 ```go
 type CmdTrack struct {
@@ -112,53 +76,36 @@ func (v *CmdTrack) Run() error {
 }
 ```
 
-Here `GetTrackClient()` returns the `keybase1.TrackClient` generated function;
-`protocols` describes which RPC endpoints the client and service want to use
-during the request; `keybase1.TrackArg` is the binding-generated struct of
-arguments to `Track`; the return value of `Track` is of the built-in Golang
-type `error`. So `cli.Track` will run on the service, returning its result
-back to the client.
+这里 `GetTrackClient()` 返回 `keybase1.TrackClient` 生成的函数；`protocols` 描述了客户端和服务在请求期间希望使用哪些 RPC 端点；`keybase1.TrackArg` 是绑定生成的 `Track` 参数结构体；`Track` 的返回值是内置的 Golang 类型 `error`。所以 `cli.Track` 将在服务上运行，将其结果返回给客户端。
 
-### Adding a new function to the protocol
+### 向协议添加新函数
 
-If we wanted to add a new function to the `TrackClient`, we'd add its
-definition to [`client/protocol/avdl/track.avdl`](https://github.com/keybase/client/blob/master/protocol/avdl/track.avdl),
-and then run `make` in [`client/protocol`](https://github.com/keybase/client/tree/master/protocol/)
-with Java installed. (If we wanted to add a new protocol in a new AVDL file,
-we'd add it to the build-stamp section of [`client/protocol/Makefile`](https://github.com/keybase/client/blob/master/protocol/Makefile)
-too.)
+如果我们想向 `TrackClient` 添加一个新函数，我们将把它的定义添加到 [`client/protocol/avdl/track.avdl`](https://github.com/keybase/client/blob/master/protocol/avdl/track.avdl)，然后在安装了 Java 的情况下在 [`client/protocol`](https://github.com/keybase/client/tree/master/protocol/) 中运行 `make`。（如果我们想在一个新的 AVDL 文件中添加一个新的协议，我们也要把它添加到 [`client/protocol/Makefile`](https://github.com/keybase/client/blob/master/protocol/Makefile) 的 build-stamp 部分。）
 
-## General file structure
+## 一般文件结构
 
-- `client/cmd_*` - client-side handling of commands, e.g. `client/cmd_track.go`
-- `libkb/` - service-side lower-level library functions, e.g. `libkb/track.go`
-- `engine/*` - service-side higher-level library functions, e.g.
-  `engine/track*.go`. Most calls to the service are just wrappers around
-  engines that do most of the work. This is also where most of the testing
-  occurs.
+- `client/cmd_*` - 命令的客户端处理，例如 `client/cmd_track.go`
+- `libkb/` - 服务端低级库函数，例如 `libkb/track.go`
+- `engine/*` - 服务端高级库函数，例如 `engine/track*.go`。大多数对服务的调用只是围绕做大部分工作的引擎的包装器。这也是大多数测试发生的地方。
 
-## Messaging
+## 消息传递
 
-Since the service is doing the real work, it's going to be coming up with
-messages to show the user. Messages are sent to the client over the
-`NewLogUIProtocol`, itself described in `keybase1.LogUiProtocol`.
+由于服务正在做实际的工作，它将生成要向用户显示的消息。消息通过 `NewLogUIProtocol` 发送到客户端，其本身在 `keybase1.LogUiProtocol` 中描述。
 
-Logs (usually created with `G.Log.*()`) are automatically forwarded (again, via
-RPC) from the service to the client so that they can be seen in one place.
-You can turn on debugging logs with `keybase -d <command>`.
+日志（通常使用 `G.Log.*()` 创建）会自动从服务转发（再次通过 RPC）到客户端，以便可以在一个地方看到它们。你可以使用 `keybase -d <command>` 打开调试日志。
 
-## Tips for working with the code
+## 处理代码的技巧
 
-### Building
+### 构建
 
-On OSX, the supported way to build from source is with `brew`:
+在 OSX 上，从源代码构建的受支持方式是使用 `brew`：
 
 ```sh
 brew install go  # avoid building Go from source
 brew --build-from-source keybase/beta/kbstage
 ```
 
-On Linux you can build directly from the `client` repo:
+在 Linux 上，你可以直接从 `client` 仓库构建：
 
 ```sh
 git clone https://github.com/keybase/client

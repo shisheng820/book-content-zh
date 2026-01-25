@@ -1,35 +1,34 @@
-# Introducing the Keybase Filesystem
+# Keybase 文件系统介绍
 
-Alpha releases of the Keybase app are starting to come with a cryptographically secure file mount. It is brand new. And very different.
+Keybase 应用的 Alpha 版本开始附带一个加密安全的文件挂载。它是全新的，且与众不同。
 
+![终端一瞥 /keybase/public/chris](https://keybase.io/images/getting-started/terminal1.png)
 
-![a terminal glimpse into /keybase/public/chris](https://keybase.io/images/getting-started/terminal1.png)
+### 面向全世界的公开、签名目录
 
-### Public, signed directories for everyone in the world
-
-You can now write data in a very special place:
+您现在可以在一个非常特殊的地方写入数据：
 
 ```
 /keybase/public/yourname
 ```
 
-Or, in Windows:
+或者，在 Windows 中：
 
 ```
 k:\\public\\yourname
 ```
 
-*Every file you write in there is signed.* There's no manual signing process, no `tar`ing or `gzip`ing, no detached sigs. Instead, everything in this folder appears as plaintext files on everyone's computers. You can even open `/keybase/public/yourname<` in your Finder or Explorer and drag things in.
+*您在其中写入的每个文件均经过签名。* 无需手动签名过程，无需 `tar` 或 `gzip` 打包，也无需分离的签名文件。相反，该文件夹中的所有内容在每个人的计算机上均显示为明文文件。您甚至可以在 Finder 或资源管理器中打开 `/keybase/public/yourname` 并拖入文件。
 
-Here's my public folder:
+这是我的公开文件夹：
 
 ```
 /keybase/public/chris
 ```
 
-![what a mac user sees if they type `open /keybase/public/chris`](https://keybase.io/images/getting-started/finder2.png)
+![Mac 用户输入 `open /keybase/public/chris` 后看到的内容](https://keybase.io/images/getting-started/finder2.png)
 
-Or maybe you know me another way. In that case you can *assert* I've bi-directionally connected an identity to my keys. These folder names also work:
+或者，也许您通过其他方式认识我。在这种情况下，您可以*声明*我已将某个身份与我的密钥进行了双向连接。这些文件夹名称同样有效：
 
 ```
 /keybase/public/malgorithms@hackernews/
@@ -37,28 +36,28 @@ Or maybe you know me another way. In that case you can *assert* I've bi-directio
 /keybase/public/malgorithms@reddit/
 ```
 
-In my folder you'll find some techie things, such as my SSH public keys, my Signal app fingerprint, and some software I've manually verified and want to distribute safely to friends.
+在我的文件夹中，您会发现一些技术相关的内容，例如我的 SSH 公钥、我的 Signal 应用指纹，以及一些我已手动验证并希望安全分发给朋友的软件。
 
-What you put in your folder is up to you: the world will rejoice knowing they're seeing *the exact same bits* you're seeing, without any risk of server-side or man-in-the-middle evil.
+在您的文件夹中放置什么由您决定：全世界都会高兴地知道，他们看到的*正是您所看到的比特位*，没有任何服务端或中间人作恶的风险。
 
-When you access a *stranger's* folder (say, [mine](https://keybase.io/chris)),
+当您访问*陌生人*的文件夹（例如，[我的](https://keybase.io/chris)）时，
 
 ![/keybase/public/chris](https://keybase.io/images/getting-started/coyne-tracker.png)
 
-The popup shows plaintext and plain usernames. Here's the ugly work it hid:
+弹出窗口显示明文和普通用户名。以下是它隐藏的幕后繁杂工作：
 
-1. requesting that user's info from Keybase (keys + proofs)
-1. playing back the user's signed announcements & revocations
-1. actually scraping tweets, posts, profiles, etc.
-1. verifying the assertion you made passes, cryptographically
-1. if everything pans out, downloading blocks
-1. making sure the blocks are signed, and
-1. reconstructing the folder
-1. presenting as plain files
+1.  从 Keybase 请求该用户的信息（密钥 + 证明）
+2.  回放该用户签名的声明与吊销
+3.  实际抓取推文、帖子、个人资料等
+4.  以密码学方式验证您所做的声明是否通过
+5.  如果一切顺利，下载数据块
+6.  确保数据块已签名，并且
+7.  重建文件夹
+8.  以普通文件形式呈现
 
-Unlike Dropbox, Google Drive, and Box, there is no sync model. The files stream in on demand.
+与 Dropbox、Google Drive 和 Box 不同，这里没有同步模型。文件按需流式传输。
 
-If you want some more info, go ahead and look at this text file, signed by me:
+如果您想了解更多信息，请继续查看这个由我签名的文本文件：
 
 ```bash
 cat /keybase/public/chris/plan.txt
@@ -66,165 +65,160 @@ cat /keybase/public/chris/plan.txt
 
 ### Keybase.pub
 
-As a proof-of-concept, https://keybase.pub is a website that serves static content straight out of `/keybase/public`. You can see my `plan.txt` file at https://keybase.pub/chris/plan.txt. The site is also a work-in-progress.
+作为概念验证，https://keybase.pub 是一个直接从 `/keybase/public` 提供静态内容的网站。您可以在 https://keybase.pub/chris/plan.txt 查看我的 `plan.txt` 文件。该网站也是一个正在进行中的项目。
 
-### But there's more!
+### 还有更多！
 
-Keybase mounts **end-to-end encrypted folders** in **`/keybase/private`**.
+Keybase 将 **端到端加密文件夹** 挂载在 **`/keybase/private`** 中。
 
 ```
 /keybase/private/{people}
 ```
 
-This is your own encrypted folder, just for you:
+这是您自己的加密文件夹，仅供您使用：
 
 ```
 /keybase/private/yourname
 ```
 
-And here's a folder only you and I can read. You don't have to create this folder, it implicitly exists.
+这是一个只有您和我可以读取的文件夹。您无需创建此文件夹，它隐式存在。
 
 ```
 /keybase/private/yourname,chris
 ```
 
-Again, maybe you know me on twitter, and prefer to assert that:
+同样，也许您在 Twitter 上认识我，并更喜欢声明：
 
 ```
 /keybase/private/yourname,malgorithms@twitter
 ```
 
-These folders are encrypted using only your device-specific keys and mine.
+这些文件夹仅使用您和我的设备特定密钥进行加密。
 
-*The Keybase servers do not have private keys that can read this data.* Nor can they inject any public keys into this process, to trick you into encrypting for extra parties. Your and my key additions and removals are signed by us into a public merkle tree, which in turn is hashed into the Bitcoin block chain to prevent a forking attack. Here's a screenshot of my 7 device keys and 9 public identities, and how they're all related.
+*Keybase 服务器没有可以读取此数据的私钥。* 它们也无法在此过程中注入任何公钥，以诱骗您为额外的参与方加密。您和我对密钥的添加和移除均由我们在公开 Merkle 树中签名，该树反过来哈希进比特币区块链中，以防止分叉攻击。这是我的 7 个设备密钥和 9 个公开身份的截图，以及它们是如何关联的。
 
-![devices in pink and orange have decryption keys nodes in blue are assertions you might make](https://keybase.io/images/getting-started/cc-graph2.png)
+![粉色和橙色的设备拥有解密密钥，蓝色的节点是您可能做出的声明](https://keybase.io/images/getting-started/cc-graph2.png)
 
-src: https://keybase.io/chris/sigchain
+来源: https://keybase.io/chris/sigchain
 
-As a reminder, Keybase is [open source Go](https://github.com/keybase/client/tree/master/go/kbfs). And here's [our crypto spec](/docs/kbfs-crypto) on the file mount, which we will gladly change and update as this project evolves. (Feedback desired!)
+提醒一下，Keybase 是 [开源 Go 项目](https://github.com/keybase/client/tree/master/go/kbfs)。这是关于文件挂载的 [加密规范](/docs/kbfs-crypto)，随着项目的演进，我们将乐于对其进行更改和更新。（期待反馈！）
 
-### Frictionless sharing
+### 无摩擦分享
 
-Soon, you'll be able to throw data into `/keybase/private/yourname,pal@twitter, *even if that Twitter user hasn't joined Keybase yet*. Your app will encrypt *just for you* and then awake and rekey in the background when that Twitter user joins and announces a key.
+很快，您将能够把数据扔进 `/keybase/private/yourname,pal@twitter`，*即使该 Twitter 用户尚未加入 Keybase*。您的应用将*仅为您*加密，然后在该 Twitter 用户加入并声明密钥时在后台唤醒并重新生成密钥（rekey）。
 
-We decided to work on Keybase full time when we realized this key-identity solution could actually lower the friction on sharing.
+当我们意识到这种密钥-身份解决方案实际上可以降低分享的摩擦时，我们决定全职投入 Keybase 的工作。
 
-In contrast, this screenshot was in Keybase's fundraising deck earlier this year:
+相比之下，这张截图出现在今年早些时候 Keybase 的融资演示文稿中：
 
-![Email or phone number as a sharing identifier is very 2007](https://keybase.io/images/getting-started/dropbox_sharing.png)
+![电子邮件或电话号码作为分享标识符非常有 2007 年的感觉](https://keybase.io/images/getting-started/dropbox_sharing.png)
 
-Our goal: smack-dab in the middle of a public Reddit or HackerNews or Twitter conversation, you *should* be able to say "Hey, I threw those gifs/libraries/whatever in our encrypted keybase folder" without ever asking for more identifying info. If that person hasn't installed Keybase yet, your human work is still done. They can join and access the data within seconds, and your device will quietly handle the verification and rekeying, without ever trusting Keybase's servers.
+我们的目标：恰好在一个公开的 Reddit、HackerNews 或 Twitter 对话中，您*应该*能够说“嘿，我把那些 gif/库/随便什么扔进了我们的加密 keybase 文件夹”，而无需索要更多身份信息。如果那个人尚未安装 Keybase，您的人工工作依然完成了。他们可以在几秒钟内加入并访问数据，而您的设备将悄悄处理验证和重新生成密钥的工作，无需信任 Keybase 的服务器。
 
-### Back to you...
+### 回到您身上...
 
-Anyway, if you have the new Keybase, go ahead, start a diary:
+无论如何，如果您拥有新的 Keybase，请继续，开始写日记：
 
 ```bash
 cd /keybase/private/yourname
 echo 'The brain...it moved again.' > diary.txt
 ```
 
-On a Mac, you could just open the folder in Finder:
+在 Mac 上，您可以直接在 Finder 中打开文件夹：
 
 ```bash
 open /keybase/private/yourname
 ```
 
-And drag files on in.
+然后拖入文件。
 
-## Questions and other details
+## 问题与其他细节
 
-### Paper keys
+### 纸质密钥 (Paper keys)
 
-This is a full-powered private key. It can be used to provision and even rekey. Carry it in your wallet if you want to provision new Keybase installs without requiring an already provisioned device. You can make extras with `keybase paperkey` and revoke lost ones with `keybase device [list|remove]`.
+这是一个全功能的私钥。它可用于配置甚至重新生成密钥。如果您想在无需已配置设备的情况下配置新的 Keybase 安装，请将其放在钱包中携带。您可以使用 `keybase paperkey` 制作额外的纸质密钥，并使用 `keybase device [list|remove]` 吊销丢失的密钥。
 
+![您将选择 `选项 2`，除非您有两台并排的电脑；`选项 3` 通常不起作用（它适用于您设置的第一台电脑）](https://keybase.io/images/getting-started/provision.png)
 
-![you'll choose `option 2` unless you have two computers side-by-side `option 3` usually won't work (it will for the first computer you set up)](https://keybase.io/images/getting-started/provision.png)
+### 元数据与安全性
 
-### Metadata and Security
+Keybase 服务器显然可以读取 `/keybase/public` 中的所有内容。
 
-The Keybase servers can obviously read everything in `/keybase/public`.
+至于 `/keybase/private`，Keybase *可以* 知道
 
-As for `/keybase/private`, Keybase *can* tell
+1.  您正在哪些顶级文件夹中工作（例如 `/keybase/private/yourname,pal`），
+2.  您*何时*写入和读取数据，以及
+3.  大约*多少*数据。
 
-1. what top level folders you're working in (such as `/keybase/private/yourname,pal`),
-1. *when* you're writing and reading data, and
-1. approximately *how much* data.
+Keybase 服务器*不知道*单个文件名或子目录名。它可以尝试猜测您是在写入 100 个小文件还是 1 个大文件，但这将是基于时间的猜测。如果您在名为 `/keybase/private/yourname/pics_of_me/thong.jpg` 的私有文件夹中写入一个 1MB 的文件，Keybase 服务器完全不知道这是一个名为 `pics_of_me` 的文件夹，或者有一个名为 `thong.jpg` 的文件，或者您看起来是否不错。它不知道您是在写入图片、Excel 文档、您的 DNA 序列还是 MP3。
 
-The Keybase server *does not know* individual file names or subdirectory names. It could try to guess whether you're writing 100 small files or 1 large file, but it would be a timing-based guess. If you write a 1MB file in a private folder called `/keybase/private/yourname/pics_of_me/thong.jpg`, the Keybase server has no idea this is a folder called `pics_of_me`, or that there's a file called `thong.jpg`, or whether you look good. It doesn't know you're writing pictures, Excel docs, your DNA sequence, or MP3s.
+### “关注”他人增加安全性
 
-### "Following" people adds to security
-
-When you follow someone on Keybase, you sign a portable summary of their identity, as you saw and verified it. From then on, whenever you use their keybase username, *everything in your follower statement* must remain valid. This is far more secure than just asserting one identity.
+当您在 Keybase 上关注某人时，您会对您看到并验证过的他们的身份摘要进行签名。从那时起，每当您使用他们的 keybase 用户名时，*您关注声明中的所有内容*必须保持有效。这比仅仅声明一个身份要安全得多。
 
 ![](https://keybase.io/images/tracking/maria_twitter.jpg)
 
-So follow people.
+所以，关注别人吧。
 
-### Risk of data loss
+### 数据丢失风险
 
-At the time of this document, there are very few people using this system. We're just getting started testing. Note that we could, hypothetically, lose your data at any time. Or push a bug that makes you throw away your private keys. Ugh, burn.
+在撰写本文档时，只有极少数人使用此系统。我们刚刚开始测试。请注意，我们可能会（假设地）随时丢失您的数据。或者推送一个导致您丢弃私钥的 bug。呃，太糟了。
 
-So as one of our first testers: *back up anything you put into Keybase's alpha*, and remember: we can't recover lost encrypted data.
+作为我们的首批测试者之一：*请备份您放入 Keybase Alpha 版的任何内容*，并记住：我们无法恢复丢失的加密数据。
 
-Also, if you throw away all your devices, you will lose your private data. Your encrypted data is ONLY encrypted for your device & paper keys, not any PGP keys you have.
+此外，如果您丢弃了所有设备，您将丢失您的私有数据。您的加密数据仅针对您的设备和纸质密钥加密，而非您拥有的任何 PGP 密钥。
 
-### Storage
+### 存储
 
-We're giving everyone 250 gigabytes. Our quota model:
+我们为每个人提供 250 GB 的空间。我们的配额模型：
 
-- only the writer's quota is affected when writing in shared dirs. Woo-hoo! So you never have to worry about hurting another's quota or disk space (again: friction). Keybase has to work this way, since it doesn't work on the sync model or require approval before encrypting and sharing with someone.
+- 在共享目录中写入时，仅影响写入者的配额。哇哦！所以您永远不必担心损害他人的配额或磁盘空间（再次强调：摩擦）。Keybase 必须以这种方式工作，因为它不基于同步模型工作，也不需要在加密和与他人分享之前获得批准。
 
-- history data does count towards your quota, and you'll soon have controls for how long to keep deleted blocks around.
+- 历史数据确实会计入您的配额，您很快将拥有控制保留已删除块时长的选项。
 
-There is no paid upgrade currently. The 250GB free accounts will stay free, but we'll likely offer paid storage for people who want to store more data.
+目前没有付费升级。250GB 的免费账户将保持免费，但我们可能会为希望存储更多数据的人提供付费存储。
 
-### Performance
+### 性能
 
-We've made no performance optimizations yet. There's a lot of low-hanging fruit.
+我们尚未进行任何性能优化。还有很多唾手可得的优化空间。
 
-### Iterative releases
+### 迭代发布
 
-Keybase is about to be a full-featured GUI app.
+Keybase 即将成为一个全功能的 GUI 应用。
 
-When the Keybase app offers to install an update, we encourage you to accept it. It'll be signed by us.
+当 Keybase 应用提示安装更新时，我们鼓励您接受它。它将由我们签名。
 
-### Public folders of interest
+### 感兴趣的公开文件夹
 
-* [/keybase/public/libevent](https://keybase.pub/libevent) – the popular callback notification library. [browse](https://keybase.pub/libevent) | [glossy site](https://libevent.keybase.pub)
-* /keybase/public/chris - my example folder [browse](https://keybase.pub/chris) | [glossy site](https://chris.keybase.pub)
+* [/keybase/public/libevent](https://keybase.pub/libevent) – 流行的回调通知库。[浏览](https://keybase.pub/libevent) | [精美站点](https://libevent.keybase.pub)
+* /keybase/public/chris - 我的示例文件夹 [浏览](https://keybase.pub/chris) | [精美站点](https://chris.keybase.pub)
 
+如果上面有人是流行软件包的知名作者或知名人士，我会添加他们。如果您有任何有趣的东西，请发邮件给我 (chris@keybase.io)。
 
+### 错误报告
 
-I'll add some people above if they're known authors of popular packages or well-known people. Email me if you've got anything interesting (chris@keybase.io).
-
-### Bug reporting
-
-If you encounter a bug of any kind, please run this:
+如果您遇到任何类型的 bug，请运行：
 
 ```
 keybase log send
 ```
 
-That will (1) package up your logs for us and send them in, and (2) generate a pre-filled github issues page containing an id for your logs.
+这将 (1) 为我们打包您的日志并发送，以及 (2) 生成一个预填好的 github issue 页面，其中包含您的日志 ID。
 
-### Business Model?
+### 商业模式？
 
-We're a long way off from worrying about this, but we'll never run an ad-supported business again. And Keybase will never sell data. These are our constraints:
+我们距离担心这个问题还很远，但我们永远不会再经营广告支持的业务。Keybase 永远不会出售数据。这是我们的约束：
 
-- no ads
-- no selling data
-- we want free, easy public keys for everyone in the world
-- any hosted offerings we have (such as this filesystem) should be free for most
-- "customers" will be organizations with many users and/or individuals who want disproportionate resources.
+- 无广告
+- 不出售数据
+- 我们希望为全世界每个人提供免费、简便的公钥
+- 我们提供的任何托管服务（例如此文件系统）对大多数人应该是免费的
+- “客户”将是拥有许多用户的组织和/或希望获得超额资源的个人。
 
-But, as stated above, there is currently no pay model, and we're not trying to make money. We're testing a product right now, and we'd like
-to bring public keys to the masses.
+但是，如上所述，目前没有付费模式，我们也不试图赚钱。我们目前正在测试产品，并且我们希望将公钥带给大众。
 
-### Links
+### 链接
 
-* [download it!](https://keybase.io/download)
-* [all other documentation](https://keybase.io/docs)
-* [reporting issues via GitHub](https://github.com/keybase/client/issues)
-
+* [下载它！](https://keybase.io/download)
+* [所有其他文档](https://keybase.io/docs)
+* [通过 GitHub 报告问题](https://github.com/keybase/client/issues)

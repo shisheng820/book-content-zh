@@ -1,64 +1,28 @@
-# Link Previews
+# 链接预览
 
-The Keybase chat client offers the ability to generate previews of URLs posted
-in chat messages, and display them inline in the conversation thread. The client
-protects user privacy when generating these previews in the following ways:
+Keybase 聊天客户端具备生成聊天消息中 URL 预览并在对话线程中内嵌显示的功能。客户端在生成这些预览时，通过以下方式保护用户隐私：
 
-1. Allows the user to control which domains they have allowed previews to be
-   generated for. By default, the client is configured to prompt the user for
-   every domain of the URLs the user sends. This way, the user doesn't
-   accidentally expose their IP address to a random link they paste into a
-   message by mistake. A user client only visits a link if the user has
-   explicitly granted permission to do so.
-2. Previews are completely packaged up, encrypted and sent into the chat
-   thread with all information necessary to render the preview in all receiving
-   clients. This way receiving clients also do not need to visit the URL to
-   preview it, all the information is in the encrypted payload of the thread.
+1.  允许用户控制授权生成预览的域名。默认情况下，客户端配置为对用户发送的 URL 的每个域名都进行提示。以此方式，用户可避免因误将链接粘贴至消息中，而意外向任意链接暴露其 IP 地址。客户端仅在用户明确授权的情况下才会访问链接。
+2.  预览内容经过完整封装与加密，并发送至聊天会话中，其中包含接收端客户端渲染预览所需的所有信息。因此，接收端客户端也无需访问该 URL 即可预览，所有信息均包含在会话的加密载荷中。
 
-## Prompts
+## 提示
 
-Whenever a URL is sent into a chat thread, the user will be prompted to take
-action on it for the purposes of the link previews. The options are the
-following:
+每当 URL 发送到聊天会话中时，用户将收到提示，以便针对链接预览采取相应操作。选项如下：
 
-1. Always - the client will always automatically generate a preview for all
-   domains in the future.
-2. Always for _domain_ - the client will never prompt for the specific domain
-   again.
-3. Yes, but ask again for _domain_ - the client will generate the preview for
-   the current message, but will ask again for the _domain_.
-4. Not now - the client will not generate a preview for this message.
-5. Never - the client will never generate any preview, or prompt for them in the
-   future.
+1.  **Always**（始终） - 客户端日后将始终自动为所有域名生成预览。
+2.  **Always for _domain_**（始终针对 _domain_） - 客户端将不再针对该特定域名进行提示。
+3.  **Yes, but ask again for _domain_**（是的，但针对 _domain_ 再次询问） - 客户端将为当前消息生成预览，但针对该 _domain_ 会再次询问。
+4.  **Not now**（暂不） - 客户端将不为此消息生成预览。
+5.  **Never**（从不） - 客户端日后将不再生成任何预览，也不再进行提示。
 
-The domain whitelist data is stored in a special hidden, "developer" chat
-conversation associated with the user. This allows the user to sync the domain
-whitelist to all of their devices without the Keybase server knowing the
-contents of it. The hidden chat channels get all of the same encryption and
-privacy of a normal chat channel, but provides the benefit of allowing the
-Keybase client to sync cross device in an encrypted manner. 
+域名白名单数据存储在与用户关联的特殊隐藏“开发者”聊天会话中。这允许用户将其域名白名单同步至所有设备，而无需 Keybase 服务器知晓其内容。隐藏聊天频道享有与普通聊天频道相同的加密和隐私保护，但具备允许 Keybase 客户端以加密方式跨设备同步的优势。
 
 ## Giphy
 
-Giphy.com is special-cased in the Keybase client to allow for searching for GIFs
-to send directly from the client. We use a technique similar to
-[Signal](https://www.signal.org) to
-safeguard user privacy for these requests as described in their [blog
-post](https://signal.org/blog/giphy-experiment) about
-the subject. The general technique is to use a TCP proxy on the Keybase
-server-side to anonymize the requests into Giphy.com. This has the effect of
-hiding the search contents from Keybase, and hiding the IP address of the user
-from Giphy.com. This is achieved in the following manner:
+Keybase 客户端对 Giphy.com 进行了特殊处理，允许用户直接在客户端内搜索并发送 GIF。我们使用类似于 [Signal](https://www.signal.org) 的技术来保护这些请求的用户隐私，详见其关于该主题的 [博客文章](https://signal.org/blog/giphy-experiment)。其核心技术是在 Keybase 服务端使用 TCP 代理，以匿名化发往 Giphy.com 的请求。此举可对 Keybase 隐藏搜索内容，并对 Giphy.com 隐藏用户的 IP 地址。具体实现方式如下：
 
-1. Keybase client opens a TCP connection to the Keybase Giphy proxy server.
-2. Keybase client performs TLS for the giphy.com domain and certificate. This
-   protects the data from Keybase.
-3. The Keybase proxy server opens a TCP connection to Giphy.com and begins
-   forwarding packets to/from Giphy and the Keybase client. This protects the
-   client from exposing its IP address to Giphy. 
+1.  Keybase 客户端开启与 Keybase Giphy 代理服务器的 TCP 连接。
+2.  Keybase 客户端针对 giphy.com 域名及其证书执行 TLS 连接。此举可保护数据免受 Keybase 服务器窥探。
+3.  Keybase 代理服务器开启与 Giphy.com 的 TCP 连接，并开始在 Giphy 与 Keybase 客户端之间转发数据包。此举可保护客户端免向 Giphy 暴露其 IP 地址。
 
-Giphy link previews are packaged, encrypted and sent into conversation threads
-in the same manner as any other link preview, so receivers will never contact
-the Keybase Giphy proxy or Giphy to render the content. 
-
-
+Giphy 链接预览采用与其他链接预览相同的方式进行封装、加密并发送至会话线程中，因此接收方无需连接 Keybase Giphy 代理或 Giphy 即可渲染内容。

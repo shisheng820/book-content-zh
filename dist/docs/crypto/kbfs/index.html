@@ -117,7 +117,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/chat" class="chapter-nav__link">Chat</a>
+                        <a href="/docs/chat" class="chapter-nav__link">聊天</a>
                         
                     </li>
                     
@@ -139,7 +139,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/files" class="chapter-nav__link">Introducing the Keybase Filesystem</a>
+                        <a href="/docs/files" class="chapter-nav__link">Keybase 文件系统介绍</a>
                         
                     </li>
                     
@@ -149,7 +149,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/wallet" class="chapter-nav__link">Stellar Wallet Key Management</a>
+                        <a href="/docs/wallet" class="chapter-nav__link">Stellar 钱包密钥管理</a>
                         
                     </li>
                     
@@ -157,7 +157,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/crypto" class="chapter-nav__link chapter-nav__link--active">Keybase Crypto Documents</a>
+                        <a href="/docs/crypto" class="chapter-nav__link chapter-nav__link--active">Keybase 加密文档</a>
                         
                             
                             
@@ -258,19 +258,19 @@
                                 <ol class="chapter-nav__nested-list">
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/crypto/key-exchange" class="chapter-nav__nested-link">Keybase Key Exchange (KEX) Protocol</a>
+                                        <a href="/docs/crypto/key-exchange" class="chapter-nav__nested-link">Keybase 密钥交换 (KEX) 协议</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/crypto/local-key-security" class="chapter-nav__nested-link">Local Key Security</a>
+                                        <a href="/docs/crypto/local-key-security" class="chapter-nav__nested-link">本地密钥安全</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/crypto/kbfs" class="chapter-nav__nested-link">Crypto spec: the Keybase filesystem (KBFS)</a>
+                                        <a href="/docs/crypto/kbfs" class="chapter-nav__nested-link">加密规范：Keybase 文件系统 (KBFS)</a>
                                     </li>
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/crypto/_account-corner-cases" class="chapter-nav__nested-link">Keybase Account Corner Cases (Plan)</a>
+                                        <a href="/docs/crypto/_account-corner-cases" class="chapter-nav__nested-link">Keybase 账户边缘情况（计划）</a>
                                     </li>
                                     
                                 </ol>
@@ -290,7 +290,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/bots" class="chapter-nav__link">Bots</a>
+                        <a href="/docs/bots" class="chapter-nav__link">机器人 (Bots)</a>
                         
                     </li>
                     
@@ -298,7 +298,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/linux" class="chapter-nav__link">Linux User Guide</a>
+                        <a href="/docs/linux" class="chapter-nav__link">Linux 用户指南</a>
                         
                     </li>
                     
@@ -306,7 +306,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/lockdown" class="chapter-nav__link">Lockdown Mode</a>
+                        <a href="/docs/lockdown" class="chapter-nav__link">锁定模式 (Lockdown Mode)</a>
                         
                     </li>
                     
@@ -314,7 +314,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/client" class="chapter-nav__link">Keybase client-side architecture</a>
+                        <a href="/docs/client" class="chapter-nav__link">Keybase 客户端架构</a>
                         
                     </li>
                     
@@ -378,777 +378,571 @@ body .kbfs-crypto-spec {
 </style>
 
 <div class="kbfs-crypto-spec">
-  <h1>Crypto spec: the Keybase filesystem (KBFS)</h1>
+  <h1>加密规范：Keybase 文件系统 (KBFS)</h1>
 
   <md>
-    See also: [KBFS documentation](/docs/kbfs)
+    另请参阅：[KBFS 文档](/docs/kbfs)
   </md>
 
-  <p>Version 2.0</p>
-  <p><strong>ChangeLog</strong></p>
+  <p>版本 2.0</p>
+  <p><strong>更新日志</strong></p>
   <ul>
-    <li>Version 2.0
+    <li>版本 2.0
       <ul>
-        <li>Describe the new block encryption/hashing scheme, addressing the low-risk issue NCC-KB2018-005 in the <a href="https://keybase.io/docs-assets/blog/NCC_Group_Keybase_KB2018_Public_Report_2019-02-27_v1.3.pdf">NCC audit</a>.  We will eventually stop supporting new blocks being generated with the old scheme.</li>
+        <li>描述新的块加密/哈希方案，解决了 <a href="https://keybase.io/docs-assets/blog/NCC_Group_Keybase_KB2018_Public_Report_2019-02-27_v1.3.pdf">NCC 审计</a> 中的低风险问题 NCC-KB2018-005。我们最终将停止支持使用旧方案生成新块。</li>
       </ul>
     </li>
-    <li>Version 1.10
+    <li>版本 1.10
       <ul>
-        <li>Point to new teams documentation.</li>
+        <li>指向新的团队文档。</li>
       </ul>
     </li>
-    <li>Version 1.9
+    <li>版本 1.9
       <ul>
-        <li>Temporarily remove talk of orgs while we refactor the doc.</li>
-      </ul>
-      </li>
-    <li>Version 1.8
-      <ul>
-        <li>More details and dates for the KBFS Merkle Trees.</li>
+        <li>在我们重构文档时暂时移除关于组织的讨论。</li>
       </ul>
       </li>
-    <li>Version 1.7
-    <ul>
-      <li>A threat model</li>
-    </ul>
-    </li>
-    <li>Version 1.6
-    <ul>
-      <li>Say what's in progress on what's implemented.</li>
-      <li>Last writer isn't encrypted.</li>
-    </ul>
-    </li>
-    <li>Version 1.5
+    <li>版本 1.8
       <ul>
-        <li>Remove pairwise HMACs, just used signatures.</li>
-        <li>Rename file from <tt>crypto</tt> to <tt>kbfs-crypto</tt>.</li>
-        <li>Remove browser/deterministic keys.</li>
+        <li>关于 KBFS Merkle 树的更多细节和日期。</li>
+      </ul>
+      </li>
+    <li>版本 1.7
+    <ul>
+      <li>威胁模型</li>
+    </ul>
+    </li>
+    <li>版本 1.6
+    <ul>
+      <li>说明哪些已实现，哪些正在进行中。</li>
+      <li>最后的写入者未加密。</li>
+    </ul>
+    </li>
+    <li>版本 1.5
+      <ul>
+        <li>移除成对 HMAC，仅使用签名。</li>
+        <li>将文件从 <tt>crypto</tt> 重命名为 <tt>kbfs-crypto</tt>。</li>
+        <li>移除浏览器/确定性密钥。</li>
       </ul>
     </li>
-    <li>Version 1.4
+    <li>版本 1.4
       <ul>
-        <li>Revert PRF-based per-block key generation</li>
-        <li>Raise Jeremy's objection to MAC-ing TLFs with read-only members.</li>
-        <li>Provide system overview</li>
-        <li>Better key exchange specifics</li>
+        <li>恢复基于 PRF 的每块密钥生成</li>
+        <li>提出 Jeremy 反对对具有只读成员的 TLF 进行 MAC 处理的意见。</li>
+        <li>提供系统概述</li>
+        <li>更好的密钥交换细节</li>
       </ul>
     </li>
-    <li>Version 1.3
+    <li>版本 1.3
       <ul>
-        <li>PRF-based per-block key generation system with per-epoch folder keys</li>
-        <li>Try to use "TLF" consistently everywhere instead of "folder" or "directory"</li>
+        <li>具有每时期文件夹密钥的基于 PRF 的每块密钥生成系统</li>
+        <li>尝试在各处一致地使用 "TLF" 而不是 "folder" 或 "directory"</li>
       </ul>
     </li>
-    <li>Version 1.2
+    <li>版本 1.2
     <ul>
-      <li>Describe directory IDs</li>
-      <li>Detail \((M_f, m_f)\) generation</li>
+      <li>描述目录 ID</li>
+      <li>详述 \((M_f, m_f)\) 生成</li>
     </ul>
     </li>
-    <li>Version 1.1
+    <li>版本 1.1
     <ul>
-      <li>Organizations</li>
-      <li>Readers can push onto reader lists</li>
-      <li>Merkle Trees for Public and Private data</li>
+      <li>组织</li>
+      <li>读者可以推送到读者列表</li>
+      <li>用于公共和私有数据的 Merkle 树</li>
     </ul>
     </li>
-    <li>Version 1.0: Initial Revision</li>
+    <li>版本 1.0: 初始修订</li>
   </ul>
 
-  <h2>Threat Model and Security Claims</h2>
+  <h2>威胁模型和安全声明</h2>
 
   <p>
-  <strong>End-to-end security</strong>: Keybase promises secrecy and integrity of
-  file system data and metadata even in the case of total server compromise.</p>
+  <strong>端到端安全性</strong>：Keybase 承诺即使在服务器完全受损的情况下，也能保证文件系统数据和元数据的保密性和完整性。</p>
 
-  <p>Our key cryptographic assumptions are: (1) weak collision-resistance of SHA256; (2) the
-  security of the
+  <p>我们的关键加密假设是：(1) SHA256 的弱抗碰撞性；(2) <a href="http://nacl.cr.yp.to">NaCl</a> 加密库的
   <a href="https://github.com/golang/crypto/tree/master/nacl">Go</a>
-  <a href="https://github.com/agl/ed25519">Implementation</a> of the
-  <a href="http://nacl.cr.yp.to">NaCl</a> cryptographic library.
+  <a href="https://github.com/agl/ed25519">实现</a> 的安全性。
   </p>
 
   <p>
-  <strong>Best Effort via Access Control</strong>: If our server infrastructure isn't compromised, we provide only via access control:
+  <strong>通过访问控制尽力而为</strong>：如果我们的服务器基础设施未受损，我们仅通过访问控制提供：
   </p>
 
   <ul>
-    <li>Forward-secrecy for lost or decommissioned devices.</li>
-    <li>Confidentiality regarding which private folders have data, and which
-        are empty.</li>
-    <li>Confidentiality for quota data.</li>
+    <li>丢失或退役设备的前向保密性。</li>
+    <li>关于哪些私有文件夹有数据，哪些为空的保密性。</li>
+    <li>配额数据的保密性。</li>
   </ul>
   <p>
-  In other words, an adversary who has access to Keybase's server data could:
-  learn about who is communicating with whom via KBFS; would have the same
-  usage details we would eventually use for billing; and would be able to recover data encrypted
-  for lost or decommissioned devices, if they additionally recover those devices.
+  换句话说，能够访问 Keybase 服务器数据的对手可以：
+  了解谁在通过 KBFS 与谁通信；拥有我们将最终用于计费的相同使用详情；如果他们额外恢复了那些设备，将能够恢复为丢失或退役设备加密的数据。
   </p>
 
   <p>
-  Of course we are mere mortals and don't believe we can indefinitely stave off
-  concerted attacks against our infrastructure, so we encourage our users to only
-  depend on our end-to-end security claims.
+  当然，我们也是凡人，不相信我们可以无限期地抵御针对我们基础设施的协同攻击，所以我们鼓励我们的用户仅依赖我们的端到端安全声明。
   </p>
 
-  <p>Additionally, we don't guarantee availability of data or metadata in the
-  case of server compromise.</p>
+  <p>此外，在服务器受损的情况下，我们不保证数据或元数据的可用性。</p>
 
-  <h2>System Overview</h2>
+  <h2>系统概述</h2>
 
-  <p><strong>Sibling keys and subkeys</strong>.
-    Each user in Keybase keeps two keypairs per device; one keypair
-    for signing, and one pair for encryption.  Secret keys never leave the
-    device.  The signing keys are known as "siblings" since they
-    all are equally powerful.  Any active sibling key can provision or revoke
-    another device.  Subkeys are signed by an active sibling key but can't
-    delegate to other keys.  The first of a series of sibling keys is
-    called an "eldest" key and can be revoked without affecting its other
-    live siblings.
+  <p><strong>兄弟密钥和子密钥</strong>。
+    Keybase 中的每个用户每台设备保留两个密钥对；一个密钥对用于签名，一个用于加密。私钥永远不会离开设备。签名密钥被称为"兄弟" (siblings)，因为它们都同样强大。任何活动的兄弟密钥都可以配置或撤销另一个设备。子密钥由活动的兄弟密钥签名，但不能委托给其他密钥。一系列兄弟密钥中的第一个被称为"元老" (eldest) 密钥，可以被撤销而不影响其他活动的兄弟密钥。
   </p>
 
-  <p><strong>Private Personal Directories</strong>
-  Every keybase user gets a private personal directory, keyed so that all
-  of her devices can read and write it.
+  <p><strong>私有个人目录</strong>
+  每个 keybase 用户都有一个私有个人目录，经过密钥处理，以便她的所有设备都可以读写它。
   </p>
 
-  <p><strong>Public Directories</strong>
-   Groups of one-or-more users can create public directories.  Items in
-   public directories are signed by one of the devices of one of the directory's
-   writers; they are not encrypted.  Public directories are good places to release
-   software or authenticated manifestos.
+  <p><strong>公共目录</strong>
+   一个或多个用户的组可以创建公共目录。公共目录中的项目由目录的一个写入者的设备之一签名；它们未加密。公共目录是发布软件或经过验证的声明的好地方。
   </p>
 
-  <p><strong>Private Group Directories</strong>
-    The most interesting case, a group of people with read/write permission
-    get together with some other people who have read-only permission to share
-    a directory.  This directory should use authenticated encryption to
-    guarantee that only someone in the group could have written to it.  It
-    should further use some mechanism (currently vanilla signatures) to determine which writer is
-    responsible for which write, so that users can't put words in each other's mouths.
+  <p><strong>私有组目录</strong>
+    最有趣的情况是，一群拥有读/写权限的人与一些拥有只读权限的人一起共享一个目录。该目录应使用认证加密来保证只有组内的人可以写入它。它应该进一步使用某种机制（目前是普通签名）来确定哪个写入者对哪个写入负责，以便用户不能把话塞进别人的嘴里。
   </p>
 
-  <p><strong>Forest of Merkle Trees</strong> [Unimplemented]
-    Keybase keeps public Merkle trees for managing: (1) each user's collection of keypairs
-    and public identities; and (2) the progression of file system states, so that the
-    server can't maliciously roll back to previous states.
+  <p><strong>Merkle 树森林</strong> [未实现]
+    Keybase 保留公共 Merkle 树用于管理：(1) 每个用户的密钥对和公共身份集合；以及 (2) 文件系统状态的进展，以便服务器不能恶意回滚到以前的状态。
   </p>
 
-  <h2>Keys</h2>
+  <h2>密钥</h2>
 
-  <h3>Eldest Key</h3>
+  <h3>元老密钥 (Eldest Key)</h3>
 
   <p>
-    When a user Alice (\(A\)) joins, she starts off by generating or
-    importing a keypair.  For our current users, this is a PGP keypair,
-    denoted (\(P_A,p_A\)). But there's nothing special about PGP keys,
-    and we are free to change the format in the future. We call this keypair
-    Alice's <em>eldest</em> keypair, since it's the first among potentially
-    many sibling keys.
+    当用户 Alice (\(A\)) 加入时，她首先生成或导入一个密钥对。对于我们当前的用户，这是一个 PGP 密钥对，表示为 (\(P_A,p_A\))。但 PGP 密钥没有什么特别之处，我们可以自由地在未来更改格式。我们称这个密钥对为 Alice 的 <em>元老</em> 密钥对，因为它是潜在的许多兄弟密钥中的第一个。
   </p>
 
-  <h3>Per-Device Keys</h3>
+  <h3>每设备密钥 (Per-Device Keys)</h3>
   <p>
-    For each of her devices, Alice generates two per-device keypairs.
-    The signing key becomes a sibkey, and the encryption keypair is just a
-    subkey.
+    对于她的每台设备，Alice 生成两个每设备密钥对。
+    签名密钥成为兄弟密钥 (sibkey)，加密密钥对只是一个子密钥 (subkey)。
   </p>
 
   <p>
-    For Alice's \(i\)th device, the procedure is:
+    对于 Alice 的第 \(i\) 个设备，过程如下：
   </p>
 
   <ol>
 
    <li>
-    Generate an <a href="http://ed25519.cr.yp.to/">Ed25519</a> <a
-    href="https://github.com/agl/ed25519">Keypair</a> at random, yielding the
-    pair \((E^i_A, e^i_A)\). In Ed25519, the private key is a 64-byte
-    string, and the public key is a 32-byte (derived) string.
+    随机生成一个 <a href="http://ed25519.cr.yp.to/">Ed25519</a> <a
+    href="https://github.com/agl/ed25519">密钥对</a>，产生对 \((E^i_A, e^i_A)\)。在 Ed25519 中，私钥是一个 64 字节的字符串，公钥是一个 32 字节的（派生）字符串。
    </li>
 
    <li>
-     <a href="https://code.google.com/p/go/source/browse/nacl/box/box.go?repo=crypto&r=8fec09c61d5d66f460d227fd1df3473d7e015bc6#32">Generate</a> a <a href="http://nacl.cr.yp.to/">Curve25519 Keypair</a> suitable for use
-     with NaCL's <a href="http://nacl.cr.yp.to/box.html">Box</a> feature (or Go Crypto's <a href="https://code.google.com/p/go/source/browse/nacl/box/box.go?repo=crypto&r=8fec09c61d5d66f460d227fd1df3473d7e015bc6#60">box.Seal</a> feature). Call
-     it \((M^i_A,m^i_A)\). In Curve25519
-    (Montgomery form), the public and private key are both 32-byte strings.
+     <a href="https://code.google.com/p/go/source/browse/nacl/box/box.go?repo=crypto&r=8fec09c61d5d66f460d227fd1df3473d7e015bc6#32">生成</a> 一个适合与 NaCL 的 <a href="http://nacl.cr.yp.to/box.html">Box</a> 功能（或 Go Crypto 的 <a href="https://code.google.com/p/go/source/browse/nacl/box/box.go?repo=crypto&r=8fec09c61d5d66f460d227fd1df3473d7e015bc6#60">box.Seal</a> 功能）一起使用的 <a href="http://nacl.cr.yp.to/">Curve25519 密钥对</a>。称之为 \((M^i_A,m^i_A)\)。在 Curve25519（蒙哥马利形式）中，公钥和私钥都是 32 字节的字符串。
    </li>
 
    <li>
-    Sign \(E^i_{A}\) with a valid sibling key; and as in PGP, include a "reverse" signature
-    of the delegating key, signed by the new key.  Push this <em>sibkey</em> signature
-    into Alice's signature chain.  See <a href="key-exchange">our doc</a> on key exchange
-    for more specifics.
+    使用有效的兄弟密钥签署 \(E^i_{A}\)；就像在 PGP 中一样，包含由新密钥签署的委托密钥的"反向"签名。将此 <em>sibkey</em> 签名推送到 Alice 的签名链中。有关更多细节，请参阅 <a href="key-exchange">我们的文档</a> 关于密钥交换。
    </li>
 
    <li>
-     Sign \(M^i_{A}\) with \(e^i_{A}\).  Push this <em>subkey</em>
-     signature into Alice's signature chain.
+     使用 \(e^i_{A}\) 签署 \(M^i_{A}\)。将此 <em>subkey</em> 签名推送到 Alice 的签名链中。
    </li>
 
    <li>
-     Store \(e^i_{A}\) and \(m^i_{A}\) on device \(i\)
+     将 \(e^i_{A}\) 和 \(m^i_{A}\) 存储在设备 \(i\) 上
    </li>
   </ol>
 
-  <h3>Key IDS (kids)</h3>
+  <h3>密钥 ID (kids)</h3>
   <p>
-    Keybase has an idea of a "Key ID".  In the case of PGP keys, it's a hash
-    of the public key materials.  In the case of ECC keys, it's the public key
-    itself. We describe here how to construct them in Version 1:
+    Keybase 有一个 "Key ID" 的概念。在 PGP 密钥的情况下，它是公钥材料的哈希。在 ECC 密钥的情况下，它是公钥本身。我们在这里描述如何在版本 1 中构建它们：
   </p>
 
   <ul>
-    <li>For a PGP public key \(P\), compute the serialization \(s(P)\)
-    as you would to compute a PGP fingerprint.  Let \(t\) be the one-byte type
-    of the key in question. For example, or RSA, \(t = 1\); for DSA \(t = 17\).
-    See <a href="http://tools.ietf.org/html/rfc4880#section-9.1">RFC 4880</a> and <a href="http://tools.ietf.org/html/rfc6637#section-5">RFC 6637</a> for a complete list.
-    Then:
+    <li>对于 PGP 公钥 \(P\)，计算序列化 \(s(P)\)，就像计算 PGP 指纹一样。设 \(t\) 为相关密钥的一个字节类型。例如，对于 RSA，\(t = 1\)；对于 DSA \(t = 17\)。有关完整列表，请参阅 <a href="http://tools.ietf.org/html/rfc4880#section-9.1">RFC 4880</a> 和 <a href="http://tools.ietf.org/html/rfc6637#section-5">RFC 6637</a>。
+    然后：
       <blockquote>
         kid(\(P\)) = <tt>0x01</tt> || \(t\) || SHA-256(\(s(P)\)) || <tt>0x0a</tt>
       </blockquote>
     </li>
-    <li>For a NaCl encryption key, \(E\):
+    <li>对于 NaCl 加密密钥，\(E\)：
       <blockquote>
         kid(E) = <tt>0x01</tt> || <tt>0x21</tt> || E || <tt>0x0a</tt>
       </blockquote>
     </li>
-    <li>For a NaCl EDDSA key, \(M\):
+    <li>对于 NaCl EDDSA 密钥，\(M\)：
       <blockquote>
         kid(M) = <tt>0x01</tt> || <tt>0x20</tt> || M || <tt>0x0a</tt>
       </blockquote>
     </li>
   </ul>
 
-  <h2>Top-Level Folder (TLFs) in KBFS</h2>
+  <h2>KBFS 中的顶层文件夹 (TLFs)</h2>
 
   <p>
-  A top-level folder (TLF) in KBFS has a fixed set of readers and writers, as specified by
-  the name of the folder.  Every file and folder recursively contained in a TLF has
-  the same permissions as its parent.  This organization will feel a little bit different from normal
-  POSIX semantics, but greatly simplifies the system.
+  KBFS 中的顶层文件夹 (TLF) 具有一组固定的读取者和写入者，由文件夹名称指定。TLF 中递归包含的每个文件和文件夹都与其父级具有相同的权限。这种组织方式感觉与正常的 POSIX 语义略有不同，但极大地简化了系统。
   </p>
 
-  <h3>Private TLFs</h3>
+  <h3>私有 TLFs</h3>
   <p>
-    We cover the case of private TLFs with multiple readers and writers first, since
-    it's the most general. Home directories are a simple subcase of general private
-    group TLFs.
+    我们首先涵盖具有多个读取者和写入者的私有 TLF 的情况，因为这是最通用的。主目录是通用私有组 TLF 的一个简单子例。
   </p>
 
-  <h4>Keying a Private Group TLF</h4>
+  <h4>为私有组 TLF 设置密钥</h4>
 
   <p>
-  Let's say Alice (\(A\)) is creating a new TLF for Bob (\(B\))
-  and Charlie (\(C\)). Bob has read/write access, and Charlie only gets
-  read-only access. Alice keys the folder (call it \(f\)) for all other
-  users when she creates it. The procedure is as follows:
+  假设 Alice (\(A\)) 正在为 Bob (\(B\)) 和 Charlie (\(C\)) 创建一个新的 TLF。Bob 拥有读/写权限，而 Charlie 只有只读权限。Alice 在创建文件夹（称之为 \(f\)）时为所有其他用户设置密钥。过程如下：
   </p>
   <ol>
-    <li>Generate a random 15-byte directory ID, with the suffix <tt>0x16</tt></li>
-    <li>Generate a per-TLF Curve25519 DH key pair for inclusion of this folder's
-        metadata in the site's private-data Merkle tree; call it \((M_f, m_f)\).
+    <li>生成一个随机的 15 字节目录 ID，后缀为 <tt>0x16</tt></li>
+    <li>生成一个每 TLF Curve25519 DH 密钥对，用于在站点的私有数据 Merkle 树中包含此文件夹的元数据；称之为 \((M_f, m_f)\)。
     </li>
-    <li>Generate a 32-byte random secret key (version=0 for the first one): \(s^{f,0}\) =
-    rand(32)</li>
-    <li>Generate an ephemeral Curve25519 Diffie-Helman keypair.  Call it \((M_e,m_e)\).</li>
-    <li>For each user \(u\) in \(\{A,B,C\}\):
+    <li>生成一个 32 字节的随机密钥（第一个版本为 0）：\(s^{f,0}\) = rand(32)</li>
+    <li>生成一个临时 Curve25519 Diffie-Helman 密钥对。称之为 \((M_e,m_e)\)。</li>
+    <li>对于 \(\{A,B,C\}\) 中的每个用户 \(u\)：
      <ol>
-      <li>For each device \(i\) in \(u\)'s set of devices:
+      <li>对于 \(u\) 的设备集中的每个设备 \(i\)：
         <ol>
-          <li>generate \(s^{f,0,i}_{u} = \) rand(32).
-           This will be the server-side half of the key.</li>
+          <li>生成 \(s^{f,0,i}_{u} = \) rand(32)。
+           这将是密钥的服务器端部分。</li>
            <li>
-             \(t^{f,0,i}_{u} = s^{f,0,i}_u \oplus s^{f,0}\).  That is, XOR the global per-TLF key together with the per-user-per-device key to get a masked key.
+             \(t^{f,0,i}_{u} = s^{f,0,i}_u \oplus s^{f,0}\)。即，将全局每 TLF 密钥与每用户每设备密钥进行异或运算，得到掩码密钥。
            </li>
           <li>
-            \(S^{f,0,i}_{u} = (M_e, \)Box\((m_e, M^i_u, t^{f,0,i}_u))\).
-            That is, run the <a href="http://nacl.cr.yp.to/box.html">NaCl Box</a> function with the ephemeral private key, with the user's public device key,
-            and on the message \(t^{f,0,i}_u\).
-            This new key \(S^{f,0,i}_u\) can now be published publicly.  It
-            can only be decrypted by \(u\)'s private device key, and with some server
-            assist (via \(s^{f,0,i}_u\)).  Note that we prepend the public key
-            \(M_e\) to the output of Box.  Eventually, we might need to add new keys
-            or replace existing keys, and we'll do so with a new ephemeral keypair.  So
-            \(M_e\) might eventually be replaced.
+            \(S^{f,0,i}_{u} = (M_e, \)Box\((m_e, M^i_u, t^{f,0,i}_u))\)。
+            即，运行 <a href="http://nacl.cr.yp.to/box.html">NaCl Box</a> 函数，使用临时私钥、用户的公钥设备密钥，以及消息 \(t^{f,0,i}_u\)。
+            这个新密钥 \(S^{f,0,i}_u\) 现在可以公开发布。它只能由 \(u\) 的私有设备密钥解密，并需要一些服务器辅助（通过 \(s^{f,0,i}_u\)）。注意，我们将公钥 \(M_e\) 附加到 Box 的输出之前。最终，我们可能需要添加新密钥或替换现有密钥，我们将使用新的临时密钥对这样做。所以 \(M_e\) 最终可能会被替换。
           </li>
         </ol>
        </li>
      </ol>
     </li>
-    <li>Publish the following metadata (\(md_c\)) in the clear:
+    <li>以明文形式发布以下元数据 (\(md_c\))：
       <ol>
-        <li>A block of reader keys.  In this case it's just Charlie who is read-only:
+        <li>读取者密钥块。在这种情况下，只有 Charlie 是只读的：
             <blockquote>
                readers = \([ S^{f,0,1}_{C}, S^{f,0,2}_{C}, S^{f,0,3}_{C} ]\)
             </blockquote>
         </li>
         <li>
-          A block of writer keys.  In this case it's Alice and Bob:
+          写入者密钥块。在这种情况下是 Alice 和 Bob：
             <blockquote>
                writers = \([ S^{f,0,1}_{A}, S^{f,0,2}_{A}, S^{f,0,1}_{B},S^{f,0,2}_{B} ]\)
             </blockquote>
         </li>
         <li>
-          The public key \(M_f\)
+          公钥 \(M_f\)
         </li>
       </ol>
     </li>
-    <li>Some of the metadata is encrypted.  Construct a plaintext \(md_{e}\) as:
+    <li>一些元数据是加密的。构造明文 \(md_{e}\) 为：
       <ol>
-        <li>The root TLF block (described more below).</li>
-        <li>The private key \(m_f\).</li>
+        <li>根 TLF 块（下面详细描述）。</li>
+        <li>私钥 \(m_f\)。</li>
       </ol>
       <p>
-      Then, the encryption is computed as: SecretBox(\(s^{f,0}, md_{e}\))
+      然后，加密计算为：SecretBox(\(s^{f,0}, md_{e}\))
       </p>
     </li>
 
   </ol>
 
  <p>
-    Note that the server sees reader and writer blocks in the clear, and
-    can therefore sanity check updates to them.  For instance, the server
-    can check that the readers and writers correspond to the TLF
-    name, and that readers and writers aren't being dropped maliciously
-    during updates.
+    注意，服务器可以看到明文的读取者和写入者块，因此可以对它们的更新进行完整性检查。例如，服务器可以检查读取者和写入者是否对应于 TLF 名称，以及在更新期间读取者和写入者是否没有被恶意删除。
   </p>
 
   <p>
-    Similarly, the last writer is known to the server, since the server should
-    check the signatures on incoming updates.
+    同样，服务器知道最后的写入者，因为服务器应该检查传入更新的签名。
   </p>
 
   <p>
-    Writers can obviously update all of the metadata and data for a TLF.
-    Readers can change two fields in the folder's metadata: they can push new
-    keys onto the end of the reader key list; and they can flip the folder's
-    "rekey" bit to "on."  In either case, they sign these changes with any of
-    their valid signing sibkeys.  The server and clients can check that all
-    updates to metadata are authorized. The server rejects unauthorized
-    updates, and clients ignore them.
+    写入者显然可以更新 TLF 的所有元数据和数据。
+    读取者可以更改文件夹元数据中的两个字段：他们可以将新密钥推送到读取者密钥列表的末尾；他们可以将文件夹的 "rekey"（重新密钥）位翻转为 "on"。在这两种情况下，他们使用任何有效的签名兄弟密钥签署这些更改。服务器和客户端可以检查对元数据的所有更新是否都经过授权。服务器拒绝未经授权的更新，客户端忽略它们。
   </p>
 
-  <h4>Encrypting a Block</h4>
+  <h4>加密块</h4>
 
   <p>
-    Once she has established keys as above, Alice can start encrypting blocks.
-    Take any arbitrary plaintext block like \(b_j\) in TLF \(f\).
-    Assume version 0 of the key. To encrypt:
+    一旦她如上所述建立了密钥，Alice 就可以开始加密块了。
+    取 TLF \(f\) 中的任意明文块，如 \(b_j\)。
+    假设密钥版本为 0。加密步骤：
     <ol>
-      <li> Generate a random 32-byte per-block key \(s_{j}\).</li>
-      <li> Compute \(h_{j} = HMAC512(s^{f,0}, s_{j})\).
-      <li> Let \(h^{[0,31]}_{j}\) be the first 32 bytes of \(h_{j}\), to be used as the block encryption key.
-      <li> Let \(n\) be the next 24 bytes of \(h_{j}\), to be used as a nonce.
-      <li> Compute: \(B_j = \) SecretBox\((h^{[0,31]}_{j}, n, b_j)\)</li>
-      <li> For the initial rollout, store \(\{n,s_j\}\) along with \(B_j\) on the
-           hosted storage provider.  In the future, we hope to store \(s_{j}\) on machines
-           we host to get more secure block deletion.</li>
+      <li> 生成一个随机的 32 字节每块密钥 \(s_{j}\)。</li>
+      <li> 计算 \(h_{j} = HMAC512(s^{f,0}, s_{j})\)。
+      <li> 让 \(h^{[0,31]}_{j}\) 为 \(h_{j}\) 的前 32 个字节，用作块加密密钥。
+      <li> 让 \(n\) 为 \(h_{j}\) 的接下来的 24 个字节，用作 nonce。
+      <li> 计算：\(B_j = \) SecretBox\((h^{[0,31]}_{j}, n, b_j)\)</li>
+      <li> 对于初始发布，将 \(\{n,s_j\}\) 与 \(B_j\) 一起存储在托管存储提供商处。在未来，我们希望将 \(s_{j}\) 存储在我们托管的机器上，以获得更安全的块删除。</li>
     </ol>
   </p>
 
   <p>
-    The idea of some sort of per-block key is one we'll want to keep and
-    expand upon in the future.  It allows us to be quite liberal in distributing
-    encrypted blocks to CDNs and local caches, without fearing that they might
-    be never thrown away. If we apply more strict access controls on per-block
-    keys \(s_j\), we still retain some ability to throw away blocks, even
-    after client key compromise.
+    某种每块密钥的想法是我们希望在未来保留并扩展的。它允许我们在向 CDN 和本地缓存分发加密块时非常自由，而不用担心它们可能永远不会被丢弃。如果我们对每块密钥 \(s_j\) 应用更严格的访问控制，我们仍然保留了一些丢弃块的能力，即使在客户端密钥受损之后。
   </p>
 
   <p>
-    We're not using convergent encryption or anything like it, so a block that's used twice
-    will be encrypted differently both times.  However, clients will keep per-folder caches that
-    map hashes of block plaintexts to encrypted block IDs.  So they shouldn't reencrypt/reupload
-    blocks they know to be repeats.  In practice, this local lookup might be good enough, since often
-    data is read before it's copied, and many block copies will hit this cache.  We don't
-    want to allow block deduplication across top-level-directories for privacy reasons.
+    我们没有使用收敛加密或类似的任何东西，所以被使用两次的块两次加密都会不同。然而，客户端将保留每文件夹缓存，将块明文的哈希映射到加密的块 ID。所以他们不应该重新加密/重新上传他们知道是重复的块。实际上，这种本地查找可能已经足够好了，因为通常数据在被复制之前会被读取，许多块副本会命中这个缓存。出于隐私原因，我们不想允许跨顶层目录的块去重。
   </p>
 
-  <h4>FS Structure</h4>
+  <h4>FS 结构</h4>
 
   <p>
-    The files in a TLF form a Merkle Tree as in other secure distributed file systems
-    (including <a href="https://spqr.eecs.umich.edu/papers/sfsro-tocs.pdf">SFSRO</a>,
+    TLF 中的文件形成一个 Merkle 树，就像在其他安全分布式文件系统中一样（包括 <a href="https://spqr.eecs.umich.edu/papers/sfsro-tocs.pdf">SFSRO</a>，
      <a href ="https://www.usenix.org/legacy/event/osdi04/tech/full_papers/li_j/li_j.pdf">SUNDR</a>
-     and <a href="https://www.tahoe-lafs.org/">Tahoe-LAFS</a>).
-    However, KBFS makes the same simplification as the <a href="http://ori.scs.stanford.edu/">ORI File system</a>,
-    and does away with iNode-style indirection. Thus, KBFS cannot implement hard-links
-    without deeper architectural changes.
+     和 <a href="https://www.tahoe-lafs.org/">Tahoe-LAFS</a>）。
+    然而，KBFS 做了与 <a href="http://ori.scs.stanford.edu/">ORI 文件系统</a> 相同的简化，取消了 iNode 风格的间接引用。因此，如果不进行更深层次的架构更改，KBFS 无法实现硬链接。
   </p>
 
   <p>
-    Block IDs are computed as the SHA-256 hashes of encrypted blocks
-    and their nonces.  Using the nonce \({n}\) (which is
-    derived from the block's secret key) prevents the server from
-    colluding with another writer in the folder to compute another
-    combination of secret key and plaintext data that will result in
-    the same ciphertext for the block, thus allowing the server to
-    serve alternate blocks (with identical block IDs) to some subset
-    of readers.  By deriving the nonce from the secret key, we
-    guarantee that the block IDs would be different even if the
-    attacker found a way to duplicate the ciphertext, and thus the
-    attack would be detectable by the client.  For more details, see
-    NCC-KB2018-005 in the <a
-    href="https://keybase.io/docs-assets/blog/NCC_Group_Keybase_KB2018_Public_Report_2019-02-27_v1.3.pdf">NCC
-    audit</a>
+    块 ID 计算为加密块及其 nonce 的 SHA-256 哈希。使用 nonce \({n}\)（它源自块的密钥）可以防止服务器与文件夹中的另一个写入者勾结，计算出密钥和明文数据的另一种组合，从而导致相同的块密文，进而允许服务器向部分读取者提供替代块（具有相同的块 ID）。通过从密钥派生 nonce，我们保证即使攻击者找到复制密文的方法，块 ID 也会不同，因此攻击会被客户端检测到。有关更多详细信息，请参阅 <a
+    href="https://keybase.io/docs-assets/blog/NCC_Group_Keybase_KB2018_Public_Report_2019-02-27_v1.3.pdf">NCC 审计</a> 中的 NCC-KB2018-005。
   </p>
 
   <p>
-    Directory nodes are, in turn, maps of file names
-    to Block IDs.  They are packed as blocks, and get the same
-    encryption treatment as data blocks. This structure continues
-    recursively up to the TLF root.
+    目录节点反过来是文件名到块 ID 的映射。它们被打包成块，并获得与数据块相同的加密处理。这种结构递归向上直到 TLF 根。
   </p>
 
-  <h4>Signing The Root Block</h4>
+  <h4>签署根块</h4>
 
   <p>
-    Readers and writers in a private shared TLF know via authenticated
-    encryption that someone who had access to \(s^{f,0}\) wrote \(f\),
-    but they don't know who.  Alice can try to steal credit for Bob's work, or
-    Bob might frame Alice for saying something naughty.
+    私有共享 TLF 中的读取者和写入者通过认证加密知道，拥有 \(s^{f,0}\) 访问权限的人写入了 \(f\)，但他们不知道是谁。Alice 可能会试图窃取 Bob 工作的功劳，或者 Bob 可能会陷害 Alice 说了些淘气的话。
   </p>
 
   <p>
-    A sledgehammer approach to this problem would be to have Alice sign the
-    root block of \(f\) on every update.  But this is too strong of a
-    statement. If Eve later compromises Charlie's key, she can blackmail
-    Alice, since Alice proved to Bob, Charlie and everyone else that she wrote
-    particular contents to \(f\).
+    解决这个问题的一个强硬方法是让 Alice 在每次更新时签署 \(f\) 的根块。但这声明太强了。如果 Eve 后来破坏了 Charlie 的密钥，她可以勒索 Alice，因为 Alice 向 Bob、Charlie 和其他所有人证明了她向 \(f\) 写入了特定内容。
   </p>
 
   <p>
-    We experimented with various pairwise symmetric MAC schemes, to achieve
-    repudiability as in OTR protocols.  However, such schemes didn't work for
-    folders with non-writing readers.  So we do the simple thing which is
-    just to sign the hash of the root block with the writer's per-device
-    EdDSA signing key.  The same technique is used in all three cases:
-    public directories, private directories without non-writing readers,
-    and private directories with non-writing readers.
+    我们尝试了各种成对对称 MAC 方案，以实现像 OTR 协议中的可否认性。然而，这种方案对于具有非写入读取者的文件夹不起作用。所以我们做了简单的事情，就是用写入者的每设备 EdDSA 签名密钥签署根块的哈希。在所有三种情况下都使用相同的技术：公共目录、没有非写入读取者的私有目录，以及有非写入读取者的私有目录。
   </p>
 
-  <h3>Public Directories</h3>
+  <h3>公共目录</h3>
 
   <p>
-    If user \(u\) updates a KBFS folder with his \(i\)th device,
-    he must sign his changes to the whole folder state by signing its root block.
-    This will in effect sign all data and metadata contained recursively in this folder.
+    如果用户 \(u\) 用他的第 \(i\) 个设备更新 KBFS 文件夹，他必须通过签署其根块来签署他对整个文件夹状态的更改。这实际上将签署此文件夹中递归包含的所有数据和元数据。
   </p>
 
-  <p>To sign, \(u\) computes the complete metadata \(md\)
-  as specified above, except without encrypting \(md_e\).  He then signs the block:
+  <p>为了签名，\(u\) 计算完整的元数据 \(md\)，如上所述，只是不加密 \(md_e\)。然后他签署该块：
     <blockquote>
       \(\sigma(md) = \) Sign(\(e^i_{u},md\))
     </blockquote>
   </p>
 
   <p>
-   The <em>Sign</em> function outputs both the signature, and the KID of the
-   key used to generate it.  This way, verifiers know which key to use.
+   <em>Sign</em> 函数输出签名以及用于生成它的密钥的 KID。这样，验证者就知道使用哪个密钥。
   </p>
 
-  <h3>Home Directories</h3>
+  <h3>主目录 (Home Directories)</h3>
 
   <p>
-    As described above, home directories are special cases of TLF group
-    directories. When Alice sets up encryption keys for all of her devices,
-    she uses the protocol described in 4.1.1, iterating all of her per-device
-    keys.  Alice can skip the signing step described in 4.1.3, because she is not
-    worried about the "confused authorship" attack, but she still needs to
-    sign \(md\) as for public directories to prevent the server from
-    spoofing rekeys.
+    如上所述，主目录是 TLF 组目录的特例。当 Alice 为她的所有设备设置加密密钥时，她使用 4.1.1 中描述的协议，迭代她所有的每设备密钥。Alice 可以跳过 4.1.3 中描述的签名步骤，因为她不担心 "混淆作者身份" 攻击，但她仍然需要像公共目录一样签署 \(md\)，以防止服务器欺骗重新密钥。
   </p>
 
-  <h2>Keeping the Server Honest</h2>
+  <h2>保持服务器诚实</h2>
 
   <p>
-    Unless we're careful, the server can selectively withhold file system updates
-    or can serve two different versions of the FS to two different clients.  In
-    this section, we describe the precautions we take to prevent these sorts of
-    attacks.
+    除非我们小心，否则服务器可以选择性地保留文件系统更新，或者向两个不同的客户端提供两个不同版本的 FS。在本节中，我们描述了我们为防止此类攻击而采取的预防措施。
   </p>
 
   <p>
-    Our general approach is that the server creates a Merkle Tree out of all
-    sensitive site data, then signs and publishes this tree for all to see.
-    Third party monitors are invited to check on the progression of the site's
-    Merkle trees and to check they obey the specified cryptographic consistency
-    constraints.  Clients check their views of the file system with those
-    published in the Merkle trees to make sure the server isn't rolling back
-    state or attempting a fork.
+    我们的总体方法是，服务器从所有敏感的站点数据中创建一个 Merkle 树，然后签署并公布这棵树供所有人查看。我们邀请第三方监视器检查站点 Merkle 树的进展，并检查它们是否遵守指定的加密一致性约束。客户端将它们的文件系统视图与 Merkle 树中发布的视图进行检查，以确服务器没有回滚状态或尝试分叉。
   </p>
 
   <p>
-    There are three separate Merkle trees to consider: (1) the Keybase Core
-    Merkle tree that publicizes sibling keys, public identity proofs, and
-    ``follower'' statements;
-    (2) a public-data Merkle tree that captures all of the public data on KBFS; and
-    (3) a private-data Merkle tree that encapsulates the state of all private data on KBFS.
+    有三个独立的 Merkle 树需要考虑：(1) Keybase 核心 Merkle 树，它公布兄弟密钥、公共身份证明和 "关注者" 声明；
+    (2) 一个公共数据 Merkle 树，捕获 KBFS 上的所有公共数据；和
+    (3) 一个私有数据 Merkle 树，封装 KBFS 上所有私有数据的状态。
   </p>
 
-  <h3>The Keybase Core Merkle Tree</h3>
+  <h3>Keybase 核心 Merkle 树</h3>
 
   <p>
-    As described in <a href="../server">our
-    Server Security</a> document, users sign statements about their keys,
-    their identities and the identities of others. They commit these
-    signatures to monotonically growing signature chains, which are collected
-    into a sitewide Merkle Tree. As we describe later in this document, these
-    signature chains will eventually cover organizations in addition to single
-    users.  These structure all exist outside of KBFS and should be accessible
-    without KBFS software.
+    如 <a href="../server">我们的服务器安全</a> 文档中所述，用户签署关于他们的密钥、他们的身份和他人的身份的声明。他们将这些签名提交给单调增长的签名链，这些签名链被收集到一个全站范围的 Merkle 树中。正如我们在本文档后面描述的那样，除了单个用户之外，这些签名链最终还将覆盖组织。这些结构都存在于 KBFS 之外，应该可以在没有 KBFS 软件的情况下访问。
   </p>
 
-  <h3>The Public-Data Merkle Tree</h3>
+  <h3>公共数据 Merkle 树</h3>
 
   <p>
-    All public directories on KBFS are collected into a sitewide Merkle Tree.
-    The leaves of this tree are dictionaries of key-value pairs.  The key
-    is the ID of the TLF, and the value is most recent signature of
-    the TLF <tt>RootMetadata</tt> block.  This signature contains,
-    recursively: the writer keys for this directory, the root directory
-    entry for this directory, and the hash of the previous <tt>RootMetadata</tt>
-    block.
+    KBFS 上的所有公共目录都被收集到一个全站范围的 Merkle 树中。这棵树的叶子是键值对字典。键是 TLF 的 ID，值是 TLF <tt>RootMetadata</tt> 块的最新签名。此签名递归地包含：此目录的写入者密钥、此目录的根目录条目以及前一个 <tt>RootMetadata</tt> 块的哈希。
   </p>
 
   <p>
-    Interior nodes of the merkle tree are constructed upwards, covering shorter
-    prefixes of the directory IDs listed in the leaves.  The final root is
-    signed, and published periodically, maybe every hour.
+    Merkle 树的内部节点是向上构建的，覆盖叶子中列出的目录 ID 的较短前缀。最终的根被签名，并定期发布，也许每小时一次。
   </p>
 
-  <h3>The Private-Data Merkle Tree</h3>
+  <h3>私有数据 Merkle 树</h3>
 
   <p>
-    Private data deserves the same treatment as public data, but we have to
-    be slightly more careful not to reveal: (1) how often private directories
-    are modified; or (2) even worse, who is collaborating with whom.  Naive
-    solutions might allow an adversary to correlate device additions in public
-    sigchains with changes in private TLFs to correlate share membership.
-    We take a pretty blunt approach that should solve data leaks from the server
-    to the public.
+    私有数据值得与公共数据同等的待遇，但我们必须稍微小心一点，不要泄露：(1) 私有目录修改的频率；或 (2) 更糟糕的是，谁在与谁合作。简单的解决方案可能会允许对手将公共签名链中的设备添加与私有 TLF 中的更改相关联，从而关联共享成员身份。我们采取了一种相当生硬的方法，应该可以解决从服务器到公众的数据泄露问题。
   </p>
 
   <p>
-    When a user Alice creates private TLF \(f\), she generates a
-    Curve25519 keypair \((M_f, m_f)\). She stores \(M_f\) in the folder's
-    public metadata, and \(m_f\) in the folder's private metadata.
+    当用户 Alice 创建私有 TLF \(f\) 时，她生成一个 Curve25519 密钥对 \((M_f, m_f)\)。她将 \(M_f\) 存储在文件夹的公共元数据中，将 \(m_f\) 存储在文件夹的私有元数据中。
   </p>
 
   <p>
-    Every hour, the server makes a new Merkle Tree of the entire site's private data.
-    The algorithm is:
+    每小时，服务器都会为整个站点的私有数据制作一个新的 Merkle 树。算法是：
     <ol>
-      <li>Generate an ephemeral Curve25519 keypair \((M_S, m_s)\)</li>
-      <li>For each private folder \(f\):
+      <li>生成一个临时 Curve25519 密钥对 \((M_S, m_s)\)</li>
+      <li>对于每个私有文件夹 \(f\)：
       <ol>
          <li>
-         Perform encryption \(C_f \leftarrow\) Box(\(m_s,M_f,\sigma_f\)), where \(\sigma_f\)
-         is the most-recent signature of \(f\)'s metadata.
+         执行加密 \(C_f \leftarrow\) Box(\(m_s,M_f,\sigma_f\))，其中 \(\sigma_f\) 是 \(f\) 元数据的最新签名。
          </li>
          <li>
-          Make a mapping of the ID of \(f\) to \(C_f\).
+          制作 \(f\) 的 ID 到 \(C_f\) 的映射。
          </li>
       </ol>
       </li>
       <li>
-        Construct a Merkle tree from these leaves as in the Public data case, and publish
-        the tree along with \(M_s\), the public ephemeral Curve25519 key.
+        像在公共数据情况下一样，从这些叶子构建一个 Merkle 树，并将该树与公共临时 Curve25519 密钥 \(M_s\) 一起发布。
       </li>
     </ol>
 
   </p>
 
   <p>
-    When Alice's client goes to fetch TLF \(f\), she gets the most recent
-    root from the server, and also the most recently-published Merkle tree
-    from the server.  She traces a path down the from the root to the leaf for \(f\),
-    and then decrypts \(\sigma_f\) using \(m_f\).  She finally checks
-    that the current root links back to the root published in the merkle tree.  She might
-    of course need to traverse 100s or 1000s of links if there were many writes in the
-    last hour, but the server should batch all of the data necessary to make this
-    determination in a few RPC calls. Future implementations might also implement
-    "skip list"-style fast-forward links to speed this process for periods of heavy
-    writes.
+    当 Alice 的客户端去获取 TLF \(f\) 时，她从服务器获取最新的根，以及服务器最新发布的 Merkle 树。她沿着从根到 \(f\) 的叶子的路径追踪，然后使用 \(m_f\) 解密 \(\sigma_f\)。最后，她检查当前根是否链接回 Merkle 树中发布的根。当然，如果最后一小时内有很多写入，她可能需要遍历数百或数千个链接，但服务器应该批量处理做出此决定所需的所有数据，只需几次 RPC 调用。未来的实现可能还会实现 "跳表" 风格的快进链接，以加快写入繁重期间的这一过程。
   </p>
 
-  <h3>Merkle Tree Integration</h3>
+  <h3>Merkle 树集成</h3>
 
   <p>
-    The roots of the two KBFS Merkle trees will be inserted into the root block of
-    the main Keybase Merkle Tree.  Doing so establishes ordering relationships between
-    key manipulations and writes to KBFS.  In turn, this knowledge allows
-    KBFS clients to determine if writes to KBFS happened before or after a key is revoked,
-    and therefore whether or not a corrupt server has exploited an exposed key.
+    两个 KBFS Merkle 树的根将被插入到主 Keybase Merkle 树的根块中。这样做在密钥操作和 KBFS 写入之间建立了顺序关系。反过来，这种知识允许 KBFS 客户端确定对 KBFS 的写入是在密钥被撤销之前还是之后发生的，从而确定腐败的服务器是否利用了暴露的密钥。
   </p>
 
-  <h2>Keying, Rekeying, and Revoking</h2>
+  <h2>密钥设置、重新密钥和撤销</h2>
 
-  <h3>Adding A New Device</h3>
+  <h3>添加新设备</h3>
 
-Imagine Bob gets a new device. He now wants to provision it for access to all
-relevant KBFS folders. Here are the high-level steps he would take:
+  <p>
+想象一下 Bob 得到了一台新设备。他现在想为它配置访问所有相关 KBFS 文件夹的权限。以下是他将采取的高级步骤：
+  </p>
 
   <ol>
-    <li>Key generation</li>
-    <li>Key certification: sign the new key with an existing sibling key</li>
-    <li>TLF keying: add the key to the relevant reader and writer blocks</li>
+    <li>密钥生成</li>
+    <li>密钥认证：用现有的兄弟密钥签署新密钥</li>
+    <li>TLF 密钥设置：将密钥添加到相关的读取者和写入者块中</li>
   </ol>
 
-The first step, key generation, was covered above, and is the same here.
-Key certification is covered in our <a href="key-exchange">key exchange</a>
-document.
+  <p>
+第一步，密钥生成，在上面已经涵盖，这里也是一样的。
+密钥认证在我们的 <a href="key-exchange">密钥交换</a> 文档中有涵盖。
+  </p>
 
-  <h4>TLF Keying</h4>
+  <h4>TLF 密钥设置</h4>
 
   <p>
-  Now Bob must go through and add write access for his device on all encrypted
-  Keybase directories that he can write. Call his new device \(n\) and
-  his old device \(d\). Device \(d\) does the following:
+  现在 Bob 必须检查并为他的设备添加对他可以写入的所有加密 Keybase 目录的写入访问权限。称他的新设备为 \(n\)，他的旧设备为 \(d\)。设备 \(d\) 执行以下操作：
   </p>
 
   <ol>
-    <li>Generate an ephemeral Curve25519 Diffie-Helman keypair.  Call it \((M_e,m_e)\).</li>
-    <li>For every TLF \(f\) that Bob can read:
+    <li>生成一个临时 Curve25519 Diffie-Helman 密钥对。称之为 \((M_e,m_e)\)。</li>
+    <li>对于 Bob 可以读取的每个 TLF \(f\)：
      <ol>
-      <li>Use \(m^{d}_{B}\) to decrypt \(t^{f,0,d}_B\)</li>
-      <li>Query the server for \(s^{f,0,d}_{B}\) and XOR to recover \(s^{f,0}\)</li>
-      <li>Encrypt \(s^{f,0}\) using sender key \(m_e\) and receiver key \(M^{n}_{B}\),
-          which was generated on device \(n\) and securely transferred over to \(d\)
-          in previous steps.</li>
+      <li>使用 \(m^{d}_{B}\) 解密 \(t^{f,0,d}_B\)</li>
+      <li>向服务器查询 \(s^{f,0,d}_{B}\) 并进行异或运算以恢复 \(s^{f,0}\)</li>
+      <li>使用发送方密钥 \(m_e\) 和接收方密钥 \(M^{n}_{B}\) 加密 \(s^{f,0}\)，
+          后者是在设备 \(n\) 上生成的，并在之前的步骤中安全地传输到 \(d\)。</li>
       <li>
-        Add \(S^{f,0,n}_B\) to the writers (or readers) list for \(f\) and
-        sign with \(e^{d}_B\)
+        将 \(S^{f,0,n}_B\) 添加到 \(f\) 的写入者（或读取者）列表中，并用 \(e^{d}_B\) 签名
       </li>
       </ol>
     </li>
   </ol>
 
   <p>
-  Bob pushes \((M_e, S^{f,0,n}_B)\) to TLF \(f\)'s reader or
-  writer list.  If he is a reader, he is allowed to push onto the reader list
-  in the metadata.  If he is a writer, he can edit \(f\)'s metadata
-  at will.
+  Bob 将 \((M_e, S^{f,0,n}_B)\) 推送到 TLF \(f\) 的读取者或写入者列表。如果他是读取者，他被允许推送到元数据中的读取者列表。如果他是写入者，他可以随意编辑 \(f\) 的元数据。
   </p>
 
-  <h3>Freezing a Device [Unimplemented]</h3>
+  <h3>冻结设备 [未实现]</h3>
 
   <p>
-  If Alice loses a device \(d\), the first thing to do is to "freeze" access
-  to the device via the server.  Any device that can establish a session as the user
-  can do so.  Once a device is frozen, the server will refuse to honor requests for
-  key-halves of the form \(s^{f,0,d}_{A}\). Any device but \(d\) can
-  ask for an unfreeze.
+  如果 Alice 丢失了设备 \(d\)，要做的第一件事是通过服务器 "冻结" 对该设备的访问。任何可以作为用户建立会话的设备都可以这样做。一旦设备被冻结，服务器将拒绝接受形式为 \(s^{f,0,d}_{A}\) 的密钥半部分的请求。除了 \(d\) 之外的任何设备都可以请求解冻。
   </p>
 
   <p>
-  Alice can take an additional (optional) step.  She can sign a <em>key freeze</em> into her
-  signature chain for each signing key on the lost device.  Other clients should refuse
-  to honor signatures from frozen keys during the freeze window.  Alice can later
-  cancel the freeze using the same key that ordered the freeze.  The server
-  can't assist here, so Alice can only freeze a specific key if she has another provisioned device.
+  Alice 可以采取额外的（可选）步骤。她可以为丢失设备上的每个签名密钥在其签名链中签署一个 <em>密钥冻结</em>。其他客户端应拒绝在冻结窗口期间接受来自冻结密钥的签名。Alice 稍后可以使用下令冻结的同一密钥取消冻结。服务器在这里无法提供帮助，所以 Alice 只有在拥有另一个已配置设备的情况下才能冻结特定密钥。
   </p>
 
-  <h3>Decommissioning a Device (And Optionally Adding a New One)</h3>
+  <h3>退役设备（并可选地添加新设备）</h3>
 
   <p>
-  To decommision a device, Alice should first freeze it as above, issuing a final revocation
-  statement for the key into her sigchain. Her client should
-  then iterate over all TLFs that she has read or write access to, and delete the lost
-  keys from the keyblocks, and then rekey.  She of course needs an active keypair in order to do this.
-  Let's say \(r\) is Alice's lost device, and \(d\) is her currently
-  active device.  Also, Alice can optionally provision a new device \(n\) as a result
-  of this process:
+  要退役设备，Alice 首先应如上所述将其冻结，向她的签名链发布最终撤销声明。然后，她的客户端应遍历她具有读或写访问权限的所有 TLF，从密钥块中删除丢失的密钥，然后重新密钥。当然，她需要一个活动的密钥对才能做到这一点。
+  假设 \(r\) 是 Alice 丢失的设备，\(d\) 是她当前活动的设备。此外，作为此过程的结果，Alice 可以选择性地配置新设备 \(n\)：
   </p>
 
   <ol>
-    <li>For each TLF \(f\) Alice can write to:
+    <li>对于 Alice 可以写入的每个 TLF \(f\)：
     <ol>
-      <li>Generate an ephemeral Curve25519 Diffie-Helman keypair.  Call it \((M_e,m_e)\). </li>
-      <li>Delete \(S^{f,0,r}_{A}\)</li>
-      <li>Ask the server to delete \(s^{f,0,r}_A\).</li>
-      <li>Generate a new 32-byte random secret key (version=1 for the next one): \(s^{f,1}\) = rand(32)</li>
-      <li>For each user \(u\) who can access \(f\)
+      <li>生成一个临时 Curve25519 Diffie-Helman 密钥对。称之为 \((M_e,m_e)\)。 </li>
+      <li>删除 \(S^{f,0,r}_{A}\)</li>
+      <li>要求服务器删除 \(s^{f,0,r}_A\)。</li>
+      <li>生成一个新的 32 字节随机密钥（下一个版本为 1）：\(s^{f,1}\) = rand(32)</li>
+      <li>对于可以访问 \(f\) 的每个用户 \(u\)
       <ol>
-        <li>For each device \(i\) that \(u\) has:
+        <li>对于 \(u\) 拥有的每个设备 \(i\)：
           <ol>
-            <li>As before, generate \(s^{f,1,i}_{u} = \) rand(32), for the server-side of the key</li>
-            <li>As before, encrypt:
+            <li>如前所述，生成 \(s^{f,1,i}_{u} = \) rand(32)，作为密钥的服务器端部分</li>
+            <li>如前所述，加密：
               \(S^{f,1,i}_{u} = \)Box\((m_e, M^i_u, s^{f,1,i}_u \oplus s^{f,1})\)
             </li>
           </ol>
         </li>
       </ol>
       </li>
-      <li>If provisioning \(n\), generate and encrypt \(S^{f,1,n}_{A}\).</li>
-      <li>Store the rekeyed key blocks to the server, signed with \(e^d_A\)</li>
-      <li>Store \(M_e\) to the server </li>
-      <li>Don't bother to reencrypt old blocks, so leave the old decryption materials around
-          (except for the compromised key)</li>
+      <li>如果正在配置 \(n\)，生成并加密 \(S^{f,1,n}_{A}\)。</li>
+      <li>将重新密钥后的密钥块存储到服务器，用 \(e^d_A\) 签名</li>
+      <li>将 \(M_e\) 存储到服务器 </li>
+      <li>不要费心重新加密旧块，所以保留旧的解密材料（受损密钥除外）</li>
     </ol>
     </li>
-    <li>For each TLF \(f\) Alice can read:
+    <li>对于 Alice 可以读取的每个 TLF \(f\)：
       <ol>
-        <li>Ask the server to delete \(s^{f,0,r}_A\).</li>
-        <li>Flip the <strong>rekey</strong> flag on TLF \(f\) to ``on''.  The next writer who updates the directory
-            will perform the above protocol that Alice used for her writable directories.</li>
+        <li>要求服务器删除 \(s^{f,0,r}_A\)。</li>
+        <li>将 TLF \(f\) 上的 <strong>rekey</strong> 标志翻转为 "on"。更新目录的下一个写入者将执行 Alice 对其可写目录使用的上述协议。</li>
       </ol>
     </li>
-    <li>Rekey any organizations that Alice is a member of (see below).</li>
+    <li>对 Alice 所属的任何组织重新密钥（见下文）。</li>
   </ol>
 
-  <h3>Eldest Key Update (or Deletion) [Unimplemented]</h3>
+  <h3>元老密钥更新（或删除）[未实现]</h3>
 
   <p>
-    If Alice fears all of her sibling keys have been compromised, she should
-    start from scratch. The protocol is:
+    如果 Alice 担心她所有的兄弟密钥都已受损，她应该从头开始。协议是：
   </p>
 
   <ol>
-    <li>Generate a new eldest key pair.</li>
-    <li>Generate a new per-device keys for the current device.</li>
-    <li>Decommission all old keys, while provisioning the device keys.</li>
+    <li>生成一个新的元老密钥对。</li>
+    <li>为当前设备生成新的每设备密钥。</li>
+    <li>退役所有旧密钥，同时配置设备密钥。</li>
   </ol>
 
   <p>
-    If simply deleting her account, Alice will do as above but will not generate
-    new keys or provision new devices.
+    如果只是删除她的账户，Alice 将如上所述操作，但不会生成新密钥或配置新设备。
   </p>
 
-  <h2>Organizations</h2>
+  <h2>组织</h2>
 
   <p>
-    See our discussion of <a href="/docs/teams">Teams</a>.
+    请参阅我们关于 <a href="/docs/teams">团队</a> 的讨论。
   </p>
 
-  <h2>Other Topics</h2>
+  <h2>其他主题</h2>
 
-  <h3>File Wipe [Unimplemented]</h3>
+  <h3>文件擦除 [未实现]</h3>
 
   <p>
-    The server maintains a list of which block-specific keys are in use for
-    each folder.  It doesn't know which key corresponds to which files, since
-    the TLF structure cannot be recreated without decryption keys.
+    服务器维护每个文件夹正在使用哪些特定于块的密钥的列表。它不知道哪个密钥对应于哪些文件，因为没有解密密钥无法重新创建 TLF 结构。
   </p>
 
-  <h4>With A Provisioned Device</h4>
+  <h4>使用已配置设备</h4>
 
   <p>
-    Say the user wants to delete a file \(f\).
-    A provisioned device can compute a set \(I\) such that for any \(i \in I\),
-    \(b_i\) is or was a part of \(f\).  The client then asks
-    the server to delete \(s_i\) for \(i \in I\).  The server
-    honors this request as long as the user can write to the parent TLF.
+    假设用户想要删除文件 \(f\)。
+    已配置的设备可以计算一个集合 \(I\)，使得对于任何 \(i \in I\)，\(b_i\) 是或曾经是 \(f\) 的一部分。然后客户端要求服务器删除 \(i \in I\) 的 \(s_i\)。只要用户可以写入父 TLF，服务器就会满足此请求。
   </p>
 
-  <h4>Without a Provisioned Device</h4>
+  <h4>没有已配置设备</h4>
 
   <p>
-    If a user loses all of his provisioned devices, he can ask the server to wipe
-    a TLF by deleting all keys for blocks in that TLF.  The server keeps
-    a list, so can perform the task.  Of course, the server will only honor
-    such a request if the user can write to this TLF.
+    如果用户丢失了所有已配置的设备，他可以要求服务器通过删除该 TLF 中所有块的密钥来擦除 TLF。服务器保留一个列表，因此可以执行该任务。当然，只有当用户可以写入此 TLF 时，服务器才会满足此类请求。
   </p>
 
 </div>
@@ -1158,7 +952,7 @@ document.
         <footer class="footer" data-footer-label="下一章">
         <a class="footer__link" href="/docs/crypto/_account-corner-cases">
             <div class="footer__inner">
-            <p class="footer__title" data-chapter-count="D">Keybase Account Corner Cases (Plan)</p>
+            <p class="footer__title" data-chapter-count="D">Keybase 账户边缘情况（计划）</p>
                 
             </div>
             <img alt="" class="footer__image" src="/static/img/illos/docs.jpg" loading="lazy" width="870"/>

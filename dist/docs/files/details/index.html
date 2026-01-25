@@ -117,7 +117,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/chat" class="chapter-nav__link">Chat</a>
+                        <a href="/docs/chat" class="chapter-nav__link">聊天</a>
                         
                     </li>
                     
@@ -139,7 +139,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/files" class="chapter-nav__link chapter-nav__link--active">Introducing the Keybase Filesystem</a>
+                        <a href="/docs/files" class="chapter-nav__link chapter-nav__link--active">Keybase 文件系统介绍</a>
                         
                             
                             
@@ -234,7 +234,7 @@
                                 <ol class="chapter-nav__nested-list">
                                     
                                     <li class="chapter-nav__nested-list-item">
-                                        <a href="/docs/files/details" class="chapter-nav__nested-link">Understanding the Keybase Filesystem</a>
+                                        <a href="/docs/files/details" class="chapter-nav__nested-link">理解 Keybase 文件系统</a>
                                     </li>
                                     
                                 </ol>
@@ -248,7 +248,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/wallet" class="chapter-nav__link">Stellar Wallet Key Management</a>
+                        <a href="/docs/wallet" class="chapter-nav__link">Stellar 钱包密钥管理</a>
                         
                     </li>
                     
@@ -256,7 +256,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/crypto" class="chapter-nav__link">Keybase Crypto Documents</a>
+                        <a href="/docs/crypto" class="chapter-nav__link">Keybase 加密文档</a>
                         
                     </li>
                     
@@ -272,7 +272,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/bots" class="chapter-nav__link">Bots</a>
+                        <a href="/docs/bots" class="chapter-nav__link">机器人 (Bots)</a>
                         
                     </li>
                     
@@ -280,7 +280,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/linux" class="chapter-nav__link">Linux User Guide</a>
+                        <a href="/docs/linux" class="chapter-nav__link">Linux 用户指南</a>
                         
                     </li>
                     
@@ -288,7 +288,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/lockdown" class="chapter-nav__link">Lockdown Mode</a>
+                        <a href="/docs/lockdown" class="chapter-nav__link">锁定模式 (Lockdown Mode)</a>
                         
                     </li>
                     
@@ -296,7 +296,7 @@
                     
                     <li class="chapter-nav__list-item">
                         
-                        <a href="/docs/client" class="chapter-nav__link">Keybase client-side architecture</a>
+                        <a href="/docs/client" class="chapter-nav__link">Keybase 客户端架构</a>
                         
                     </li>
                     
@@ -322,409 +322,132 @@
         
         <div class="content__inner">
             <section id="overview" class="content__section">
-                <h1 id="understanding-the-keybase-filesystem">Understanding the Keybase Filesystem</h1>
-<p>(For a gentler introduction to KBFS, see our <a href="https://keybase.io/docs/kbfs">launch announcement</a>.)</p>
-<h3 id="overview">Overview</h3>
-<p>The Keybase filesystem (KBFS) is a distributed filesystem with
-end-to-end encryption and a global namespace.  The KBFS code is
-<a href="https://github.com/keybase/client/tree/master/go/kbfs">open source</a>.</p>
-<p>“Distributed” means you can access it from any device.</p>
-<p>“Filesystem” means that there is no sync model -- files stream in and
-out on demand. Among other things, that means that by default files on
-KBFS don’t permanently take up space on your devices.  (KBFS does use
-the local disk for temporary and transient data; see the "Local disk
-usage policy" section below for more details.  You may also opt-in to
-permanent local disk storage for some folders or files; see the
-"Syncing data for offline access" section below for more details.)</p>
-<p>“End-to-end encryption” means that all data stored in KBFS have
-guaranteed integrity and authentication, and also confidentiality when
-desired, and that only the people intended to read or write a piece of
-data can do so. In particular, we (Keybase) cannot change, read, or
-even know the names of your private files.</p>
-<p>“Global namespace” means that each file on KBFS has a single unique
-path, regardless of the device from which you access it.</p>
-<h3 id="the-keybase-namespace">The Keybase namespace</h3>
-<p>A Keybase path has the form
-<code>/keybase/public/canonical_top_level_folder_name/subpath</code> or
-<code>/keybase/private/canonical_top_level_folder_name/subpath</code>. Files and
-folders under <code>/keybase/public</code> are signed, and files and folders under
-<code>/keybase/private</code> are encrypted in addition to being signed.</p>
-<p>A top-level folder (TLF) is a subdirectory of either <code>/keybase/public</code>
-or <code>/keybase/private</code>. A canonical name for a public folder is in the
-form <code>writer1,writer2,...</code>, and a canonical name for a private folder
-is either <code>writer1,writer2,...</code> or
-<code>writer1,writer2,...#reader1,reader2,...</code>, where each writer or reader
-is a keybase username, and the list of writers and readers are
-alphabetized separately. The writers for a TLF can both read and write
-to that TLF, whereas readers can only read.</p>
-<p>The canonical name for a TLF encodes which keybase users can read or
-write to it. For a public folder, it is guaranteed that only the
-writers for that folder have written to it. This is verified by the
-keybase client, which checks the signatures of the updates to that
-folder against the writers’ public keys.</p>
-<p>For a private folder, it is guaranteed that only the writers for that
-folder have written to it, and only the writers and readers for that
-folder can read it. This is also verified by the keybase client.</p>
-<p>For further details on the crypto design of KBFS, see
-https://keybase.io/docs/kbfs-crypto.</p>
-<p>You can also access keybase files through paths with non-canonical TLF
-names. The simplest example of a non-canonical TLF name is one where
-the order of the writers or reader is not alphabetical, but more
-useful examples involve using assertions instead of usernames. See
-https://keybase.io/docs/command_line for assertion syntax.</p>
-<p>Example assertions:</p>
+                <h1 id="理解-keybase-文件系统">理解 Keybase 文件系统</h1>
+<p>(关于 KBFS 更温和的介绍，请参阅我们的 <a href="https://keybase.io/docs/kbfs">发布公告</a>。)</p>
+<h3 id="概览">概览</h3>
+<p>Keybase 文件系统 (KBFS) 是一个具有端到端加密和全局命名空间的分布式文件系统。KBFS 代码是 <a href="https://github.com/keybase/client/tree/master/go/kbfs">开源的</a>。</p>
+<p>“分布式”意味着您可以从任何设备访问它。</p>
+<p>“文件系统”意味着没有同步模型——文件按需流式传输进出。除其他事项外，这意味着默认情况下，KBFS 上的文件不会永久占用您设备上的空间。（KBFS 确实使用本地磁盘存储临时和瞬态数据；有关更多详细信息，请参阅下面的“本地磁盘使用策略”部分。您也可以选择对某些文件夹或文件进行永久本地磁盘存储；有关更多详细信息，请参阅下面的“同步数据以供离线访问”部分。）</p>
+<p>“端到端加密”意味着存储在 KBFS 中的所有数据都具有保证的完整性和身份验证，并在需要时具有机密性，并且只有预期的读写者才能操作数据。特别是，我们 (Keybase) 无法更改、读取甚至知道您的私有文件的名称。</p>
+<p>“全局命名空间”意味着 KBFS 上的每个文件都有一个唯一的路径，无论您从哪个设备访问它。</p>
+<h3 id="keybase-命名空间">Keybase 命名空间</h3>
+<p>Keybase 路径的形式为 <code>/keybase/public/canonical_top_level_folder_name/subpath</code> 或 <code>/keybase/private/canonical_top_level_folder_name/subpath</code>。<code>/keybase/public</code> 下的文件和文件夹已签名，<code>/keybase/private</code> 下的文件和文件夹除签名外还经过加密。</p>
+<p>顶级文件夹 (TLF) 是 <code>/keybase/public</code> 或 <code>/keybase/private</code> 的子目录。公开文件夹的规范名称形式为 <code>writer1,writer2,...</code>，私有文件夹的规范名称为 <code>writer1,writer2,...</code> 或 <code>writer1,writer2,...#reader1,reader2,...</code>，其中每个写入者或读取者都是一个 Keybase 用户名，且写入者和读取者列表分别按字母顺序排列。TLF 的写入者既可以读取也可以写入该 TLF，而读取者只能读取。</p>
+<p>TLF 的规范名称编码了哪些 Keybase 用户可以读取或写入它。对于公开文件夹，保证只有该文件夹的写入者曾写入过它。这是由 Keybase 客户端验证的，它会根据写入者的公钥检查该文件夹更新的签名。</p>
+<p>对于私有文件夹，保证只有该文件夹的写入者曾写入过它，并且只有该文件夹的写入者和读取者可以读取它。这也由 Keybase 客户端验证。</p>
+<p>有关 KBFS 加密设计的更多详细信息，请参阅 https://keybase.io/docs/kbfs-crypto。</p>
+<p>您还可以通过非规范 TLF 名称路径访问 Keybase 文件。非规范 TLF 名称最简单的例子是写入者或读取者的顺序不是按字母排列的，但更有用的例子涉及使用声明 (assertions) 代替用户名。有关声明语法，请参阅 https://keybase.io/docs/command_line。</p>
+<p>声明示例：</p>
 <ul>
-<li><code>akalin</code> trivially resolves to the Keybase user <code>akalin</code>.</li>
-<li><code>fakalin@twitter</code> resolves to the Keybase user who has proven
-   ownership of the <code>fakalin</code> account at Twitter.</li>
-<li><code>fakalin@twitter+akalin@github</code> resolves to the Keybase user who has
-   proven ownership of the <code>fakalin</code> account at Twitter as well as the
-   <code>akalin</code> account at GitHub.</li>
+<li><code>akalin</code> 平凡地解析为 Keybase 用户 <code>akalin</code>。</li>
+<li><code>fakalin@twitter</code> 解析为已证明拥有 Twitter 账户 <code>fakalin</code> 的 Keybase 用户。</li>
+<li><code>fakalin@twitter+akalin@github</code> 解析为已证明拥有 Twitter 账户 <code>fakalin</code> 以及 GitHub 账户 <code>akalin</code> 的 Keybase 用户。</li>
 </ul>
-<p>At the filesystem level, each non-canonical TLF name resolves as a
-symlink to the canonical TLF name.</p>
-<h3 id="security-model">Security Model</h3>
-<p>At a high level, end-user devices are trusted and Keybase/KBFS/other
-servers are untrusted. On desktops, we run all KBFS processes as the
-current user and use OS-level secret stores, but we don’t attempt to
-protect against other processes owned by the same user or root.</p>
-<p>The KBFS client doesn’t trust any data coming from Keybase or KBFS
-servers, and verifies any received data against the relevant users’
-public keys. For the nitty-gritty details, see the
-<a href="https://keybase.io/docs/kbfs-crypto">KBFS crypto doc</a>. In particular,
-the KBFS servers cannot see into the contents or structure of your
-(non-public) files.</p>
-<p>That having been said, the KBFS servers know what users can access
-which data, and will only serve data to an authorized reader of a TLF
-with a valid session. Furthermore, they will only serve historical
-(archived) data to writers of a TLF, even public ones.</p>
-<p>Each TLF is backed by an "implicit" Keybase team, and the private keys
-required to access the TLF are managed by this team; see the <a href="https://keybase.io/docs/teams/index">Keybase
-team docs</a> for more details.
-When you provision a new device to your account, it automatically
-gains access to these keys, and thus the TLF data.  When you revoke a
-device, a new key is created for the TLF and used to encrypt all
-future data written to the TLF, to ensure that the device cannot read
-the new data.  Old data is not re-encrypted (though our servers won’t
-serve it to revoked devices).</p>
-<h3 id="filesystem-semantics">Filesystem semantics</h3>
-<p>There are no guarantees as to the relative ordering of operations in
-two different TLFs.</p>
-<p>A TLF is best thought of as a linear sequence of changes. If only a
-single device is operating on a TLF, then each change it makes appends
-to this sequence, which is called the “master branch”. However, if
-there are multiple devices, then a change from another device may be
-added to the master branch before one from the current device. In that
-case, a separate branch exclusive to the local device is forked
-off. In this state (called “staged”), operations on the local device
-aren’t normally visible to any other devices, although they’re still
-persisted locally (or, with journaling turned off, on KBFS servers) in
-case of process or device restarts. Then a background process
-periodically attempts to merge this branch into the master branch,
-resolving conflicts as necessary. When this succeeds, the changes from
-the local device are visible to everyone else (but see the section on
-conflict resolution below).</p>
-<p>Within a single device, KBFS then behaves more or less like a normal
-(i.e., POSIX-compliant) filesystem, except for the exceptions listed
-below. However, it’s difficult to make general statements about the
-relative ordering and visibility of operations in a TLF between two
-different devices. But in general, once an application does an fsync
-that is sent to the KBFS servers successfully from a device, all the
-previously-written data will eventually be visible to a second
-device. Note that a file write is a purely local operation---writes to
-a file on a device will be invisible to a second device until the next
-sync or close, and after the sync they will eventually be visible to a
-second device.  There is also a background process that frequently
-syncs file data, in case the application does not sync or close the
-files.</p>
-<p>By default, KBFS requires network connectivity, and no offline reads
-are possible unless the data being read happens to be cached in
-memory.  In theory offline writes are possible, and will be queued up
-on your local disk until network access is available.  However,
-writing often involves reading first, especially for updating the
-directory that contains the file, so in practice the lack of offline
-reads could hinder offline writes.  (See the "Syncing data for offline
-access" section below for more options for offline access.)</p>
-<h4 id="durability">Durability</h4>
-<p>For performance reasons, when KBFS receives a write call (either a
-file write or a directory modification), KBFS buffers the write in
-memory and responds successfully, before the new data is persisted on
-disk or on the servers.  This is POSIX-compliant, but due to the
-latencies involved, KBFS holds data in memory for longer than most
-mounted file systems.  By default, it holds data for up to 1 second
-(or until 100 operations, or 25 MB of file data, have been buffered).</p>
-<p>Any <code>fsync</code> call causes all buffered data to be flushed immediately
-and synchronously to either the local disk or the KBFS server,
-depending on the journal configuration (see below).  KBFS doesn't
-currently have any optimizations for syncing individual files -- it's
-all or nothing.</p>
-<p>Applications may inspect the currently-buffered data in the special
-<code>.kbfs_status</code> file that can be read within your TLF (e.g., <code>cat
-/keybase/private/me,you/.kbfs_status</code> or <code>keybase fs read
-/keybase/private/me,you/.kbfs_status</code>).  In that file, there is a list
-of "DirtyPaths", indicating which files and directories have data that
-is held only in memory.</p>
-<h4 id="journaled-writes">Journaled writes</h4>
-<p>By default, KBFS uses a persistent <em>journal</em> on your local disk to
-store any changes you make to a TLF temporarily, until they can be
-saved on our servers.  This makes the writes faster, decouples your
-network latency from your file system latency, and provides KBFS
-opportunities for rolling several changes together and saving you
-bandwidth.  This applies both to file writes and directory updates.
-Note that all data in this journal are encrypted before being written
-to disk.</p>
-<p>The use of a journal means that a sync or close of a file does NOT
-ensure the data has made it to our KBFS servers and will soon be
-visible to other devices.  Data in the journal are flushed to the
-servers in the background.  Your Keybase app icon will change to
-include an up arrow while data is uploading from the journal.  You can
-check the status of the changes that the journal is uploading (and an
-estimated time for when the uploads will finish) using the <code>keybase fs
-uploads</code> CLI command.  Furthermore, in the <code>.kbfs_status</code> file (see
-above), you can also see which local directory is being used for the
-journal; see the "Local disk usage policy" section below for more
-details.</p>
-<p>If you want stronger semantics, or if you want to avoid using any disk
-space for KBFS data even temporarily, you can disable journaling
-altogether, or on a per-TLF basis.  For example, on Linux and macOS
-you can do the following:</p>
+<p>在文件系统层面，每个非规范 TLF 名称都解析为指向规范 TLF 名称的符号链接。</p>
+<h3 id="安全模型">安全模型</h3>
+<p>在高层次上，终端用户设备是受信任的，而 Keybase/KBFS/其他服务器是不受信任的。在桌面上，我们以当前用户身份运行所有 KBFS 进程，并使用操作系统级别的秘密存储，但我们不尝试防范同一用户或 root 拥有的其他进程。</p>
+<p>KBFS 客户端不信任来自 Keybase 或 KBFS 服务器的任何数据，并根据相关用户的公钥验证任何接收到的数据。有关具体细节，请参阅 <a href="https://keybase.io/docs/kbfs-crypto">KBFS 加密文档</a>。特别是，KBFS 服务器无法看到您（非公开）文件的内容或结构。</p>
+<p>话虽如此，KBFS 服务器知道哪些用户可以访问哪些数据，并且只会向具有有效会话的 TLF 授权读取者提供数据。此外，它们只会向 TLF 的写入者提供历史（归档）数据，即使是公开 TLF 也是如此。</p>
+<p>每个 TLF 由一个“隐式”Keybase 团队支持，访问该 TLF 所需的私钥由该团队管理；有关更多详细信息，请参阅 <a href="https://keybase.io/docs/teams/index">Keybase 团队文档</a>。当您为账户配置新设备时，它会自动获得这些密钥的访问权限，从而获得 TLF 数据。当您吊销设备时，会为 TLF 创建一个新密钥并用于加密所有未来写入该 TLF 的数据，以确保该设备无法读取新数据。旧数据不会重新加密（尽管我们的服务器不会将其提供给已吊销的设备）。</p>
+<h3 id="文件系统语义">文件系统语义</h3>
+<p>对于两个不同 TLF 中操作的相对顺序，没有任何保证。</p>
+<p>TLF 最好被视为一系列线性变更。如果只有一个设备在 TLF 上操作，那么它所做的每个更改都会追加到此序列中，该序列称为“主分支” (master branch)。但是，如果有多个设备，则来自另一设备的更改可能会在当前设备的更改之前添加到主分支。在这种情况下，会分叉出一个该本地设备独有的单独分支。在这种状态（称为“暂存”，staged）下，本地设备上的操作通常对任何其他设备都不可见，尽管它们仍会在本地持久化（或者在关闭日志记录的情况下，在 KBFS 服务器上持久化），以防进程或设备重启。然后，后台进程会定期尝试将此分支合并到主分支中，并在必要时解决冲突。成功后，本地设备的更改将对其他所有人可见（但请参阅下面的冲突解决部分）。</p>
+<p>在单个设备内，KBFS 的行为或多或少像一个普通（即符合 POSIX 标准）的文件系统，除了下面列出的例外情况。但是，很难对两个不同设备之间 TLF 中操作的相对顺序和可见性做出一般性陈述。但通常，一旦应用程序执行了一个成功发送到 KBFS 服务器的 fsync，所有先前写入的数据最终都将对第二个设备可见。请注意，文件写入纯粹是本地操作——设备上文件的写入在下一次同步或关闭之前对第二个设备是不可见的，而在同步之后，它们最终将对第二个设备可见。还有一个后台进程会频繁同步文件数据，以防应用程序没有同步或关闭文件。</p>
+<p>默认情况下，KBFS 需要网络连接，除非正在读取的数据恰好缓存在内存中，否则无法进行离线读取。理论上，离线写入是可能的，并且会排队在您的本地磁盘上，直到网络连接可用。但是，写入通常涉及先读取，特别是为了更新包含文件的目录，因此在实践中，缺乏离线读取可能会阻碍离线写入。（有关离线访问的更多选项，请参阅下面的“同步数据以供离线访问”部分。）</p>
+<h4 id="持久性">持久性</h4>
+<p>出于性能原因，当 KBFS 收到写入调用（文件写入或目录修改）时，KBFS 会在内存中缓冲写入并成功响应，然后再将新数据持久化到磁盘或服务器上。这符合 POSIX 标准，但由于涉及延迟，KBFS 将数据保存在内存中的时间比大多数挂载的文件系统要长。默认情况下，它将数据保留最多 1 秒（或直到缓冲了 100 个操作，或 25 MB 的文件数据）。</p>
+<p>任何 <code>fsync</code> 调用都会导致所有缓冲数据立即同步刷新到本地磁盘或 KBFS 服务器，具体取决于日志配置（见下文）。KBFS 目前没有任何针对同步单个文件的优化——它是全有或全无的。</p>
+<p>应用程序可以在 TLF 内可读取的特殊 <code>.kbfs_status</code> 文件中检查当前缓冲的数据（例如，<code>cat /keybase/private/me,you/.kbfs_status</code> 或 <code>keybase fs read /keybase/private/me,you/.kbfs_status</code>）。在该文件中，有一个 "DirtyPaths" 列表，指示哪些文件和目录的数据仅保存在内存中。</p>
+<h4 id="日志式写入-journaled-writes">日志式写入 (Journaled writes)</h4>
+<p>默认情况下，KBFS 使用本地磁盘上的持久化 <em>日志</em> (journal) 临时存储您对 TLF 所做的任何更改，直到它们可以保存到我们的服务器上。这使得写入速度更快，将您的网络延迟与文件系统延迟解耦，并为 KBFS 提供了将多个更改合并在一起并节省带宽的机会。这既适用于文件写入，也适用于目录更新。请注意，此日志中的所有数据在写入磁盘之前都经过加密。</p>
+<p>使用日志意味着文件的同步或关闭<strong>不</strong>保证数据已到达我们的 KBFS 服务器并将很快对其他设备可见。日志中的数据在后台刷新到服务器。当数据从日志上传时，您的 Keybase 应用图标将变为包含一个向上箭头。您可以使用 <code>keybase fs uploads</code> CLI 命令检查日志正在上传的更改的状态（以及上传完成的预计时间）。此外，在 <code>.kbfs_status</code> 文件（见上文）中，您还可以看到哪个本地目录正被用作日志；有关更多详细信息，请参阅下面的“本地磁盘使用策略”部分。</p>
+<p>如果您想要更强的语义，或者如果您想避免即使是临时地使用任何磁盘空间来存储 KBFS 数据，您可以完全禁用日志记录，或者基于每个 TLF 禁用。例如，在 Linux 和 macOS 上，您可以执行以下操作：</p>
 <ul>
-<li>Persistently turn off all journaling for TLFs accessed in the
-  future: <code>echo 1 &gt; /keybase/.kbfs_disable_auto_journals</code>.  This
-  doesn't affect TLFs that might already be using journaling; you'll
-  have to disable each of those manually.)</li>
-<li>Turn off journaling for one TLF: <code>echo 1 &gt;
-  /keybase/private/me,you/.kbfs_disable_journal</code>.  This only works if
-  the journal is empty.</li>
+<li>永久关闭未来访问的所有 TLF 的日志记录：<code>echo 1 &gt; /keybase/.kbfs_disable_auto_journals</code>。（这不会影响可能已经在使用日志记录的 TLF；您必须手动禁用每一个。）</li>
+<li>关闭单个 TLF 的日志记录：<code>echo 1 &gt; /keybase/private/me,you/.kbfs_disable_journal</code>。这仅在日志为空时有效。</li>
 </ul>
-<p>In comparison to sync-based systems like Dropbox, the use of a journal
-gives stronger ordering guarantees between file system operations on
-the same device, since KBFS strictly uploads data in the order it was
-written.  If you know there will only be one device at a time writing
-to a particular TLF, this means it's fairly safe to run something like
-<code>git</code> in a KBFS folder, even if other devices can be reading from it
-at the same time, since you're not at risk of repo corruption if the
-read happens at the wrong time or the device stalls or fails.  (Of
-course, Keybase also offers <a href="https://keybase.io/blog/encrypted-git-for-everyone">encrypted git
-repositories</a>
-directly as a service, which are also based on KBFS but offer the
-usual git safety guarantees even when multiple devices are committing
-at the same time.)</p>
-<h4 id="conflict-resolution">Conflict resolution</h4>
-<p>Our conflict resolution strategy is similar to Dropbox's, but because
-we have stronger filesystem semantics than they do, we're able to do
-things in a slightly different way that more closely match the
-behavior of a local FS when two users are updating it concurrently
-(only relevant for corner cases). Here is roughly what the resolutions
-look like:</p>
+<p>与 Dropbox 等基于同步的系统相比，日志的使用在同一设备上的文件系统操作之间提供了更强的顺序保证，因为 KBFS 严格按照写入顺序上传数据。如果您知道一次只有一个设备写入特定的 TLF，这意味着在 KBFS 文件夹中运行像 <code>git</code> 这样的东西是相当安全的，即使其他设备可能同时从中读取，因为如果读取发生在错误的时间或者设备停顿或失败，您也不面临仓库损坏的风险。（当然，Keybase 也直接作为服务提供 <a href="https://keybase.io/blog/encrypted-git-for-everyone">加密 git 仓库</a>，这也是基于 KBFS 的，但即使多个设备同时提交，也能提供通常的 git 安全保证。）</p>
+<h4 id="冲突解决">冲突解决</h4>
+<p>我们的冲突解决策略类似于 Dropbox，但因为我们拥有比他们更强的文件系统语义，所以我们可以用稍微不同的方式做事情，这更接近于两个用户并发更新本地 FS 时的行为（仅与边缘情况相关）。解决方案大致如下：</p>
 <ul>
-<li>When both devices do make non-conflicting changes to the same
-    directory, those will get merged trivially.</li>
-<li>When both devices write to the same file, the "loser" file will
-    get copied to a new name, marked with the name of the user who did
-    the write, and the time at which the resolution happened. So if
-    both users with to file <code>a/b.txt</code>, but user "bob" loses the race,
-    after resolution you should see <code>a/b.txt</code> and <code>a/b.conflicted (bob’s
-    macbook copy 2015-11-24).txt</code>, where “bob” is the name of the user
-    who wrote the file, and “macbook” is the public name of the device
-    on which bob wrote the file.  KBFS does not currently attempt to
-    merge the contents of the two copies, for any type of file.</li>
-<li>When both devices create a file with the same name, the same
-    resolution as above will happen.</li>
-<li>When both devices create a directory with the same name, they will
-    be intelligently merged (dealing with children conflicts
-    recursively).</li>
-<li>If one device creates a directory, and another creates a file,
-    using the same name, the file is always renamed with the
-    <code>.conflicted...</code> suffix mentioned above, in order to preserve the
-    directory structure as best as possible.</li>
-<li>Unlike Dropbox, if "alice" creates a file <code>a/foo</code>, but "bob" does
-    <code>mv a b</code>, the resolution should only have the file <code>b/foo</code>. That
-    is, the updates to a directory follow that directory across
-    renames. This is the same way it works in the terminal, if you're
-    in a directory and someone moves that directory out from under
-    you.</li>
-<li>If the devices cause a rename cycle, it's resolved with
-    symlinks. So for example, "alice" does <code>mv b/ a/</code> and bob does <code>mv a/
-    b/</code>. If alice wins the initial race, the resolution will look like
-    <code>a/b/a</code>, where the second <code>a</code> is a symlink pointing to <code>../</code>.</li>
-<li>One weirdness is when alice does <code>mv a/ b/</code> and bob concurrently
-    does <code>mkdir b</code>. Ideally, we would merge those two directories, but
-    implementing that is very tricky and expensive, so right now the
-    code treats it as a conflict.</li>
+<li>当两个设备对同一目录进行不冲突的更改时，这些更改将被简单地合并。</li>
+<li>当两个设备写入同一文件时，“失败者”文件将被复制到一个新名称，并标记为执行写入的用户名称以及解决发生的时间。因此，如果两个用户都写入文件 <code>a/b.txt</code>，但用户 "bob" 输掉了比赛，解决后您应该会看到 <code>a/b.txt</code> 和 <code>a/b.conflicted (bob’s macbook copy 2015-11-24).txt</code>，其中 “bob” 是写入该文件的用户名，“macbook” 是 bob 写入该文件的设备的公开名称。KBFS 目前不尝试合并两个副本的内容，无论何种文件类型。</li>
+<li>当两个设备创建同名文件时，将发生与上述相同的解决。</li>
+<li>当两个设备创建同名目录时，它们将被智能合并（递归处理子项冲突）。</li>
+<li>如果一个设备创建目录，而另一个使用相同名称创建文件，则该文件始终重命名为上述提到的 <code>.conflicted...</code> 后缀，以便尽可能保留目录结构。</li>
+<li>与 Dropbox 不同，如果 "alice" 创建文件 <code>a/foo</code>，但 "bob" 执行 <code>mv a b</code>，解决后应该只有文件 <code>b/foo</code>。也就是说，目录的更新会跟随该目录的重命名。这与终端中的工作方式相同，如果您在一个目录中，而有人将该目录移走了。</li>
+<li>如果设备导致重命名循环，则使用符号链接解决。例如，"alice" 执行 <code>mv b/ a/</code> 而 bob 执行 <code>mv a/ b/</code>。如果 alice 赢得了最初的比赛，解决方案将看起来像 <code>a/b/a</code>，其中第二个 <code>a</code> 是指向 <code>../</code> 的符号链接。</li>
+<li>一个奇怪的情况是当 alice 执行 <code>mv a/ b/</code> 而 bob 并发执行 <code>mkdir b</code>。理想情况下，我们会合并这两个目录，但实现这一点非常棘手且昂贵，所以目前代码将其视为冲突。</li>
 </ul>
-<h4 id="folders-stuck-in-conflict-mode">Folders stuck in conflict mode</h4>
-<p>In rare cases where KBFS has a bug in its conflict resolution process,
-or resource pressures on the device prevent conflict resolution from
-completing, a device might get permanently stuck with its local
-branched view of a folder, and other devices won't ever see that data.
-If this is the case, the <code>.kbfs_status</code> file in the TLF (see above)
-will show <code>IN_CONFLICT_AND_STUCK</code> for its <code>ConflictStatus</code>.  If you
-notice one of your TLFs in this state, please use <code>keybase log send</code>
-to bring it to our attention as soon as possible.</p>
-<p>You can revert the stuck TLF to the "master" view by using the
-<code>keybase fs clear-conflicts</code> command.  This moves the local view aside
-under a new, read-only path name such as <code>/keybase/team/mycompany
-(local conflicted copy 2019-09-25)</code>, while making the "master" view
-accessible under the normal path.  Data can then be manually copied
-from the stuck view into the normal view.  Once any required data has
-been restored, the conflict view can be removed (and the corresponding
-local disk space reclaimed) with the <code>keybase fs
-finish-resolving-conflicts</code> command.</p>
-<h4 id="deviations-from-posix">Deviations from POSIX</h4>
-<p>Permissions are determined entirely by the TLF name, and so there are
-no POSIX-style permissions.</p>
-<p>Hard links are not supported. Symbolic links are supported, but will
-only be globally meaningful if they refer to other KBFS paths.</p>
-<p><code>O_EXCL</code> and <code>O_APPEND</code> are not supported, although they may work if
-the file is operated on only from a single device. In particular,
-nothing that does file locking (like git) should be used from multiple
-devices yet, and appending to a single shared file (e.g., a log file)
-from multiple devices should be avoided. We may support either or both
-of these in the future.</p>
-<p>KBFS does not support atime, since that turns a read into a write and
-would require all readers to also be writers. Also, it'd be slow.</p>
-<p>Typical POSIX attributes like file owner, group, and permissions don't
-make much sense in KBFS. KBFS sets the owner of all files and directories to
-the UID of the local user that is running the KBFS process. Read and write
-permissions are set based on whether the user has read or write access to the
-TLF. For example:</p>
+<h4 id="陷入冲突模式的文件夹">陷入冲突模式的文件夹</h4>
+<p>在极少数情况下，如果 KBFS 在其冲突解决过程中存在 bug，或者设备上的资源压力阻止冲突解决完成，设备可能会永久陷入其文件夹的本地分支视图，而其他设备永远看不到该数据。如果是这种情况，TLF 中的 <code>.kbfs_status</code> 文件（见上文）的 <code>ConflictStatus</code> 将显示 <code>IN_CONFLICT_AND_STUCK</code>。如果您发现您的任何 TLF 处于此状态，请尽快使用 <code>keybase log send</code> 通知我们。</p>
+<p>您可以使用 <code>keybase fs clear-conflicts</code> 命令将卡住的 TLF 恢复为“主”视图。这将把本地视图移动到一个新的只读路径名下，例如 <code>/keybase/team/mycompany (local conflicted copy 2019-09-25)</code>，同时使“主”视图可以通过正常路径访问。然后可以手动将数据从卡住的视图复制到正常视图中。一旦恢复了任何所需的数据，就可以使用 <code>keybase fs finish-resolving-conflicts</code> 命令删除冲突视图（并回收相应的本地磁盘空间）。</p>
+<h4 id="偏离-posix-标准">偏离 POSIX 标准</h4>
+<p>权限完全由 TLF 名称决定，因此没有 POSIX 风格的权限。</p>
+<p>不支持硬链接。支持符号链接，但只有当它们引用其他 KBFS 路径时才具有全局意义。</p>
+<p>不支持 <code>O_EXCL</code> 和 <code>O_APPEND</code>，尽管如果文件仅从单个设备操作，它们可能会起作用。特别是，任何进行文件锁定的东西（如 git）目前都不应从多个设备使用，并且应避免从多个设备向单个共享文件（例如日志文件）追加内容。我们将来可能会支持其中一个或两个。</p>
+<p>KBFS 不支持 atime，因为那会将读取变成写入，并要求所有读取者也是写入者。此外，这会很慢。</p>
+<p>典型的 POSIX 属性（如文件所有者、组和权限）在 KBFS 中意义不大。KBFS 将所有文件和目录的所有者设置为运行 KBFS 进程的本地用户的 UID。读写权限根据用户是否拥有 TLF 的读或写权限来设置。例如：</p>
 <ul>
-<li>Non-executable files in writable private TLF: <code>0600</code> (<code>-rw-------</code>)</li>
-<li>Executable files in writable private TLF: <code>0700</code> (<code>-rwx------</code>)</li>
-<li>Private subdirectories: <code>0700</code> (<code>drwx------</code>)</li>
-<li>Public subdirectories that user has write access to: <code>0700</code> (<code>drwx------</code>)</li>
-<li>Read-only public subdirectories: <code>0500</code> (<code>-dr-x------</code>)</li>
+<li>可写私有 TLF 中的不可执行文件：<code>0600</code> (<code>-rw-------</code>)</li>
+<li>可写私有 TLF 中的可执行文件：<code>0700</code> (<code>-rwx------</code>)</li>
+<li>私有子目录：<code>0700</code> (<code>drwx------</code>)</li>
+<li>用户有写权限的公开子目录：<code>0700</code> (<code>drwx------</code>)</li>
+<li>只读公开子目录：<code>0500</code> (<code>-dr-x------</code>)</li>
 </ul>
-<p>Note that permissions and ownership of a TLF itself may be incorrect until one
-has accessed the TLF.</p>
-<p>Any requests to change the owner or group (e.g., via <code>chown</code>) or to
-set permissions (excluding the executable bit) will appear to succeed,
-but the change will not be saved or propagated to other clients.
-Ideally we would fail these calls, but too many applications (such as
-<code>mv</code> or <code>unzip</code>) fail miserably when those calls fail.  In addition,
-any attribute change request that doesn't result in a real change to
-the underlying KBFS metadata (including setting the executable bit
-when it is already set, for example) does not update the corresponding
-ctime for the directory entry.  This is a violation of POSIX, but it's
-an important optimization for some common workloads (e.g., <code>rsync</code>).</p>
-<h4 id="symbolic-links-can-lead-outside-a-tlf">Symbolic links can lead outside a TLF</h4>
-<p>The Keybase client allows symbolic links that lead outside a TLF. This
-is by design, and we envision a variety of great use cases:</p>
+<p>请注意，TLF 本身的权限和所有权可能在访问 TLF 之前是不正确的。</p>
+<p>任何更改所有者或组（例如，通过 <code>chown</code>）或设置权限（不包括可执行位）的请求都将显示为成功，但更改不会保存或传播到其他客户端。理想情况下，我们会让这些调用失败，但太多的应用程序（如 <code>mv</code> 或 <code>unzip</code>）在这些调用失败时会彻底崩溃。此外，任何不会导致底层 KBFS 元数据实际更改的属性更改请求（例如，当可执行位已设置时再次设置它）都不会更新目录条目的相应 ctime。这违反了 POSIX，但对于某些常见工作负载（例如 <code>rsync</code>）来说，这是一项重要的优化。</p>
+<h4 id="符号链接可能指向-tlf-外部">符号链接可能指向 TLF 外部</h4>
+<p>Keybase 客户端允许指向 TLF 外部的符号链接。这是有意设计的，我们设想了各种很好的用例：</p>
 <ul>
-<li>a subfolder of <em>your</em> public folder, where you link to friends'
-    public folders you endorse</li>
-<li>storing private links to all your favorite private folders</li>
-<li>a link entirely outside KBFS to another global filesystem you
-    endorse. For example, to something in <a href="https://ipfs.io/">IPFS</a>.</li>
+<li>您的公开文件夹的子文件夹，链接到您认可的朋友的公开文件夹</li>
+<li>存储指向所有您最喜欢的私有文件夹的私有链接</li>
+<li>完全指向 KBFS 外部到您认可的另一个全局文件系统的链接。例如，指向 <a href="https://ipfs.io/">IPFS</a> 中的某物。</li>
 </ul>
-<p>You should therefore take care to consider the possibility of blindly
-following a symbolic link - without noticing - by someone you don't
-trust. As an example, if you ran a webserver and naively served
-content in someone's <code>/keybase/public/</code> folder - with your server
-configured to follow symbolic links - a user could trick you into
-serving your own secret files back out.</p>
-<h3 id="storage-quotas-and-history">Storage, Quotas and History</h3>
-<p>The KBFS servers store your data in opaque blobs called <em>blocks</em>.
-Both files and directories within a TLF are stored as blocks, and the
-servers can't tell which block belongs to which file or directory
-within the TLF.  The data in these blocks are encrypted, and their
-size is increased (i.e., <em>padded</em>) to avoid leaking information to
-our servers.</p>
-<p>Each user has a quota, expressed in a number of bytes.  Whenever you
-write to a file or change a TLF’s structure, only the blocks that you
-change count against your quota.  The complete size of each block
-(including encryption and padding) is what counts towards your quota.
-Note that due to KBFS internal data structures, changing a file or
-directory also changes all of the directories on the path back to the
-root of the TLF.  So, for example, if you edit a file at
-<code>/keybase/private/you/a/b/c/foo</code>, you've ended up changing at least
-five blocks: the TLF root directory block for <code>/keybase/private/you</code>,
-the subdirectory blocks for <code>a</code>, <code>a/b</code>, and <code>a/b/c</code>, and the file
-block for <code>a/b/c/foo</code>.</p>
-<p>You can check your quota usage using <code>keybase fs quota</code>, or <code>df</code> on
-Linux and macOS.  Note that <code>du</code> also works (though it might be very
-slow) - however, <code>du</code> only counts the plaintext size of the files, and
-includes data written by any user, not just you.</p>
-<p>Blocks that are deprecated due to a new change (e.g., if you overwrite
-a previous version of a file, or add a new directory entry) are marked
-for cleanup, and a background process on each client cleans up these
-old blocks after about two weeks, though this could be delayed if all
-clients currently accessing that folder go offline.  These deprecated
-blocks don't count towards your quota.</p>
-<h4 id="time-travel">Time travel</h4>
-<p>You can view, and recover data from, old versions of your TLF within
-the two-week window before old, archived data is cleaned up.</p>
-<p>Every time you change something in a KBFS TLF (at the root level or in
-any subdirectory), you create a new version, or <em>revision</em>, of that
-TLF.  Each revision is assigned a monotonically increasing <em>revision
-number</em>.  You can see the current revision number in the <code>Revision</code>
-field of the <code>.kbfs_status</code> file for the TLF (see below).  You can
-also find the revision number of the newest version of the folder to
-have been cleaned up (and thus is NOT accessible anymore) in the
-<code>LastGCRevision</code> field of that same file.  When viewing old versions
-of the TLF, you choose one of those revisions to browse.  They are
-read-only, but you can copy data from them into the current copy of
-the TLF.</p>
-<p>There are multiple ways to view old data.  Within the <code>keybase fs</code>
-suite of commands, you can access old data with the <code>ls</code>, <code>stat</code>, and
-<code>read</code> commands, and for the source paths of the <code>cp</code> command, using
-the following flags:</p>
+<p>因此，您应该小心考虑盲目跟随（未注意到）由您不信任的人创建的符号链接的可能性。例如，如果您运行一个网络服务器并天真地提供某人 <code>/keybase/public/</code> 文件夹中的内容——且您的服务器配置为跟随符号链接——用户可能会诱骗您将您自己的秘密文件服务出来。</p>
+<h3 id="存储配额与历史">存储、配额与历史</h3>
+<p>KBFS 服务器将您的数据存储在称为 <em>块</em> (blocks) 的不透明 blob 中。TLF 中的文件和目录都存储为块，服务器无法分辨哪个块属于 TLF 中的哪个文件或目录。这些块中的数据是加密的，并且其大小会增加（即 <em>填充</em>，padding）以避免向我们的服务器泄露信息。</p>
+<p>每个用户都有一个配额，以字节数表示。每当您写入文件或更改 TLF 的结构时，只有您更改的块会计入您的配额。每个块的完整大小（包括加密和填充）是计入配额的内容。请注意，由于 KBFS 内部数据结构的原因，更改文件或目录也会更改路径上一直回到 TLF 根目录的所有目录。因此，例如，如果您编辑 <code>/keybase/private/you/a/b/c/foo</code> 处的文件，您最终至少更改了五个块：<code>/keybase/private/you</code> 的 TLF 根目录块，<code>a</code>、<code>a/b</code> 和 <code>a/b/c</code> 的子目录块，以及 <code>a/b/c/foo</code> 的文件块。</p>
+<p>您可以使用 <code>keybase fs quota</code> 检查您的配额使用情况，或者在 Linux 和 macOS 上使用 <code>df</code>。请注意，<code>du</code> 也可以工作（尽管可能非常慢）——但是，<code>du</code> 仅计算文件的明文大小，并且包括任何用户写入的数据，而不仅仅是您。</p>
+<p>因新更改而弃用的块（例如，如果您覆盖文件的先前版本，或添加新的目录条目）将被标记为清理，每个客户端上的后台进程会在大约两周后清理这些旧块，尽管如果当前访问该文件夹的所有客户端都离线，这可能会延迟。这些弃用的块不计入您的配额。</p>
+<h4 id="时间旅行">时间旅行</h4>
+<p>您可以在旧的、归档的数据被清理之前的两周窗口内，查看并恢复 TLF 的旧版本数据。</p>
+<p>每当您更改 KBFS TLF 中的某些内容（在根级别或任何子目录中）时，您都会创建该 TLF 的一个新版本，或 <em>修订版</em> (revision)。每个修订版都分配有一个单调递增的 <em>修订版号</em>。您可以在 TLF 的 <code>.kbfs_status</code> 文件（见下文）的 <code>Revision</code> 字段中看到当前的修订版号。您还可以在同一文件的 <code>LastGCRevision</code> 字段中找到已清理（因此不再可访问）的最新文件夹版本的修订版号。查看 TLF 的旧版本时，您选择其中一个修订版进行浏览。它们是只读的，但您可以将数据从它们复制到 TLF 的当前副本中。</p>
+<p>有多种查看旧数据的方法。在 <code>keybase fs</code> 命令套件中，您可以使用 <code>ls</code>、<code>stat</code> 和 <code>read</code> 命令访问旧数据，对于 <code>cp</code> 命令的源路径，可以使用以下标志：</p>
 <ul>
-<li><code>-time</code>: This specifies a date and time for when the data was
-  available to all devices from the KBFS servers.  It can take many
-  different formats, such as:</li>
+<li>
+<p><code>-time</code>: 指定数据从 KBFS 服务器对所有设备可用的日期和时间。它可以采用许多不同的格式，例如：</p>
+<ul>
 <li>"Sun Jul 29 11:46:18 PDT 2018"</li>
 <li>"July 29, 2018 11:46:18 PM PST"</li>
 <li>"July 29, 2018"</li>
 <li>"2018-07-18 13:13:43 +0800"</li>
 </ul>
-<p>Note that if no timezone is given, it uses UTC (and not the local
-  timezone), in order to provide consistent behavior when copy/pasting
-  commands between users/devices that may be in different timezones.
-  Dates in formats where the month and day are ambiguous (such as
-  "4/3/18" or "04-03-2018" are treated as if the month comes first,
-  and then the day, as in typical US date formats.
-* <code>-reltime</code>: This specifies a relative time in the past, using unit
-  suffixes, such as "5m" for five minutes ago or "5h3m2s" for five
-  hours, three minutes and two seconds ago.  Valid time units are
-  "ns", "us" (or "µs"), "ms", "s", "m", "h".  Of course, this would
-  not be copy/paste-able as the relative revisions could change
-  according to the current time.
-* <code>-rev</code>: This specifies the exact revision number of the TLF you're
-  browsing, and is probably most useful for Keybase developers.</p>
-<p>For example, to view the TLF as it was five minutes ago (and the
-current date is July 29th 2018 at 11:51:00 am in San Francisco):</p>
+<p>请注意，如果没有给出时区，它将使用 UTC（而不是本地时区），以便在可能处于不同时区的用户/设备之间复制/粘贴命令时提供一致的行为。在月和日模糊的格式中（例如 "4/3/18" 或 "04-03-2018"），将被视为月在前，然后是日，如典型的美国日期格式。
+*   <code>-reltime</code>: 指定过去的相对时间，使用单位后缀，例如 "5m" 表示五分钟前，或 "5h3m2s" 表示五小时三分钟两秒前。有效的时间单位是 "ns", "us" (或 "µs"), "ms", "s", "m", "h"。当然，这将不可复制/粘贴，因为相对修订版可能会随当前时间而变化。
+*   <code>-rev</code>: 指定您正在浏览的 TLF 的确切修订版号，这对 Keybase 开发人员可能最有用。</p>
+</li>
+</ul>
+<p>例如，要查看五分钟前的 TLF（当前日期为 2018 年 7 月 29 日上午 11:51:00 旧金山时间）：</p>
 <pre class="codehilite"><code>$ keybase fs ls -reltime 5m /keybase/private/you
-- or -
+- 或 -
 $ keybase fs ls -time &quot;Sun Jul 29 11:46:00 PDT 2018&quot; /keybase/private/you
 </code></pre>
 
-<p>You can also browse old versions of the TLF directly inside the KBFS
-mount, using these special directories at the root of the TLF:</p>
+<p>您还可以直接在 KBFS 挂载点内浏览 TLF 的旧版本，使用 TLF 根目录下的这些特殊目录：</p>
 <ul>
-<li><code>.kbfs_archived_time=&lt;t&gt;</code>: As with the <code>-time</code> flag above, you can
-  substitute any time for <code>&lt;t&gt;</code>.  This actually just acts as a symlink
-  to the corresponding revision for that time (see below).</li>
-<li><code>.kbfs_archived_rev=&lt;r&gt;</code>: As with the <code>-rev</code> flag above, you can
-  specify an exact revision here as <code>&lt;r&gt;</code>.</li>
-<li><code>.kbfs_archived_reltime=&lt;r&gt;</code>: Unlike this above two version, this
-  isn't a directory.  It's a file, whose contents contains the
-  directory name of the revision directory corresponding to the
-  relative time.  This is to avoid copy/paste issues across time.</li>
+<li><code>.kbfs_archived_time=&lt;t&gt;</code>: 与上面的 <code>-time</code> 标志一样，您可以将 <code>&lt;t&gt;</code> 替换为任何时间。实际上，这只是充当指向该时间对应修订版的符号链接（见下文）。</li>
+<li><code>.kbfs_archived_rev=&lt;r&gt;</code>: 与上面的 <code>-rev</code> 标志一样，您可以在此处指定确切的修订版 <code>&lt;r&gt;</code>。</li>
+<li><code>.kbfs_archived_reltime=&lt;r&gt;</code>: 与上述两个版本不同，这不是一个目录。它是一个文件，其内容包含对应于相对时间的修订版目录名称。这是为了避免跨时间的复制/粘贴问题。</li>
 </ul>
-<p>For the same examples above, you can do this in the mount directory instead:</p>
+<p>对于上面的相同示例，您可以改为在挂载目录中执行此操作：</p>
 <pre class="codehilite"><code>$ ls &quot;/keybase/private/you/.kbfs_archived_time=Sun Jul 29 11:46:00 PDT 2018/
-- or -
+- 或 -
 $ cd /keybase/private/you
 $ ls `cat .kbfs_archived_reltime=5m`
 </code></pre>
 
-<p>If you're interested in browsing the revisions of a specific file or
-directory, you can list them using the <code>keybase fs stat</code> command.  The
-<code>-show-archived</code> flag shows you the stat info for five previous
-revisions of the file, scattered throughout the archive history.  For
-example:</p>
+<p>如果您有兴趣浏览特定文件或目录的修订版，可以使用 <code>keybase fs stat</code> 命令列出它们。<code>-show-archived</code> 标志向您显示散布在整个归档历史中的文件的五个先前版本的统计信息。例如：</p>
 <pre class="codehilite"><code>$ keybase fs stat --show-archived /keybase/private/you/tmp/foo
 /private/you/foo
 69403)  2018-08-01 11:22:50 PDT FILE    444 foo you
@@ -734,12 +457,8 @@ example:</p>
 69295)  2018-08-01 11:20:00 PDT FILE    12  foo you
 </code></pre>
 
-<p>The first number in each row is the revision number.  You can pass
-that to other commands, such as <code>keybase fs read</code> or <code>keybase fs
-recover</code>, to access that exact revision of the file.</p>
-<p>Another option is the <code>-show-last-archived</code> flag, which shows exactly
-the last five revisions of the file.  You can use this to iterate all
-of the revisions, if desired.  For example:</p>
+<p>每行的第一个数字是修订版号。您可以将其传递给其他命令，例如 <code>keybase fs read</code> 或 <code>keybase fs recover</code>，以访问文件的该确切修订版。</p>
+<p>另一个选项是 <code>-show-last-archived</code> 标志，它准确显示文件的最后五个修订版。如果需要，您可以使用它来迭代所有修订版。例如：</p>
 <pre class="codehilite"><code>$ keybase fs stat --show-last-archived /keybase/private/you/foo
 /private/you/foo
 69403)  2018-08-01 11:22:50 PDT FILE    444 foo you
@@ -756,255 +475,103 @@ $ ./keybase fs stat --show-last-archived -rev 69399 /keybase/private/you/foo
 69395)  2018-08-01 11:22:38 PDT FILE    412 foo you
 </code></pre>
 
-<p><code>keybase fs recover</code> provides a simple helper command to recover the
-specific revision of a file or directory back into the TLF.  It takes
-the same <code>-time</code>, <code>-reltime</code> and <code>-rev</code> flags as the above commands,
-and just forcibly overwrites the current data in the folder with the
-data from the specified revision.  It recovers directories
-recursively.  It does not delete new files that weren't in the old
-versions of the directories.</p>
-<p>A neat property of KBFS recovery is that you can restore a
-<em>consistent</em> view of the TLF.  That is, all the versions of the files
-within a specific revision all existed exactly that way, at the same
-time.  So it's guaranteed that if you wrote file <code>a</code>, and then wrote
-file <code>b</code>, that in the future when you browse a revision of the TLF and
-see that version of <code>b</code>, you'll also the see the same version of <code>a</code>
-that existed at the time you wrote <code>b</code>.  This can be important for
-recovering certain types of applications that write to multiple files,
-such as databases and repositories.</p>
-<p>An important caveat, though, as mentioned above, is that using
-<code>keybase fs recover</code> on a directory (including the root of the TLF
-itself) could leave behind new files that didn't exist at the time
-from which you are recovering.  If exact recovery is needed for a full
-directory, one option is to recover via the file system's special
-<code>.kbfs_archived</code> directories, using <code>rsync --delete</code>.</p>
-<p>Currently the limit for recovering data is about two weeks in the
-past, though we might improve this in the future.</p>
-<h4 id="local-disk-usage-policy">Local disk usage policy</h4>
-<p>As mentioned above, KBFS streams data into and out of your device on
-demand, and doesn't store data permanently on your disk by default.
-However, for performance reasons, KBFS does use your local disk in two
-different ways, limiting the amount of space it uses based on the
-amount of disk space <em>currently available</em> on the disk partition
-storing your local home directory.  (This only applies to desktop
-devices at the moment, since KBFS is not yet available on mobile
-devices.)  All data stored to disk is first encrypted.</p>
+<p><code>keybase fs recover</code> 提供了一个简单的辅助命令，用于将文件或目录的特定修订版恢复回 TLF。它采用与上述命令相同的 <code>-time</code>、<code>-reltime</code> 和 <code>-rev</code> 标志，并且只是用指定修订版的数据强制覆盖文件夹中的当前数据。它递归恢复目录。它不会删除旧版本目录中不存在的新文件。</p>
+<p>KBFS 恢复的一个很好的属性是您可以恢复 TLF 的 <em>一致</em> 视图。也就是说，特定修订版中的所有文件版本都完全以那种方式、在同一时间存在。因此，可以保证如果您写入文件 <code>a</code>，然后写入文件 <code>b</code>，那么将来当您浏览 TLF 的修订版并看到该版本的 <code>b</code> 时，您也会看到在您写入 <code>b</code> 时存在的同一版本的 <code>a</code>。这对于恢复某些写入多个文件的应用程序类型（如数据库和存储库）可能很重要。</p>
+<p>不过，如上所述，一个重要的注意事项是，在目录（包括 TLF 根目录本身）上使用 <code>keybase fs recover</code> 可能会留下您正在恢复的时间点不存在的新文件。如果需要对完整目录进行精确恢复，一种选择是使用 <code>rsync --delete</code> 通过文件系统的特殊 <code>.kbfs_archived</code> 目录进行恢复。</p>
+<p>目前恢复数据的限制大约是过去两周，尽管我们将来可能会改进这一点。</p>
+<h4 id="本地磁盘使用策略">本地磁盘使用策略</h4>
+<p>如上所述，KBFS 按需将数据流式传输进出您的设备，默认情况下不会将数据永久存储在您的磁盘上。但是，出于性能原因，KBFS 确实以两种不同的方式使用您的本地磁盘，根据存储本地主目录的磁盘分区上 <em>当前可用</em> 的磁盘空间量来限制其使用的空间量。（目前这仅适用于桌面设备，因为 KBFS 尚未在移动设备上可用。）所有存储到磁盘的数据首先都经过加密。</p>
 <ul>
-<li><em>Temporary local writes</em>: After files are written to KBFS, but
-before they are uploaded to the servers, they will temporarily use
-disk space on your device -- see the "Journaled writes" section above.
-We limit this usage to 85% of your available disk space, up to a
-maximum of 170 GB.  These files will be deleted as soon as they sync
-successfully to the KBFS servers.</li>
-<li><em>On-disk transient cache</em>: KBFS also stores data in a transient
-cache on disk to improve performance.  This is limited to 10% of your
-available disk space, up to a maximum of 20 GB.  If other applications
-start using more of your disk space, data will be evicted from this
-cache automatically to maintain the overall usage percentage.</li>
+<li><em>临时本地写入</em>：文件写入 KBFS 后，但在上传到服务器之前，它们将临时使用您设备上的磁盘空间——请参阅上面的“日志式写入”部分。我们将此使用限制为您可用磁盘空间的 85%，最大为 170 GB。一旦这些文件成功同步到 KBFS 服务器，它们就会被删除。</li>
+<li><em>磁盘瞬态缓存</em>：KBFS 还在磁盘上的瞬态缓存中存储数据以提高性能。这限制为您可用磁盘空间的 10%，最大为 20 GB。如果其他应用程序开始使用更多磁盘空间，数据将自动从缓存中逐出以保持整体使用百分比。</li>
 </ul>
-<p>If you want to adjust these limits, see the "Running on a
-resource-constrained system" section below.  There is currently no way
-to adjust the locations of the directories.</p>
-<p>In addition, the KBFS process writes log files to your Keybase log
-directory.  The KBFS logs are limited to about 400 MB total.</p>
-<h4 id="syncing-data-for-offline-access">Syncing data for offline access</h4>
-<p>KBFS does not store TLF data permanently on your local device by
-default.  This is because KBFS gives you access to a very large amount
-of data (e.g., every Keybase user's public files!), and so syncing all
-that data before accessing it is infeasible.  This comes at the cost
-of not being able to access the data while offline, however.</p>
-<p>KBFS now offers a way for you to opt-in to "syncing" the data in
-specific TLFs, or in specific subdirectories or files within a TLF, to
-your local device, so that the most up-to-date version of the data
-possible will be accessible quickly, even when offline.  This process
-works by storing the encrypted blocks in a local database (similar to
-the "transient cache" above), and making the data available through
-the normal KBFS mount point.  It does not "sync" the data in decrypted
-form to/from a folder on your local file system the way Dropbox and
-others do.  The synced files are not available when KBFS is not
-running.</p>
-<p>Right now this feature is only supported on non-mobile devices, and
-the only way to enable this feature is via the command line.  To
-enable syncing, use the <code>keybase fs sync enable</code> command as follows:</p>
-<pre class="codehilite"><code># Sync an entire TLF
+<p>如果您想调整这些限制，请参阅下面的“在资源受限系统上运行”部分。目前无法调整目录的位置。</p>
+<p>此外，KBFS 进程会将日志文件写入您的 Keybase 日志目录。KBFS 日志总共限制为大约 400 MB。</p>
+<h4 id="同步数据以供离线访问">同步数据以供离线访问</h4>
+<p>默认情况下，KBFS 不会将 TLF 数据永久存储在您的本地设备上。这是因为 KBFS 让您可以访问大量数据（例如，每个 Keybase 用户的公开文件！），因此在访问之前同步所有数据是不可行的。但这带来的代价是离线时无法访问数据。</p>
+<p>KBFS 现在为您提供了一种选择加入的方式，将特定 TLF 或 TLF 内的特定子目录或文件中的数据“同步”到您的本地设备，以便即使在离线时也可以快速访问最新的数据版本。此过程的工作原理是将加密块存储在本地数据库中（类似于上面的“瞬态缓存”），并通过正常的 KBFS 挂载点使数据可用。它<strong>不</strong>像 Dropbox 和其他服务那样以解密形式将数据“同步”到/从本地文件系统上的文件夹。当 KBFS 未运行时，同步的文件不可用。</p>
+<p>目前，此功能仅在非移动设备上受支持，并且启用此功能的唯一方法是通过命令行。要启用同步，请使用 <code>keybase fs sync enable</code> 命令，如下所示：</p>
+<pre class="codehilite"><code># 同步整个 TLF
 $ keybase fs sync enable /keybase/private/me
 
-# Sync just a subdirectory of a TLF
+# 仅同步 TLF 的子目录
 $ keybase fs sync enable /keybase/private/me,you/tax_docs
 
-# Sync just a particular file
+# 仅同步特定文件
 $ keybase fs sync enable /keybase/team/mycompany/passwords.txt
 </code></pre>
 
-<p>There is also a <code>disable</code> subcommand to turn off the syncing (the data
-is deleted slowly in the background), and a <code>show</code> command for showing
-sync configuration and progress (including an estimated time when the
-sync will finish) for the all synced TLFs, or for a particular TLF.</p>
-<p>Note that, unlike for the transient cache described above, KBFS will
-use as much local storage as necessary to store this data.  Therefore
-if you try to sync more data than you have in available disk space,
-you will fill up your disk.</p>
-<p>GUI and mobile support for file syncing will be coming soon.</p>
-<h3 id="favorites">Favorites</h3>
-<p>Each Keybase user has their own list of "favorites" that appear under
-<code>/keybase/private</code> and <code>/keybase/public</code>.  Whenever you access a new
-directory (e.g., you run <code>ls /keybase/public/malgorithms@twitter</code>), it
-will be added to your favorites list under its canonical name (e.g.,
-<code>/keybase/public/chris</code>).</p>
-<p>You can remove entries from your favorites list using <code>rmdir</code> for the
-canonical TLF name (e.g., <code>rmdir /keybase/public/chris</code>), or choosing
-to ignore the folder in the Keybase GUI application.</p>
-<h3 id="mountpoints">Mountpoints</h3>
-<p>On macOS and Linux, the official Keybase packages support multiple
-local users of a computer all using KBFS at the same time (presumably
-signed into different Keybase accounts, but that's not a requirement).
-We do that by mounting KBFS onto your file system for each user in a
-unique location.</p>
+<p>还有一个 <code>disable</code> 子命令用于关闭同步（数据会在后台缓慢删除），以及一个 <code>show</code> 命令用于显示所有同步 TLF 或特定 TLF 的同步配置和进度（包括同步完成的预计时间）。</p>
+<p>请注意，与上述瞬态缓存不同，KBFS 将根据需要使用尽可能多的本地存储来存储此数据。因此，如果您尝试同步的数据量超过了可用磁盘空间，您将填满磁盘。</p>
+<p>针对文件同步的 GUI 和移动支持即将推出。</p>
+<h3 id="收藏夹">收藏夹</h3>
+<p>每个 Keybase 用户都有自己的“收藏夹”列表，显示在 <code>/keybase/private</code> 和 <code>/keybase/public</code> 下。每当您访问新目录时（例如，您运行 <code>ls /keybase/public/malgorithms@twitter</code>），它都会以其规范名称（例如 <code>/keybase/public/chris</code>）添加到您的收藏夹列表中。</p>
+<p>您可以使用 <code>rmdir</code> 针对规范 TLF 名称（例如 <code>rmdir /keybase/public/chris</code>）从收藏夹列表中删除条目，或者选择在 Keybase GUI 应用程序中忽略该文件夹。</p>
+<h3 id="挂载点">挂载点</h3>
+<p>在 macOS 和 Linux 上，官方 Keybase 软件包支持一台计算机的多个本地用户同时使用 KBFS（假设登录到不同的 Keybase 账户，但这并非强制要求）。我们通过将 KBFS 挂载到每个用户文件系统的唯一位置来实现这一点。</p>
 <ul>
-<li><em>macOS</em>: For a user with local macOS account name <code>user</code>, KBFS is
-mounted at <code>/Volumes/Keybase (user)</code>.</li>
-<li><em>Linux</em>: If the user (with Linux account name <code>user</code>) has
-<code>$XDG_RUNTIME_DIR</code> set in their environment, KBFS is mounted at
-<code>$XDG_RUNTIME_DIR/keybase/kbfs</code>.  Otherwise, we mount it at
-<code>/home/user/.config/keybase/kbfs</code>.</li>
+<li><em>macOS</em>: 对于本地 macOS 账户名为 <code>user</code> 的用户，KBFS 挂载在 <code>/Volumes/Keybase (user)</code>。</li>
+<li><em>Linux</em>: 如果用户（Linux 账户名为 <code>user</code>）在其环境中设置了 <code>$XDG_RUNTIME_DIR</code>，KBFS 挂载在 <code>$XDG_RUNTIME_DIR/keybase/kbfs</code>。否则，我们将其挂载在 <code>/home/user/.config/keybase/kbfs</code>。</li>
 </ul>
-<p>Notably, we don't create a <code>~/keybase</code> directory, like other file
-storage applications do, because KBFS is a real mountpoint and gives
-you access to team and public directories, and so it slows down
-programs that crawl your home directory like backup software, <code>du</code>, or
-<code>find</code>.  (A Linux user without <code>$XDG_RUNTIME_DIR</code> set will still have
-this issue, unfortunately.)</p>
-<p>You can figure out your current mountpoint with <code>keybase status | grep
-mount</code>.</p>
-<h4 id="root-redirector">Root redirector</h4>
-<p>So, how does the magic <code>/keybase</code> path work, if it's not the KBFS
-mountpoint?  We mount what we call a <em>root redirector</em> there, which
-shows different symlinks to the per-user mounts, depending on which
-user is asking.  This allows our users to send and post global paths
-to KBFS files that will work for all Linux and macOS users (and
-Windows users, via the <code>keybase fs</code> command set), all while supporting
-multiple local users.</p>
-<p>Note that on fresh Keybase installs on macOS 10.15 or later, the
-operating system does not allow the creation of new mount points at
-the root level of the file system.  In that case, the root redirector
-is mounted at <code>/Volumes/Keybase</code> instead.</p>
-<p>We recognize that not everyone would want to run the root redirector.
-In particular it runs with root permissions on your computer (via a
-root-suid binary on Linux, and via a root helper process on macOS),
-and it also makes a directory at the root of your local file system,
-either of which might be unwelcome.  So if you'd rather access KBFS
-directly via the per-user mountpoints, you can turn off the root
-redirector by creating a root-level Keybase config file at
-<code>/etc/keybase/config.json</code> with the following contents:</p>
+<p>值得注意的是，我们不会像其他文件存储应用程序那样创建 <code>~/keybase</code> 目录，因为 KBFS 是一个真正的挂载点，并让您可以访问团队和公开目录，因此它会减慢像备份软件、<code>du</code> 或 <code>find</code> 等爬取主目录的程序。（不幸的是，未设置 <code>$XDG_RUNTIME_DIR</code> 的 Linux 用户仍会遇到此问题。）</p>
+<p>您可以使用 <code>keybase status | grep mount</code> 找出当前的挂载点。</p>
+<h4 id="根重定向器-root-redirector">根重定向器 (Root redirector)</h4>
+<p>那么，如果 <code>/keybase</code> 不是 KBFS 挂载点，这个神奇的路径是如何工作的呢？我们在那里挂载了所谓的 <em>根重定向器</em>，它会根据请求的用户显示指向每个用户挂载的不同符号链接。这允许我们的用户发送和发布指向 KBFS 文件的全局路径，这些路径对所有 Linux 和 macOS 用户（以及通过 <code>keybase fs</code> 命令集的 Windows 用户）都有效，同时支持多个本地用户。</p>
+<p>请注意，在 macOS 10.15 或更高版本的新 Keybase 安装上，操作系统不允许在文件系统根级别创建新挂载点。在这种情况下，根重定向器改为挂载在 <code>/Volumes/Keybase</code>。</p>
+<p>我们认识到并非所有人都想运行根重定向器。特别是它以 root 权限在您的计算机上运行（在 Linux 上通过 root-suid 二进制文件，在 macOS 上通过 root 辅助进程），并且它还在本地文件系统的根目录下创建了一个目录，这两者都可能不受欢迎。因此，如果您更愿意直接通过每用户挂载点访问 KBFS，可以通过在 <code>/etc/keybase/config.json</code> 创建包含以下内容的根级别 Keybase 配置文件来关闭根重定向器：</p>
 <pre class="codehilite"><code>{
   &quot;disable-root-redirector&quot;: true
 }
 </code></pre>
 
-<p>Then on Linux, do:</p>
+<p>然后在 Linux 上，执行：</p>
 <pre class="codehilite"><code>sudo killall keybase-redirector
 sudo chmod a-s /usr/bin/keybase-redirector
 </code></pre>
 
-<p>On macOS, you can do this:</p>
+<p>在 macOS 上，您可以执行此操作：</p>
 <pre class="codehilite"><code>keybase uninstall -c redirector
 </code></pre>
 
-<p>After that the redirector should stay off permanently, even across upgrades.</p>
-<h4 id="custom-mountpoints">Custom mountpoints</h4>
-<p>If you don't like the default mountpoint location, you can override it
-with <code>keybase config set mountdir &lt;/a/better/location&gt;</code>, and then
-restart Keybase.</p>
-<p>The root redirector mountpoint cannot currently be changed.</p>
+<p>此后，即使升级，重定向器也应永久保持关闭状态。</p>
+<h4 id="自定义挂载点">自定义挂载点</h4>
+<p>如果您不喜欢默认挂载点位置，可以使用 <code>keybase config set mountdir &lt;/a/better/location&gt;</code> 覆盖它，然后重启 Keybase。</p>
+<p>根重定向器挂载点目前无法更改。</p>
 <h4 id="windows">Windows</h4>
-<p>Currently only one Windows user may use Keybase, and KBFS, at a time.
-We mount to the <code>K:\</code> drive if possible, picking another available
-drive letter if needed.  You can customize the drive letter with
-<code>keybase config set mountdir X:</code>.</p>
-<h3 id="running-on-a-resource-constrained-system">Running on a resource-constrained system</h3>
-<p>On desktops and laptops, KBFS makes liberal use of memory in order to
-cache recently-read data for performance.  It also uses CPU and
-networking resources to <em>pre-fetch</em> data you are likely to access in
-the near future, such as recently-edited files or subsequent data
-blocks to data that was just requested.  These optimization tradeoffs
-might not be desired on systems that don't have any extra RAM or CPU
-to spare.  Starting with Keybase 4.6.0, we allow users to configure
-their desktops and laptops to run the same way mobile devices do,
-which disables these optimizations.  To do so, run the following
-command:</p>
+<p>目前，一次只能有一位 Windows 用户使用 Keybase 和 KBFS。如果可能，我们会挂载到 <code>K:\</code> 驱动器，如果需要，会选择另一个可用的驱动器号。您可以使用 <code>keybase config set mountdir X:</code> 自定义驱动器号。</p>
+<h3 id="在资源受限系统上运行">在资源受限系统上运行</h3>
+<p>在台式机和笔记本电脑上，KBFS 大量使用内存来缓存最近读取的数据以提高性能。它还使用 CPU 和网络资源来 <em>预取</em> 您可能在不久的将来访问的数据，例如最近编辑的文件或刚请求数据的后续数据块。对于没有任何额外 RAM 或 CPU 可用的系统，这些优化权衡可能不是所希望的。从 Keybase 4.6.0 开始，我们允许用户将其台式机和笔记本电脑配置为以与移动设备相同的方式运行，从而禁用这些优化。为此，请运行以下命令：</p>
 <pre class="codehilite"><code>keybase config set kbfs.mode constrained
 </code></pre>
 
-<p>and then restart KBFS.  The default behavior can be restored with:</p>
+<p>然后重启 KBFS。可以使用以下命令恢复默认行为：</p>
 <pre class="codehilite"><code>keybase config set kbfs.mode --clear
 </code></pre>
 
-<p>followed by a restart.</p>
-<p>A few other configuration options can be set via <code>keybase config set</code>
-as well:</p>
+<p>随后重启。</p>
+<p>还可以通过 <code>keybase config set</code> 设置其他一些配置选项：</p>
 <ul>
-<li><code>kbfs.block_cache.mem_max_bytes</code> (integer, must be set using the
-  <code>-i</code> flag): The maximum number of bytes that the in-memory data
-  cache can hold at once.  The default for this number is 512 MB or
-  1/8 of the total RAM on the device, whichever is smaller.  Making
-  this number smaller can help reduce KBFS's memory footprint.</li>
-<li><code>kbfs.block_cache.disk_max_fraction</code> (float, must be set using the
-  <code>-f</code> flag): The fraction of the available bytes of the local disk
-  that can be used for the on-disk <em>transient</em> cache.  If the usage
-  goes above this fraction, blocks will be evicted from the cache
-  until it fits within the fraction again.  The default value for this
-  fraction is 0.10 (10%, as discussed above).</li>
-<li><code>kbfs.block_cache.sync_max_fraction</code> (float, must be set using the
-  <code>-f</code> flag): The fraction of the available bytes of the local disk
-  that can be used for synced-for-offline-access data.  Data is never
-  evicted from this cache; if its size exceeds the configured fraction
-  of the disk, then background syncs will fail until more space
-  becomes available.  The default fraction for his fraction is 1.00
-  (100%).</li>
+<li><code>kbfs.block_cache.mem_max_bytes</code>（整数，必须使用 <code>-i</code> 标志设置）：内存数据缓存一次可容纳的最大字节数。此数字的默认值为 512 MB 或设备总 RAM 的 1/8，以较小者为准。减小此数字有助于减少 KBFS 的内存占用。</li>
+<li><code>kbfs.block_cache.disk_max_fraction</code>（浮点数，必须使用 <code>-f</code> 标志设置）：本地磁盘可用字节数中可用于磁盘 <em>瞬态</em> 缓存的分数。如果使用率超过此分数，块将从缓存中逐出，直到再次符合该分数。此分数的默认值为 0.10（10%，如上所述）。</li>
+<li><code>kbfs.block_cache.sync_max_fraction</code>（浮点数，必须使用 <code>-f</code> 标志设置）：本地磁盘可用字节数中可用于同步以供离线访问数据的分数。数据永远不会从该缓存中逐出；如果其大小超过配置的磁盘分数，则后台同步将失败，直到有更多空间可用。此分数的默认值为 1.00 (100%)。</li>
 </ul>
-<p>KBFS must be restarted for any of these options to take effect.</p>
-<h3 id="debugging">Debugging</h3>
-<p>For most users, <code>keybase log send</code> should suffice. This packages up
-some log files and sends them to Keybase admins.  Log files may
-contain metadata (sizes, etc.) about your files, though file and
-directory names are obfuscated and cannot be inferred from the logs.</p>
-<p>For the more curious, on macOS, the easiest way to access the KBFS logs
-is via [Console.app](https://en.wikipedia.org/wiki/Console_(OS_X)). On
-the left under FILES, it should be under <code>~/Library/Logs</code> as
-<code>keybase.kbfs.log</code>. <code>keybase.service.log</code> may also be useful. You can
-then either copy and paste a portion of the displayed lines, or drag
-and drop the “keybase.kbfs.log” to attach the entire file, or
-right-click and select “Reveal in Finder” to find the actual file.</p>
-<p>There are a number of special invisible KBFS files that either have
-debugging info or turns on and off KBFS settings. They all start with
-<code>.kbfs_</code>, and KBFS won’t let you create files with that prefix.</p>
-<p>Since these files aren’t listed by default, you’ll need to use the
-terminal to access these.</p>
-<p>From any folder, the following files are accessible:</p>
+<p>KBFS 必须重启才能使任何这些选项生效。</p>
+<h3 id="调试">调试</h3>
+<p>对于大多数用户，<code>keybase log send</code> 就足够了。这将打包一些日志文件并将其发送给 Keybase 管理员。日志文件可能包含有关您文件的元数据（大小等），尽管文件和目录名称已被混淆，无法从日志中推断出来。</p>
+<p>对于更好奇的用户，在 macOS 上，访问 KBFS 日志的最简单方法是通过 [Console.app](https://en.wikipedia.org/wiki/Console_(OS_X))。在左侧 FILES 下，它应该位于 <code>~/Library/Logs</code> 下的 <code>keybase.kbfs.log</code>。<code>keybase.service.log</code> 也可能有用。然后，您可以复制并粘贴显示行的一部分，或者拖放 “keybase.kbfs.log” 以附加整个文件，或者右键单击并选择“在 Finder 中显示”以找到实际文件。</p>
+<p>有许多特殊的不可见 KBFS 文件，它们要么包含调试信息，要么打开和关闭 KBFS 设置。它们都以 <code>.kbfs_</code> 开头，KBFS 不允许您创建带有该前缀的文件。</p>
+<p>由于默认情况下未列出这些文件，因此您需要使用终端来访问这些文件。</p>
+<p>从任何文件夹，均可访问以下文件：</p>
 <ul>
-<li><code>.kbfs_error</code>: contains a list of the last few errors and their
-    stack traces.</li>
-<li><code>.kbfs_metrics</code>: contains a list of some metrics (mostly
-    RPC-related).</li>
-<li><code>.kbfs_profiles/</code>: contains files representing Golang
-    <a href="https://golang.org/pkg/runtime/pprof/#Profile">profiles</a>.</li>
+<li><code>.kbfs_error</code>: 包含最近几个错误及其堆栈跟踪的列表。</li>
+<li><code>.kbfs_metrics</code>: 包含一些指标（主要是 RPC 相关）的列表。</li>
+<li><code>.kbfs_profiles/</code>: 包含表示 Golang <a href="https://golang.org/pkg/runtime/pprof/#Profile">profiles</a> 的文件。</li>
 </ul>
-<p>From within a TLF the following additional files are also accessible:</p>
+<p>在 TLF 内，还可以访问以下附加文件：</p>
 <ul>
-<li><code>.kbfs_status</code>: lists some status info about the current TLF.</li>
-<li><code>.kbfs_update_history</code>: shows a JSON-formatted list of all the
-    revisions for this TLF, including what operations were done when,
-    and by which authorized TLF writer.  This fetches all revisions
-    from the server, and may be very slow for TLFs with long
-    histories.  It contains a lot of internal debugging information
-    and may be hard to read by someone who's not a KBFS developer;
-    making a friendlier version is future work.</li>
-<li><code>.kbfs_fileinfo_XXX</code> (where XXX is the name of a file or directory
-    in that TLF subdirectory): shows some debugging information about
-    the given file, including who last claimed to have written it
-    (this is shown without explicit cryptographic verification --
-    verification is done at the TLF-level, not at the individual file
-    level).</li>
+<li><code>.kbfs_status</code>: 列出有关当前 TLF 的一些状态信息。</li>
+<li><code>.kbfs_update_history</code>: 显示此 TLF 所有修订版的 JSON 格式列表，包括何时执行了什么操作，以及由哪个授权的 TLF 写入者执行。这会从服务器获取所有修订版，对于具有长历史记录的 TLF 可能会非常慢。它包含大量内部调试信息，对于非 KBFS 开发人员来说可能难以阅读；制作更友好的版本是未来的工作。</li>
+<li><code>.kbfs_fileinfo_XXX</code>（其中 XXX 是该 TLF 子目录中的文件或目录的名称）：显示有关给定文件的一些调试信息，包括谁最后声称编写了它（这在没有显式加密验证的情况下显示——验证是在 TLF 级别完成的，而不是在单个文件级别）。</li>
 </ul>
             </section>
         </div>
@@ -1012,7 +579,7 @@ terminal to access these.</p>
         <footer class="footer" data-footer-label="下一章">
         <a class="footer__link" href="/docs/wallet">
             <div class="footer__inner">
-            <p class="footer__title" data-chapter-count="D">Stellar Wallet Key Management</p>
+            <p class="footer__title" data-chapter-count="D">Stellar 钱包密钥管理</p>
                 
             </div>
             <img alt="" class="footer__image" src="/static/img/illos/docs.jpg" loading="lazy" width="870"/>

@@ -1,41 +1,18 @@
-# Restricted Bots in Chat
+# 聊天中的受限机器人
 
-Keybase has support for restricted bots; isolated members of a chat
-conversation. The separation allows chat conversations to benefit from bots --
-providing games, utilities, or notification workflows without entrusting the
-content to the bots of the world. Users can interact with bots directly in a
-conversation without having to trust bot developers/maintainers with sensitive
-communications.
+Keybase 支持受限机器人；即聊天会话中的隔离成员。这种隔离机制使聊天会话能够受益于机器人的功能——提供游戏、实用工具或通知工作流，而无需将内容托付给外部机器人。用户可以直接在会话中与机器人交互，而无需信任机器人开发者/维护者，从而保护敏感通信。
 
-An encryption key derived from the main chat key is used to encrypt messages
-for these members, keeping the bot from accessing content of the conversation
-besides messages directly intended for them. The chat client determines which
-messages to encrypt based on a signed configuration of the bot when it is added
-to the team.
+系统使用从主聊天密钥派生的加密密钥为此类成员加密消息，从而阻止机器人访问除直接发送给它的消息之外的会话内容。聊天客户端根据机器人加入团队时的签名配置，确定哪些消息需要加密。
 
-## High Level Design
+## 高层设计
 
-Chat conversations are backed by [Keybase teams](/docs/teams) and use a
-per-team-key (PTK) to encrypt messages. Restricted bots are signed into the
-[team signature chain](/docs/teams/details#team-sigchains) as members of a team
-but lack access to the PTK, rendering them unable to decrypt any team secrets
-(chat, files, etc). Instead, team members derive a new encryption key for the
-bot called a `TeambotKey` and store a copy of the key on the server encrypted
-with the bot's [per-user-key (PUK)](/docs/teams/puk). Members use the `TeambotKey`
-when communicating with the bot, allowing all regular members to send and
-receive to the bot without exposing messages for other team members or other
-bots.
+聊天会话由 [Keybase 团队](/docs/teams) 支持，并使用团队密钥 (PTK) 加密消息。受限机器人作为团队成员被签入 [团队签名链](/docs/teams/details#team-sigchains)，但无法访问 PTK，因此无法解密任何团队秘密（聊天、文件等）。取而代之的是，团队成员为机器人派生一个新的加密密钥，称为 `TeambotKey`，并将该密钥的副本经机器人的 [用户密钥 (PUK)](/docs/teams/puk) 加密后存储在服务器上。成员在与机器人通信时使用 `TeambotKey`，这使得所有正式成员均可与机器人收发消息，而不会将针对其他团队成员或其他机器人的消息暴露给该机器人。
 
-## Technical Details
+## 技术细节
 
-### Bot Settings Chain Link
+### 机器人设置链链接
 
-A new team chain link `bot_settings` specifies the policies of when a
-restricted bot member will have content keyed for them. When sending a chat
-message, the message contents are checked against the rule set and if they
-match, the content is keyed using the derived bot key instead of the PTK. This
-data is stored in the sigchain instead of a chat message to prevent a server
-rollback of the bot’s configuration. The link is of the form:
+一个新的团队链链接 `bot_settings` 指定了何时为受限机器人成员加密内容的策略。发送聊天消息时，消息内容将根据规则集进行检查，若匹配，则使用派生的机器人密钥而非 PTK 对内容进行加密。此数据存储在签名链中而非聊天消息中，以防止服务器回滚机器人的配置。该链接的格式如下：
 
 ```
 {
@@ -50,33 +27,22 @@ rollback of the bot’s configuration. The link is of the form:
 }
 ```
 
-The config field specifies what constitutes a match:
-    - cmds: boolean
-        - "messages that begin with !<cmd>, a bot advertised command <cmd>, will match"
-    - mentions: boolean
-        - "@-mentions of the bot will match"
-    - triggers: []string | null
-        - "word(s) can be present in the message to match"
-        - "may be a regular expression for advanced usage"
-    - channels: []string | null
-        - "configuration is only respected in the given channels or all channels if null"
+config 字段指定了构成匹配的条件：
+    - cmds: 布尔值
+        - “以 !<cmd>（机器人通告的命令 <cmd>）开头的消息将匹配”
+    - mentions: 布尔值
+        - “@-提及机器人的消息将匹配”
+    - triggers: []字符串 | null
+        - “消息中出现指定单词将匹配”
+        - “可为高级用法提供正则表达式”
+    - channels: []字符串 | null
+        - “配置仅在给定频道中生效，若为 null 则在所有频道生效”
 
-Users specify this configuration when adding a bot to the team and can modify
-it with an updated chain link -- the latest config in the chain is applied when
-checking messages.
+用户在将机器人添加到团队时指定此配置，并可通过更新的链链接对其进行修改——检查消息时将应用链中的最新配置。
 
 
-### Key Derivation
+### 密钥派生
 
-When a bot member is added as a restricted bot, a `TeambotKey` is derived from
-the latest `PerTeamKey` seed and boxed for the bot’s PUK. The keys can be
-derived by any team member with access to team secrets by computing `HMAC(seed
-|| botUID || "Derived-Teambot-Key-NaCl-DH-1")`. The resulting box is signed by
-the latest PTK, which the bot validates when unboxing. Since bots cannot derive
-their own keys, if a box signed by an old PTK is seen it is considered valid
-for a short window while team members are notified to create a new key. The bot
-caches the first time a particular key is invalid on disk to prevent the server
-from repeatedly giving old boxes.
+当机器人成员作为受限机器人被添加时，将从最新的 `PerTeamKey` 种子派生出一个 `TeambotKey`，并针对机器人的 PUK 进行封装（boxed）。任何拥有团队秘密访问权限的团队成员均可通过计算 `HMAC(seed || botUID || "Derived-Teambot-Key-NaCl-DH-1")` 来派生这些密钥。生成的加密箱由最新的 PTK 签名，机器人解包时会对此进行验证。由于机器人无法派生其自身密钥，若发现由旧 PTK 签名的加密箱，在团队成员接到通知创建新密钥的短时间内，该加密箱仍被视为有效。机器人会将特定密钥首次失效的时间缓存至磁盘，以防止服务器重复提供旧的加密箱。
 
-Restricted bots can also use [exploding messages](/docs/chat/ephemeral) using a
-derived `TeambotEphemeralKey` from the teams latest TeamEK.
+受限机器人还可使用从团队最新 TeamEK 派生的 `TeambotEphemeralKey` 来使用 [阅后即焚](/docs/chat/ephemeral) 功能。

@@ -119,4 +119,4 @@ _keybase_pages.my-site.example.com. 300 IN TXT "kbp=git@keybase:team/gitwithkbpb
 
 默认情况下，当你在 Keybase 托管自定义域名时，目录列表是禁用的。你可以通过在站点根目录创建一个 `.kbp_config` 文件来启用列表。此配置文件允许对站点的不同部分进行一些简单的自定义，包括启用跨域资源共享 (CORS)。
 
-了解更多关于 [`.kbp_config`](https://keybase.io/docs/sites/access-control)。
+了解更多关于 [`.kbp_config`](/docs/sites/access-control)。
